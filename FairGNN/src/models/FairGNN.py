@@ -1,6 +1,6 @@
 import torch.nn as nn
-from models.GCN import GCN,GCN_Body
-from models.GAT import GAT,GAT_body
+from FairGNN.src.models.GCN import GCN, GCN_Body
+from FairGNN.src.models.GAT import GAT, GAT_body
 import torch
 
 def get_model(nfeat, args):
