@@ -21,10 +21,8 @@ def load_graphml(dataset_path, dataset_user_id_name):
         df_nodes = df_nodes.reset_index(level=0)
         df_nodes = df_nodes.rename(columns={"index": dataset_user_id_name})
 
-    print(type(df_nodes[dataset_user_id_name][0]) == np.int64)
     # check if user_id column is not string
     if type(df_nodes[dataset_user_id_name][0]) != np.int64:
-        print('user_id is str')
         # if so, we convert it to int
         df_nodes[dataset_user_id_name] = pd.to_numeric(df_nodes[dataset_user_id_name])
         df_nodes = df_nodes.astype({dataset_user_id_name: int})
