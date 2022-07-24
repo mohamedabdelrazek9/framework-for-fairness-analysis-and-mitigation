@@ -57,32 +57,32 @@ def load_data(path="../dataset/cora/", dataset="cora"):
 
     return adj, features, labels, idx_train, idx_val, idx_test
 
-def load_pokec(dataset,sens_attr,predict_attr, path="../dataset/pokec/", label_number=1000,sens_number=500,seed=19,test_idx=False):
-    print('we are in load_pokec')
-    print('')
-
+def load_pokec(df_nodes, edges_path, dataset_user_id_name, sens_attr,predict_attr, label_number=1000,sens_number=500,seed=19,test_idx=False):
     """Load data"""
-    print('Loading {} dataset from {}'.format(dataset,path))
 
-    idx_features_labels = pd.read_csv(os.path.join(path,"{}.csv".format(dataset)))
-    header = list(idx_features_labels.columns)
-    header.remove("user_id")
+    #idx_features_labels = pd.read_csv(os.path.join(path,"{}.csv".format(dataset)))
+    
+    header = list(df_nodes.columns)
+    header.remove(dataset_user_id_name)
 
     header.remove(sens_attr)
     header.remove(predict_attr)
 
 
-    features = sp.csr_matrix(idx_features_labels[header], dtype=np.float32)
-    labels = idx_features_labels[predict_attr].values
+    features = sp.csr_matrix(df_nodes[header], dtype=np.float32)
+    labels = df_nodes[predict_attr].values
     
 
     # build graph
-    idx = np.array(idx_features_labels["user_id"], dtype=int)
+    idx = np.array(df_nodes[dataset_user_id_name], dtype=int)
     idx_map = {j: i for i, j in enumerate(idx)}
-    edges_unordered = np.genfromtxt(os.path.join(path,"{}_relationship.txt".format(dataset)), dtype=int)
-
+    #edges_unordered = np.genfromtxt(os.path.join(path,"{}_relationship.txt".format(dataset)), dtype=int)
+    edges_unordered = np.genfromtxt(os.path.join("{}.txt".format(edges_path)), dtype=int)
+    
+    
     edges = np.array(list(map(idx_map.get, edges_unordered.flatten())),
-                     dtype=int).reshape(edges_unordered.shape)
+                     dtype=float).reshape(edges_unordered.shape)
+    edges = edges.astype(int)
     adj = sp.coo_matrix((np.ones(edges.shape[0]), (edges[:, 0], edges[:, 1])),
                         shape=(labels.shape[0], labels.shape[0]),
                         dtype=np.float32)
@@ -112,7 +112,7 @@ def load_pokec(dataset,sens_attr,predict_attr, path="../dataset/pokec/", label_n
 
 
 
-    sens = idx_features_labels[sens_attr].values
+    sens = df_nodes[sens_attr].values
 
     sens_idx = set(np.where(sens >= 0)[0])
     idx_test = np.asarray(list(sens_idx & set(idx_test)))
