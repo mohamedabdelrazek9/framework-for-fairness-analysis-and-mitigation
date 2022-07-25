@@ -4,7 +4,7 @@
 import argparse
 import os
 from turtle import st
-from utils import load_graphml
+from utils import load_networkx_file
 from FairGNN.src.utils import load_pokec, feature_norm
 from train_models import train_FairGNN
 import dgl
@@ -40,6 +40,7 @@ parser.add_argument('--acc', type=float, default=0.688, help='the selected FairG
 args = parser.parse_known_args()[0]
 args.cuda = not args.no_cuda and torch.cuda.is_available()
 
+networkx_format_list = ['.graphml', '.gexf', '.gml', '.leda', '.net']
 
 def FairGNN_pre_processing():
     # todo do suitable pre-processing for the choosen dataset
@@ -47,8 +48,8 @@ def FairGNN_pre_processing():
     
     data_extension = os.path.splitext(args.dataset_path)[1]
 
-    if data_extension == '.graphml':
-        df_nodes, edges_path = load_graphml(args.dataset_path, args.dataset_user_id_name)
+    if data_extension in networkx_format_list:
+        df_nodes, edges_path = load_networkx_file(data_extension, args.dataset_path, args.dataset_user_id_name)
 
         adj, features, labels, idx_train, idx_val, idx_test,sens,idx_sens_train = load_pokec(df_nodes,
                                                                                             edges_path,
