@@ -62,6 +62,7 @@ def FairGNN_pre_processing():
                                                                                             test_idx=True)
     else:
         # todo pre-process if data is in format neo4j  
+        df_nodes, edges_path = load_neo4j_file(data_extension, args.dataset_path, args.dataset_user_id_name) #arguments may change later on
         None                
 
     G = dgl.DGLGraph()

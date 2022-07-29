@@ -46,6 +46,38 @@ def load_networkx_file(data_extension, dataset_path, dataset_user_id_name):
     return df_nodes, edges_path
 
 
+def load_neo4j_file(data_extension, dataset_path, dataset_user_id_name):
+    # todo pre-process node and edge data
+    print('Loading dataset for FairGNN...')
+    
+    df = pd.read_json(dataset_path, lines=True) # may cause error
+
+    # todo extract node csv
+
+
+
+    #extract edges relationships
+    edges_df = df.loc[(df['type'] == 'relationship')]
+    edges_df = edges_df.drop(['labels'], axis=1)
+
+    edges_relation = pd.DataFrame(columns=['start', 'end'], index=range(len(edges_df.index)))
+    i = 0
+
+    for index, row in edges_df.iterrows():
+        edges_relation['start'][i] = row['start']['id']
+        edges_relation['end'][i] = row['end']['id']
+        i = i+1 
+
+    edges_relation.columns = [''] * len(edges_relation.columns)
+
+    # save .txt
+    # todo maybe return it normally?
+    edges_path = './FairGNN_data_relationship'
+    edges_relation.to_csv(r'{}.txt'.format(edges_path), sep='\t', header=False, index=False)
+
+    return edges_path
+
+
     
 
 
