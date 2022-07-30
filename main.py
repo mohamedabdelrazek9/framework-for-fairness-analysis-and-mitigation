@@ -4,7 +4,7 @@
 import argparse
 import os
 from turtle import st
-from utils import load_networkx_file
+from utils import load_networkx_file, load_neo4j_file
 from FairGNN.src.utils import load_pokec, feature_norm
 from train_models import train_FairGNN
 import dgl

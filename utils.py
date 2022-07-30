@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import networkx as nx
 import scipy.sparse as sp
+import re
 
 def load_networkx_file(data_extension, dataset_path, dataset_user_id_name):
 
@@ -53,9 +54,45 @@ def load_neo4j_file(data_extension, dataset_path, dataset_user_id_name):
     df = pd.read_json(dataset_path, lines=True) # may cause error
 
     # todo extract node csv
+    nodes_df = df.loc(df['type'] == ['node'])
+    #delete un-needed column
+    nodes_df = nodes_df.drop(['label', 'start', 'end'], axis=1)
+
+    # get nodes properties as list of json
+    prop_list = []
+    id_list = []
+    labels_list = []
+    for index, row in nodes_df.iterrows():
+        prop_list.append(row['propertiees'])
+        id_list.append(row['id'])
+        labels_list.append(row['labels'])
+
+    for i in range(len(prop_list)):
+        prop_list[i]['id'] = id_list[i]
+        prop_list[i]['labels'] = labels_list[i]
+
+    # create new csv from the prop list
+    new_nodes_df = pd.DataFrame(prop_list)
+    new_nodes_df = new_nodes_df.drop(['properties'], axis=1)
 
 
+    # make id as first column
+    first_column = new_nodes_df.pop('id')
+    new_nodes_df.insert(0, 'id', first_column)
 
+    # now we remove columns that we don't want it to change for the next step (one-hot step)
+    
+    nodes_columns = remove_unneeded_columns(new_nodes_df)
+    
+    # replace nan with 0
+    new_nodes_df = new_nodes_df.fillna(0)
+
+    # Todo know which columns to filter out 
+    new_nodes_df = apply_one_hot_encodding(nodes_columns, new_nodes_df)
+
+    # Todo save to csv and return 
+    
+############################################
     #extract edges relationships
     edges_df = df.loc[(df['type'] == 'relationship')]
     edges_df = edges_df.drop(['labels'], axis=1)
@@ -79,7 +116,45 @@ def load_neo4j_file(data_extension, dataset_path, dataset_user_id_name):
 
 
     
+def remove_unneeded_columns(new_nodes_df):
+    unneeded_columns = []
+    nodes_columns = new_nodes_df.columns.tolist()
 
+    matchers = ['id', 'iD', 'Id', 'description']
+    matching = [s for s in nodes_columns if any(xs in s for xs in matchers)]
+
+    for i in range(len(matching)):
+        if matching[i].endswith('id') or matching[i].endswith('Id'):
+            unneeded_columns.append(matching[i])
+            nodes_columns.remove(matching|[i])
+
+        if matching[i] == 'description' or matching[i] == 'description':
+            nodes_columns.remove(matching[i])
+
+    nodes_columns.remove('id')
+    nodes_columns.remove('labels')
+
+    return nodes_columns
+
+
+def apply_one_hot_encodding(nodes_columns, new_nodes_df):
+
+    for column in nodes_columns:
+        if new_nodes_df[column].dtype != 'int64' or new_nodes_df[column].dtype != 'float64':
+            new_nodes_df[column] = new_nodes_df[column].apply(lambda x: ",".join(x) if isinstance(x, list) else x)
+
+        tempdf = pd.get_dummies(new_nodes_df[column], prefix=column, drop_first=True)
+        new_nodes_df = pd.merge(left=new_nodes_df, right=tempdf, left_index=True, right_index=True)
+
+        new_nodes_df = new_nodes_df.drop(columns=column)
+
+    new_nodes_df.columns = new_nodes_df.columns.str.replace(' \t', '')
+    new_nodes_df.columns = new_nodes_df.columns.str.strip().str.replace(' ', '_')
+    new_nodes_df.columns = new_nodes_df.columns.str.replace('___', '_')
+    new_nodes_df.columns = new_nodes_df.columns.str.replace('__', '_')
+
+
+    return new_nodes_df
 
 
 
