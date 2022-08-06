@@ -21,6 +21,7 @@ parser.add_argument('--dataset_path', type=str, help="choose which dataset you w
 parser.add_argument('--dataset_user_id_name', type=str, help="The column name of the user in the orginal dataset (e.g. user_id or userid)")
 parser.add_argument('--sens_attr', type=str, help="choose which sensitive attribute you want to consider for the framework")
 parser.add_argument('--predict_attr', type=str, help="choose which prediction attribute you want to consider for the framework")
+parser.add_argument('--uneeded_columns', nargs="+", help="choose which columns that will not be needed in the dataset and the fairness experiment (e.g. description)")
 parser.add_argument('--label_number', type=int)
 parser.add_argument('--sens_number', type=int)
 parser.add_argument('--num-hidden', type=int, default=64, help='Number of hidden units of classifier.')
@@ -62,7 +63,7 @@ def FairGNN_pre_processing():
                                                                                             test_idx=True)
     else:
         # todo pre-process if data is in format neo4j  
-        df_nodes, edges_path = load_neo4j_file(data_extension, args.dataset_path, args.dataset_user_id_name) #arguments may change later on
+        df_nodes, edges_path = load_neo4j_file(data_extension, args.dataset_path, args.dataset_user_id_name, args.uneeded_columns) #arguments may change later on
         None                
 
     G = dgl.DGLGraph()

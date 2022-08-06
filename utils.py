@@ -47,7 +47,7 @@ def load_networkx_file(data_extension, dataset_path, dataset_user_id_name):
     return df_nodes, edges_path
 
 
-def load_neo4j_file(data_extension, dataset_path, dataset_user_id_name):
+def load_neo4j_file(data_extension, dataset_path, dataset_user_id_name, uneeded_columns):
     # todo pre-process node and edge data
     print('Loading dataset for FairGNN...')
     
@@ -80,17 +80,22 @@ def load_neo4j_file(data_extension, dataset_path, dataset_user_id_name):
     first_column = new_nodes_df.pop('id')
     new_nodes_df.insert(0, 'id', first_column)
 
-    # now we remove columns that we don't want it to change for the next step (one-hot step)
-    
+    # todo remove columns that we don't want to have in the dataframe
+    if len(uneeded_columns) == 0:
+        new_nodes_df = remove_column_from_df('description') ## we don't want descriptions in our code per default
+    else:
+        new_nodes_df = remove_column_from_df(uneeded_columns) ## user defined columns 
+
+    # now we remove columns that we don't want it to change for the next step (one-hot step) (e.g. id, person id)
     nodes_columns = remove_unneeded_columns(new_nodes_df)
     
     # replace nan with 0
+    new_nodes_df = new_nodes_df.replace(r'^\s*$', np.nan, regex=True)
     new_nodes_df = new_nodes_df.fillna(0)
 
     # Todo know which columns to filter out 
     new_nodes_df = apply_one_hot_encodding(nodes_columns, new_nodes_df)
 
-    # Todo save to csv and return 
     
 ############################################
     #extract edges relationships
@@ -112,15 +117,26 @@ def load_neo4j_file(data_extension, dataset_path, dataset_user_id_name):
     edges_path = './FairGNN_data_relationship'
     edges_relation.to_csv(r'{}.txt'.format(edges_path), sep='\t', header=False, index=False)
 
-    return edges_path
+    return new_nodes_df, edges_path
 
 
-    
+def remove_column_from_df(column, df):
+    nodes_columns = df.columns.tolist()
+    # check if we have list of columns or not
+    if type(column) == list:
+        for i in column:
+            df = df.drop([i], axis=1)
+    else:
+        for c in nodes_columns:
+            if c == column:
+                df = df.drop([column], axis=1)
+
+
 def remove_unneeded_columns(new_nodes_df):
     unneeded_columns = []
     nodes_columns = new_nodes_df.columns.tolist()
 
-    matchers = ['id', 'iD', 'Id', 'description']
+    matchers = ['id', 'iD', 'Id', 'name']
     matching = [s for s in nodes_columns if any(xs in s for xs in matchers)]
 
     for i in range(len(matching)):
@@ -128,8 +144,8 @@ def remove_unneeded_columns(new_nodes_df):
             unneeded_columns.append(matching[i])
             nodes_columns.remove(matching|[i])
 
-        if matching[i] == 'description' or matching[i] == 'description':
-            nodes_columns.remove(matching[i])
+        if matching[i] == 'name':
+            nodes_columns.remvoe(matching[i])
 
     nodes_columns.remove('id')
     nodes_columns.remove('labels')
