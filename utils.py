@@ -6,7 +6,7 @@ import networkx as nx
 import scipy.sparse as sp
 import re
 
-def load_networkx_file(data_extension, dataset_path, dataset_user_id_name):
+def load_networkx_file(data_extension, dataset_path, dataset_user_id_name, apply_onehot, onehot_bin_columns, onehot_cat_columns):
 
     # load data from graphml to csv
     print('Loading dataset for FairGNN...')
@@ -36,6 +36,18 @@ def load_networkx_file(data_extension, dataset_path, dataset_user_id_name):
         # if so, we convert it to int
         df_nodes[dataset_user_id_name] = pd.to_numeric(df_nodes[dataset_user_id_name])
         df_nodes = df_nodes.astype({dataset_user_id_name: int})
+
+
+    # todo add one-hot encoding
+    if apply_onehot == True:
+        # add binary onehot encoding if needed
+        if onehot_bin_columns is not None:
+            for column in df_nodes:
+                if column in onehot_bin_columns:
+                    df_nodes[column] = df_nodes[column].astype(int)
+        # add categorical onehot encoding if needed
+        if onehot_cat_columns is not None:
+            df_nodes = pd.get_dummies(df_nodes, columns=onehot_cat_columns)
 
     # load graph edges
     df_edge_list = nx.to_pandas_edgelist(data)
