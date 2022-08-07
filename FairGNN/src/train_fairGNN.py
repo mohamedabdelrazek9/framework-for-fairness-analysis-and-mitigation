@@ -9,7 +9,10 @@ import torch.optim as optim
 
 from utils import load_data, accuracy,load_pokec
 from models.FairGNN import FairGNN
+from utils import fair_metric
+from sklearn.metrics import accuracy_score,roc_auc_score,recall_score,f1_score
 
+'''
 # Training settings
 parser = argparse.ArgumentParser()
 parser.add_argument('--no-cuda', action='store_true', default=False,
@@ -130,89 +133,90 @@ labels[labels>1]=1
 if sens_attr:
     sens[sens>0]=1
 # Model and optimizer
+'''
 
-model = FairGNN(nfeat = features.shape[1], args = args)
-#map_location = torch.device('cpu')
-
-model.estimator.load_state_dict(torch.load("./checkpoint/GCN_sens_{}_ns_{}".format(dataset,sens_number), map_location=torch.device('cpu')))
-if args.cuda:
-    model.cuda()
-    features = features.cuda()
-    labels = labels.cuda()
-    idx_train = idx_train.cuda()
-    idx_val = idx_val.cuda()
-    idx_test = idx_test.cuda()
-    sens = sens.cuda()
-    idx_sens_train = idx_sens_train.cuda()
-
-from sklearn.metrics import accuracy_score,roc_auc_score,recall_score,f1_score
-
-
-# Train model
-t_total = time.time()
-best_result = {}
-best_fair = 100
-
-
-for epoch in range(args.epochs):
-    print(epoch)
-    print('')
-    t = time.time()
-    model.train()
-    model.optimize(G,features,labels,idx_train,sens,idx_sens_train)
-    cov = model.cov
-    cls_loss = model.cls_loss
-    adv_loss = model.adv_loss
-    model.eval()
-    output,s = model(G, features)
-    acc_val = accuracy(output[idx_val], labels[idx_val])
-    roc_val = roc_auc_score(labels[idx_val].cpu().numpy(),output[idx_val].detach().cpu().numpy())
-
-
-    acc_sens = accuracy(s[idx_test], sens[idx_test])
+def train_FairGNN(G, features, labels, idx_train, idx_val, idx_test, sens, idx_sens_train, args):
     
-    parity_val, equality_val = fair_metric(output,idx_val)
 
-    acc_test = accuracy(output[idx_test], labels[idx_test])
-    roc_test = roc_auc_score(labels[idx_test].cpu().numpy(),output[idx_test].detach().cpu().numpy())
-    parity,equality = fair_metric(output,idx_test)
-    if acc_val > args.acc and roc_val > args.roc:
-    
-        if best_fair > parity_val + equality_val :
-            best_fair = parity_val + equality_val
+    model = FairGNN(nfeat = features.shape[1], args = args)
+    #map_location = torch.device('cpu')
 
-            best_result['acc'] = acc_test.item()
-            best_result['roc'] = roc_test
-            best_result['parity'] = parity
-            best_result['equality'] = equality
+    model.estimator.load_state_dict(torch.load("./checkpoint/GCN_sens_{}_ns_{}".format(dataset,sens_number), map_location=torch.device('cpu')))
+    if args.cuda:
+        model.cuda()
+        features = features.cuda()
+        labels = labels.cuda()
+        idx_train = idx_train.cuda()
+        idx_val = idx_val.cuda()
+        idx_test = idx_test.cuda()
+        sens = sens.cuda()
+        idx_sens_train = idx_sens_train.cuda()
 
-        print("=================================")
+    # Train model
+    t_total = time.time()
+    best_result = {}
+    best_fair = 100
 
-        print('Epoch: {:04d}'.format(epoch+1),
-            'cov: {:.4f}'.format(cov.item()),
-            'cls: {:.4f}'.format(cls_loss.item()),
-            'adv: {:.4f}'.format(adv_loss.item()),
-            'acc_val: {:.4f}'.format(acc_val.item()),
-            "roc_val: {:.4f}".format(roc_val),
-            "parity_val: {:.4f}".format(parity_val),
-            "equality: {:.4f}".format(equality_val))
+
+    for epoch in range(args.epochs):
+        print(epoch)
+        print('')
+        t = time.time()
+        model.train()
+        model.optimize(G,features,labels,idx_train,sens,idx_sens_train)
+        cov = model.cov
+        cls_loss = model.cls_loss
+        adv_loss = model.adv_loss
+        model.eval()
+        output,s = model(G, features)
+        acc_val = accuracy(output[idx_val], labels[idx_val])
+        roc_val = roc_auc_score(labels[idx_val].cpu().numpy(),output[idx_val].detach().cpu().numpy())
+
+
+        acc_sens = accuracy(s[idx_test], sens[idx_test])
+        
+        parity_val, equality_val = fair_metric(output,idx_val)
+
+        acc_test = accuracy(output[idx_test], labels[idx_test])
+        roc_test = roc_auc_score(labels[idx_test].cpu().numpy(),output[idx_test].detach().cpu().numpy())
+        parity,equality = fair_metric(output,idx_test)
+        if acc_val > args.acc and roc_val > args.roc:
+        
+            if best_fair > parity_val + equality_val :
+                best_fair = parity_val + equality_val
+
+                best_result['acc'] = acc_test.item()
+                best_result['roc'] = roc_test
+                best_result['parity'] = parity
+                best_result['equality'] = equality
+
+            print("=================================")
+
+            print('Epoch: {:04d}'.format(epoch+1),
+                'cov: {:.4f}'.format(cov.item()),
+                'cls: {:.4f}'.format(cls_loss.item()),
+                'adv: {:.4f}'.format(adv_loss.item()),
+                'acc_val: {:.4f}'.format(acc_val.item()),
+                "roc_val: {:.4f}".format(roc_val),
+                "parity_val: {:.4f}".format(parity_val),
+                "equality: {:.4f}".format(equality_val))
+            print("Test:",
+                    "accuracy: {:.4f}".format(acc_test.item()),
+                    "roc: {:.4f}".format(roc_test),
+                    "acc_sens: {:.4f}".format(acc_sens),
+                    "parity: {:.4f}".format(parity),
+                    "equality: {:.4f}".format(equality))
+
+    print("Optimization Finished!")
+    print("Total time elapsed: {:.4f}s".format(time.time() - t_total))
+
+    print('============performace on test set=============')
+    if len(best_result) > 0:
         print("Test:",
-                "accuracy: {:.4f}".format(acc_test.item()),
-                "roc: {:.4f}".format(roc_test),
+                "accuracy: {:.4f}".format(best_result['acc']),
+                "roc: {:.4f}".format(best_result['roc']),
                 "acc_sens: {:.4f}".format(acc_sens),
-                "parity: {:.4f}".format(parity),
-                "equality: {:.4f}".format(equality))
-
-print("Optimization Finished!")
-print("Total time elapsed: {:.4f}s".format(time.time() - t_total))
-
-print('============performace on test set=============')
-if len(best_result) > 0:
-    print("Test:",
-            "accuracy: {:.4f}".format(best_result['acc']),
-            "roc: {:.4f}".format(best_result['roc']),
-            "acc_sens: {:.4f}".format(acc_sens),
-            "parity: {:.4f}".format(best_result['parity']),
-            "equality: {:.4f}".format(best_result['equality']))
-else:
-    print("Please set smaller acc/roc thresholds")
+                "parity: {:.4f}".format(best_result['parity']),
+                "equality: {:.4f}".format(best_result['equality']))
+    else:
+        print("Please set smaller acc/roc thresholds")

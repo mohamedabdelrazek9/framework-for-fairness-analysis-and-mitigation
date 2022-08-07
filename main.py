@@ -6,7 +6,7 @@ import os
 from turtle import st
 from utils import load_networkx_file, load_neo4j_file
 from FairGNN.src.utils import load_pokec, feature_norm
-from train_models import train_FairGNN
+from FairGNN.src.train_fairGNN import train_FairGNN
 import dgl
 import torch
 from sklearn.metrics import accuracy_score,roc_auc_score,recall_score,f1_score
