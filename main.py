@@ -9,7 +9,6 @@ from FairGNN.src.utils import load_pokec, feature_norm
 from FairGNN.src.train_fairGNN import train_FairGNN
 import dgl
 import torch
-from sklearn.metrics import accuracy_score,roc_auc_score,recall_score,f1_score
 
 
 parser = argparse.ArgumentParser()
@@ -85,7 +84,7 @@ def FairGNN_pre_processing():
         sens[sens>0]=1
 
     # define Model and optimizer and train
-    train_FairGNN(G, features, labels, idx_train, idx_val, idx_test, sens, idx_sens_train, args)
+    train_FairGNN(G, features, labels, idx_train, idx_val, idx_test, sens, idx_sens_train, args.dataset_name, args.sens_number, args)
 
     return print('Training FairGNN is done')
 

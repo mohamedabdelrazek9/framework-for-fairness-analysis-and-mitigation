@@ -185,7 +185,7 @@ def apply_one_hot_encodding(nodes_columns, new_nodes_df):
     return new_nodes_df
 
 
-def fair_metric(output,idx):
+def fair_metric(output,idx, labels, sens):
     val_y = labels[idx].cpu().numpy()
     idx_s0 = sens.cpu().numpy()[idx.cpu().numpy()]==0
     idx_s1 = sens.cpu().numpy()[idx.cpu().numpy()]==1
