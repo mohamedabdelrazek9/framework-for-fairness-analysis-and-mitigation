@@ -6,7 +6,7 @@ import networkx as nx
 import scipy.sparse as sp
 import re
 
-def load_networkx_file(data_extension, dataset_path, dataset_user_id_name, apply_onehot, onehot_bin_columns, onehot_cat_columns):
+def load_networkx_file(data_extension, dataset_path, dataset_user_id_name, onehot_bin_columns, onehot_cat_columns):
 
     # load data from graphml to csv
     print('Loading dataset for FairGNN...')
@@ -39,15 +39,12 @@ def load_networkx_file(data_extension, dataset_path, dataset_user_id_name, apply
 
 
     # todo add one-hot encoding
-    if apply_onehot == True:
-        # add binary onehot encoding if needed
-        if onehot_bin_columns is not None:
-            for column in df_nodes:
-                if column in onehot_bin_columns:
-                    df_nodes[column] = df_nodes[column].astype(int)
-        # add categorical onehot encoding if needed
-        if onehot_cat_columns is not None:
-            df_nodes = pd.get_dummies(df_nodes, columns=onehot_cat_columns)
+    # add binary onehot encoding if needed
+    if onehot_bin_columns is not None:
+        df_nodes = apply_bin_columns(df_nodes, onehot_bin_columns)
+    # add categorical onehot encoding if needed
+    if onehot_cat_columns is not None:
+        df_nodes = apply_cat_columns(df_nodes, onehot_cat_columns)
 
     # load graph edges
     df_edge_list = nx.to_pandas_edgelist(data)
@@ -59,7 +56,7 @@ def load_networkx_file(data_extension, dataset_path, dataset_user_id_name, apply
     return df_nodes, edges_path
 
 
-def load_neo4j_file(data_extension, dataset_path, dataset_user_id_name, uneeded_columns):
+def load_neo4j_file(dataset_path, uneeded_columns, onehot_bin_columns, onehot_cat_columns):
     # todo pre-process node and edge data
     print('Loading dataset for FairGNN...')
     
@@ -92,6 +89,13 @@ def load_neo4j_file(data_extension, dataset_path, dataset_user_id_name, uneeded_
     first_column = new_nodes_df.pop('id')
     new_nodes_df.insert(0, 'id', first_column)
 
+    # add binary onehot encoding if needed
+    if onehot_bin_columns is not None:
+        new_nodes_df = apply_bin_columns(new_nodes_df, onehot_bin_columns)
+    # add categorical onehot encoding if needed
+    if onehot_cat_columns is not None:
+        new_nodes_df = apply_cat_columns(new_nodes_df, onehot_cat_columns)
+
     # todo remove columns that we don't want to have in the dataframe
     if len(uneeded_columns) == 0:
         new_nodes_df = remove_column_from_df('description') ## we don't want descriptions in our code per default
@@ -106,9 +110,9 @@ def load_neo4j_file(data_extension, dataset_path, dataset_user_id_name, uneeded_
     new_nodes_df = new_nodes_df.fillna(0)
 
     # Todo know which columns to filter out 
-    new_nodes_df = apply_one_hot_encodding(nodes_columns, new_nodes_df)
+    # not needed -- replacment the function apply_cat_columns
+    #new_nodes_df = apply_one_hot_encodding(nodes_columns, new_nodes_df)
 
-    
 ############################################
     #extract edges relationships
     edges_df = df.loc[(df['type'] == 'relationship')]
@@ -198,6 +202,19 @@ def fair_metric(output,idx, labels, sens):
     equality = abs(sum(pred_y[idx_s0_y1])/sum(idx_s0_y1)-sum(pred_y[idx_s1_y1])/sum(idx_s1_y1))
 
     return parity,equality
+
+
+def apply_bin_columns(df, onehot_bin_columns):
+    for column in df:
+        if column in onehot_bin_columns:
+            df[column] = df[column].astype(int)
+
+    return df
+
+def apply_cat_columns(df, onehot_cat_columns):
+    df_nodes = pd.get_dummies(df_nodes, columns=onehot_cat_columns)
+
+    return df_nodes
 
 
 

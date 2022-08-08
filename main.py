@@ -35,10 +35,10 @@ parser.add_argument('--epochs', type=int, default=2000, help='Number of epochs t
 parser.add_argument('--seed', type=int, default=42, help='Random seed.')
 parser.add_argument('--no-cuda', action='store_true', default=False, help='Disables CUDA training')
 parser.add_argument('--acc', type=float, default=0.688, help='the selected FairGNN accuracy on val would be at least this high')
-parser.add_argument('--apply_onehot', type=bool, required=False, help='Decide weather you want the framework to apply one-hot encoding to the data for FairGNN or not (We recommend that the user does the this step and transform the data to either one of the networkx format or neo4j)')
-parser.add_argument('--uneeded_columns', nargs="+", help="choose which columns that will not be needed in the dataset and the fairness experiment (e.g. description)")
-parser.add_argument('--onehot_bin_columns', nargs="+", required='--apply_onehot', help='(only applies if apply_onhot is set to True) Decide which of the columns of your dataset are binary (e.g. False/True)')
-parser.add_argument('--onehot_cat_columns', nargs="+", required='--apply_onehot', help='choose which columns in the dataset will be transofrmed as one-hot encoded')
+#parser.add_argument('--apply_onehot', type=bool, required=False, help='Decide weather you want the framework to apply one-hot encoding to the data for FairGNN or not (We recommend that the user does the this step and transform the data to either one of the networkx format or neo4j)')
+parser.add_argument('--uneeded_columns', nargs="+", help="(OPTIONAL) choose which columns that will not be needed in the dataset and the fairness experiment (e.g. description)")
+parser.add_argument('--onehot_bin_columns', nargs="+", help='(OPTIONAL) Decide which of the columns of your dataset are binary (e.g. False/True) to be later on processed')
+parser.add_argument('--onehot_cat_columns', nargs="+", help='(OPTIONAL) choose which columns in the dataset will be transofrmed as one-hot encoded')
 
 
 args = parser.parse_known_args()[0]
@@ -49,6 +49,7 @@ networkx_format_list = ['.graphml', '.gexf', '.gml', '.leda', '.net']
 def FairGNN_pre_processing():
     # todo do suitable pre-processing for the choosen dataset
     # check if data is in form of networkx (.graphml) or neo4j
+    # Train FairGNN model
     
     data_extension = os.path.splitext(args.dataset_path)[1]
 
@@ -56,7 +57,6 @@ def FairGNN_pre_processing():
         df_nodes, edges_path = load_networkx_file(data_extension, 
                                                   args.dataset_path, 
                                                   args.dataset_user_id_name, 
-                                                  args.apply_onehot, 
                                                   args.onehot_bin_columns, 
                                                   args.onehot_cat_columns)
 
@@ -71,8 +71,10 @@ def FairGNN_pre_processing():
                                                                                             test_idx=True)
     else:
         # todo pre-process if data is in format neo4j  
-        df_nodes, edges_path = load_neo4j_file(data_extension, args.dataset_path, args.dataset_user_id_name, args.uneeded_columns) #arguments may change later on
-        None                
+        df_nodes, edges_path = load_neo4j_file(args.dataset_path, 
+                                               args.uneeded_columns, 
+                                               args.onehot_bin_columns, 
+                                               args.onehot_cat_columns)                 
 
     G = dgl.DGLGraph()
     G.from_scipy_sparse_matrix(adj)
