@@ -7,6 +7,7 @@ from turtle import st
 from utils import load_networkx_file, load_neo4j_file
 from FairGNN.src.utils import load_pokec, feature_norm
 from FairGNN.src.train_fairGNN import train_FairGNN
+from alibaba_processing.ali_RHGN_pre_processing import ali_CatGCN_pre_processing, ali_pre_process
 import dgl
 import torch
 
@@ -45,17 +46,17 @@ args = parser.parse_known_args()[0]
 args.cuda = not args.no_cuda and torch.cuda.is_available()
 
 networkx_format_list = ['.graphml', '.gexf', '.gml', '.leda', '.net']
+data_extension = os.path.splitext(args.dataset_path)[1]
 
-def FairGNN_pre_processing():
+def FairGNN_pre_processing(data_extension):
     # todo do suitable pre-processing for the choosen dataset
     # check if data is in form of networkx (.graphml) or neo4j
     # Train FairGNN model
-    
-    data_extension = os.path.splitext(args.dataset_path)[1]
 
     if data_extension in networkx_format_list:
         df_nodes, edges_path = load_networkx_file(data_extension, 
                                                   args.dataset_path, 
+                                                  args.dataset_name,
                                                   args.dataset_user_id_name, 
                                                   args.onehot_bin_columns, 
                                                   args.onehot_cat_columns)
@@ -91,14 +92,26 @@ def FairGNN_pre_processing():
     return print('Training FairGNN is done')
 
 
-def CatGCN_pre_processing():
+def CatGCN_pre_processing(data_extension):
     # todo do suitable pre-processing for the choosen dataset
     return print('catgcn pre processing')
 
 
 def RHGN_pre_processing():
     # todo do suitable pre-processing for the choosen dataset
-    return print('rhgn pre processing')
+
+    if data_extension in networkx_format_list:
+        df = load_networkx_file(data_extension, 
+                                args.dataset_path, 
+                                args.dataset_name,
+                                args.dataset_user_id_name) #argument may change
+        # todo later on: add condition for other datasets
+        if args.dataset_name == 'alibaba':
+            G = ali_pre_process(df)
+        elif args.dataset_name == 'tecent':
+            G = pre_process_tec(df)
+
+    return print('Training RHGN is done')
 
 
 if args.type == 0:

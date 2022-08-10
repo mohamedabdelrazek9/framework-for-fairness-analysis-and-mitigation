@@ -6,7 +6,7 @@ import networkx as nx
 import scipy.sparse as sp
 import re
 
-def load_networkx_file(data_extension, dataset_path, dataset_user_id_name, onehot_bin_columns, onehot_cat_columns):
+def load_networkx_file(data_extension, dataset_name, dataset_path, dataset_user_id_name, onehot_bin_columns, onehot_cat_columns):
 
     # load data from graphml to csv
     print('Loading dataset for FairGNN...')
@@ -37,23 +37,27 @@ def load_networkx_file(data_extension, dataset_path, dataset_user_id_name, oneho
         df_nodes[dataset_user_id_name] = pd.to_numeric(df_nodes[dataset_user_id_name])
         df_nodes = df_nodes.astype({dataset_user_id_name: int})
 
+    # todo if dataset is alibaba or tec then return df , else if nba or pokec then complete the onehot encoding process
+    if dataset_name == 'alibaba' or dataset_name == 'tecent':
+        return df_nodes
 
-    # todo add one-hot encoding
-    # add binary onehot encoding if needed
-    if onehot_bin_columns is not None:
-        df_nodes = apply_bin_columns(df_nodes, onehot_bin_columns)
-    # add categorical onehot encoding if needed
-    if onehot_cat_columns is not None:
-        df_nodes = apply_cat_columns(df_nodes, onehot_cat_columns)
+    else:
+        # todo add one-hot encoding
+        # add binary onehot encoding if needed
+        if onehot_bin_columns is not None:
+            df_nodes = apply_bin_columns(df_nodes, onehot_bin_columns)
+        # add categorical onehot encoding if needed
+        if onehot_cat_columns is not None:
+            df_nodes = apply_cat_columns(df_nodes, onehot_cat_columns)
 
-    # load graph edges
-    df_edge_list = nx.to_pandas_edgelist(data)
+        # load graph edges
+        df_edge_list = nx.to_pandas_edgelist(data)
 
-    #save them edges as .txt file
-    edges_path = './FairGNN_data_relationship'
-    df_edge_list.to_csv(r'{}.txt'.format(edges_path), header=None, index=None, sep=' ', mode='a')
+        #save them edges as .txt file
+        edges_path = './FairGNN_data_relationship'
+        df_edge_list.to_csv(r'{}.txt'.format(edges_path), header=None, index=None, sep=' ', mode='a')
 
-    return df_nodes, edges_path
+        return df_nodes, edges_path
 
 
 def load_neo4j_file(dataset_path, uneeded_columns, onehot_bin_columns, onehot_cat_columns):
