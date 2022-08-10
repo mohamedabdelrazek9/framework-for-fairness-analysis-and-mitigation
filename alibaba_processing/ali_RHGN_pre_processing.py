@@ -79,7 +79,7 @@ def ali_pre_process(df):
 
 
     # Generate graph
-    G = generate_graph(df_user, df_item, df_click, user_dic, item_dic, cate_dic, campaign_dic, brand_dic)
+    G = generate_graph(df_user, df_item, df_click, user_dic, item_dic, cate_dic, campaign_dic, brand_dic, c1, c2, c3)
 
     return G # use this graph for the input of the model (see RHGN repo for details)
 
@@ -141,7 +141,7 @@ def label_map(label_df, label_list):
         label_df = col_map(label_df, label, label2id)
     return label_df
 
-def generate_graph(df_user, df_item, df_click, user_dic, item_dic, cate_dic, campaign_dic, brand_dic):
+def generate_graph(df_user, df_item, df_click, user_dic, item_dic, cate_dic, campaign_dic, brand_dic, c1, c2, c3):
 
     click_user = [user_dic[user] for user in df_click.uid]
     click_item = [item_dic[item] for item in df_click.pid]
