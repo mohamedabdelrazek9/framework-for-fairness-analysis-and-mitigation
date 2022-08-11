@@ -6,7 +6,7 @@ import networkx as nx
 import scipy.sparse as sp
 import re
 
-def load_networkx_file(data_extension, dataset_name, dataset_path, dataset_user_id_name, onehot_bin_columns, onehot_cat_columns):
+def load_networkx_file(model_type, data_extension, dataset_name, dataset_path, dataset_user_id_name, onehot_bin_columns, onehot_cat_columns):
 
     # load data from graphml to csv
     print('Loading dataset for FairGNN...')
@@ -37,8 +37,8 @@ def load_networkx_file(data_extension, dataset_name, dataset_path, dataset_user_
         df_nodes[dataset_user_id_name] = pd.to_numeric(df_nodes[dataset_user_id_name])
         df_nodes = df_nodes.astype({dataset_user_id_name: int})
 
-    # todo if dataset is alibaba or tec then return df , else if nba or pokec then complete the onehot encoding process
-    if dataset_name == 'alibaba' or dataset_name == 'tecent':
+    # todo if dataset will be used for RHGN or CatGCN then return, else we assume for FairGNN then complete the onehot encoding process
+    if model_type == 'alibaba' or dataset_name == 'tecent':
         return df_nodes
 
     else:
@@ -60,7 +60,7 @@ def load_networkx_file(data_extension, dataset_name, dataset_path, dataset_user_
         return df_nodes, edges_path
 
 
-def load_neo4j_file(dataset_path, uneeded_columns, onehot_bin_columns, onehot_cat_columns):
+def load_neo4j_file(model_type, dataset_path, dataset_name, uneeded_columns, onehot_bin_columns, onehot_cat_columns):
     # todo pre-process node and edge data
     print('Loading dataset for FairGNN...')
     
@@ -93,25 +93,27 @@ def load_neo4j_file(dataset_path, uneeded_columns, onehot_bin_columns, onehot_ca
     first_column = new_nodes_df.pop('id')
     new_nodes_df.insert(0, 'id', first_column)
 
-    # add binary onehot encoding if needed
-    if onehot_bin_columns is not None:
-        new_nodes_df = apply_bin_columns(new_nodes_df, onehot_bin_columns)
-    # add categorical onehot encoding if needed
-    if onehot_cat_columns is not None:
-        new_nodes_df = apply_cat_columns(new_nodes_df, onehot_cat_columns)
+    # we only apply the uneeded columns feature and the onehot encoding for the the FairGNN model 
+    if model_type == 'FairGNN':
+        # add binary onehot encoding if needed
+        if onehot_bin_columns is not None:
+            new_nodes_df = apply_bin_columns(new_nodes_df, onehot_bin_columns)
+        # add categorical onehot encoding if needed
+        if onehot_cat_columns is not None:
+            new_nodes_df = apply_cat_columns(new_nodes_df, onehot_cat_columns)
 
-    # todo remove columns that we don't want to have in the dataframe
-    if len(uneeded_columns) == 0:
-        new_nodes_df = remove_column_from_df('description') ## we don't want descriptions in our code per default
-    else:
-        new_nodes_df = remove_column_from_df(uneeded_columns) ## user defined columns 
+        # todo remove columns that we don't want to have in the dataframe
+        if len(uneeded_columns) == 0:
+            new_nodes_df = remove_column_from_df('description') ## we don't want descriptions in our code per default
+        else:
+            new_nodes_df = remove_column_from_df(uneeded_columns) ## user defined columns 
 
-    # now we remove columns that we don't want it to change for the next step (one-hot step) (e.g. id, person id)
-    nodes_columns = remove_unneeded_columns(new_nodes_df)
-    
-    # replace nan with 0
-    new_nodes_df = new_nodes_df.replace(r'^\s*$', np.nan, regex=True)
-    new_nodes_df = new_nodes_df.fillna(0)
+        # now we remove columns that we don't want it to change for the next step (one-hot step) (e.g. id, person id)
+        new_nodes_df = remove_unneeded_columns(new_nodes_df)
+        
+        # replace nan with 0
+        new_nodes_df = new_nodes_df.replace(r'^\s*$', np.nan, regex=True)
+        new_nodes_df = new_nodes_df.fillna(0)
 
     # Todo know which columns to filter out 
     # not needed -- replacment the function apply_cat_columns
@@ -119,18 +121,21 @@ def load_neo4j_file(dataset_path, uneeded_columns, onehot_bin_columns, onehot_ca
 
 ############################################
     #extract edges relationships
-    edges_df = df.loc[(df['type'] == 'relationship')]
-    edges_df = edges_df.drop(['labels'], axis=1)
+    if dataset_name == 'alibab' or dataset_name == 'tecent':
+        return new_nodes_df
+    else:
+        edges_df = df.loc[(df['type'] == 'relationship')]
+        edges_df = edges_df.drop(['labels'], axis=1)
 
-    edges_relation = pd.DataFrame(columns=['start', 'end'], index=range(len(edges_df.index)))
-    i = 0
+        edges_relation = pd.DataFrame(columns=['start', 'end'], index=range(len(edges_df.index)))
+        i = 0
 
-    for index, row in edges_df.iterrows():
-        edges_relation['start'][i] = row['start']['id']
-        edges_relation['end'][i] = row['end']['id']
-        i = i+1 
+        for index, row in edges_df.iterrows():
+            edges_relation['start'][i] = row['start']['id']
+            edges_relation['end'][i] = row['end']['id']
+            i = i+1 
 
-    edges_relation.columns = [''] * len(edges_relation.columns)
+        edges_relation.columns = [''] * len(edges_relation.columns)
 
     # save .txt
     # todo maybe return it normally?

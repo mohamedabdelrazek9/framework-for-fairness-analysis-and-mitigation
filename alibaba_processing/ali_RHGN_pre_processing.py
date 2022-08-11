@@ -4,12 +4,13 @@ import torch
 import dgl
 import fasttext
 
-def ali_pre_process(df):
+def ali_RHGN_pre_process(df):
     # load and clean data
 
     # df_user =  label
     df_user, df_item, df_click = divide_data(df)
     df_user.rename(columns={'userid':'uid', 'final_gender_code':'gender','age_level':'age', 'pvalue_level':'buy', 'occupation':'student', 'new_user_class_level ':'city'}, inplace=True)
+    df_user.dropna(inplace=True)
     df_user = apply_bin_age(df_user)
     df_user = apply_bin_buy(df_user)
 
@@ -52,7 +53,7 @@ def ali_pre_process(df):
 
     # save??
 
-    # Process
+    # Re-process
     df_user = df_user.astype({'uid': 'str'}, copy=False)
     df_item = df_item.astype({'pid': 'str', 'cid': 'str', 'campaign_id': 'str', 'brand': 'str'}, copy=False)
     df_click = df_click.astype({'uid': 'str', 'pid': 'str'}, copy=False)
@@ -79,13 +80,13 @@ def ali_pre_process(df):
 
 
     # Generate graph
-    G = generate_graph(df_user, df_item, df_click, user_dic, item_dic, cate_dic, campaign_dic, brand_dic, c1, c2, c3)
+    G, cid1_feature, cid2_feature, cid3_feature = generate_graph(df_user, df_item, df_click, user_dic, item_dic, cate_dic, campaign_dic, brand_dic, c1, c2, c3)
 
-    return G # use this graph for the input of the model (see RHGN repo for details)
+    return G, cid1_feature, cid2_feature, cid3_feature # use this graph for the input of the model (see RHGN repo for details)
 
 
 def divide_data(df):
-    # divide data into 3 (label, pid_cid, uid_pid)
+    # divide data into 3 (df_user, df_item, df_click)
     df_user = df[['userid', 'final_gender_code', 'age_level', 'pvalue_level', 'occupation', 'new_user_class_level']].copy()
     df_item = df[['adgroup_id', 'cate_id', 'cate_id', 'campaign_id', 'brand']].copy()
     df_click = df[['userid', 'adgroup_id', 'clk']].copy()
@@ -196,4 +197,4 @@ def generate_graph(df_user, df_item, df_click, user_dic, item_dic, cate_dic, cam
     print(cid2_feature.shape,)
     print(cid3_feature.shape,)
 
-    return G
+    return G, cid1_feature, cid2_feature, cid3_feature

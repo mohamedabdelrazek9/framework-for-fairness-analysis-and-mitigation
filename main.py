@@ -7,7 +7,9 @@ from turtle import st
 from utils import load_networkx_file, load_neo4j_file
 from FairGNN.src.utils import load_pokec, feature_norm
 from FairGNN.src.train_fairGNN import train_FairGNN
-from alibaba_processing.ali_RHGN_pre_processing import ali_CatGCN_pre_processing, ali_pre_process
+from alibaba_processing.ali_RHGN_pre_processing import ali_RHGN_pre_process
+from alibaba_processing.ali_CatGCN_pre_processing import ali_CatGCN_pre_processing
+from tecent_processing.tecent_RHGN_pre_processing import tec_RHGN_pre_process
 import dgl
 import torch
 
@@ -15,8 +17,8 @@ import torch
 parser = argparse.ArgumentParser()
 # Todo add arguments for the pre-processing
 parser.add_argument('--type', type=int, default=0, choices=[0, 1, 2], help="choose if you want to run the frameowkr 0 for all models or 1, and 2 models")
-parser.add_argument('--model_type', type=str, choices=['fairGNN', 'catGCN', 'rhgn'], help="only for the case if 1 or 2 models are choosen then we choose from either FairGNN, CatGCN, RHGN")
-parser.add_argument('--dataset_name', type=str, choices=['pokec_z', 'pokec_n', 'nba', 'alibaba', 'tecent'], help="choose which dataset you want to apply on the models")
+parser.add_argument('--model_type', type=str, choices=['FairGNN', 'CatGCN', 'RHGN'], help="only for the case if 1 or 2 models are choosen then we choose from either FairGNN, CatGCN, RHGN")
+parser.add_argument('--dataset_name', type=str, choices=['pokec', 'nba', 'alibaba', 'tecent'], help="choose which dataset you want to apply on the models")
 parser.add_argument('--dataset_path', type=str, help="choose which dataset you want to apply on the models")
 parser.add_argument('--dataset_user_id_name', type=str, help="The column name of the user in the orginal dataset (e.g. user_id or userid)")
 parser.add_argument('--sens_attr', type=str, help="choose which sensitive attribute you want to consider for the framework")
@@ -55,6 +57,7 @@ def FairGNN_pre_processing(data_extension):
 
     if data_extension in networkx_format_list:
         df_nodes, edges_path = load_networkx_file(data_extension, 
+                                                  args.model_type,
                                                   args.dataset_path, 
                                                   args.dataset_name,
                                                   args.dataset_user_id_name, 
@@ -72,7 +75,9 @@ def FairGNN_pre_processing(data_extension):
                                                                                             test_idx=True)
     else:
         # todo pre-process if data is in format neo4j  
-        df_nodes, edges_path = load_neo4j_file(args.dataset_path, 
+        df_nodes, edges_path = load_neo4j_file(args.model_type,
+                                               args.dataset_path, 
+                                               args.dataset_name,
                                                args.uneeded_columns, 
                                                args.onehot_bin_columns, 
                                                args.onehot_cat_columns)                 
@@ -94,24 +99,49 @@ def FairGNN_pre_processing(data_extension):
 
 def CatGCN_pre_processing(data_extension):
     # todo do suitable pre-processing for the choosen dataset
-    return print('catgcn pre processing')
+    if data_extension in networkx_format_list:
+        df = load_networkx_file(data_extension, 
+                                args.model_type,
+                                args.dataset_path, 
+                                args.dataset_name, 
+                                args.dataset_user_id_name)
+
+    else:
+        df = load_neo4j_file(args.model_type, 
+                             args.dataset_path, 
+                            args.dataset_name)
+                    
+    
+    if args.dataset_name == 'alibaba':
+        label, pid_cid, uid_pid = ali_CatGCN_pre_processing(df)
+    elif args.dataset_name == 'tecent':
+        G = tec_CatGCN_pre_processing(df)
+    
+    return print('Training CatGCN is done.')
 
 
 def RHGN_pre_processing():
     # todo do suitable pre-processing for the choosen dataset
 
     if data_extension in networkx_format_list:
-        df = load_networkx_file(data_extension, 
+        df = load_networkx_file(data_extension,
+                                args.model_type, 
                                 args.dataset_path, 
                                 args.dataset_name,
                                 args.dataset_user_id_name) #argument may change
         # todo later on: add condition for other datasets
-        if args.dataset_name == 'alibaba':
-            G = ali_pre_process(df)
-        elif args.dataset_name == 'tecent':
-            G = pre_process_tec(df)
+    else:
+        df = load_neo4j_file(args.model_type, 
+                             args.dataset_path, 
+                             args.dataset_name)
 
-    return print('Training RHGN is done')
+    
+    if args.dataset_name == 'alibaba':
+        G, cid1_feature, cid2_feature, cid3_feature = ali_RHGN_pre_process(df)
+    elif args.dataset_name == 'tecent':
+        G, cid1_feature, cid2_feature, cid3_feature, brand_feature = tec_RHGN_pre_process(df)
+
+    return print('Training RHGN is done.')
 
 
 if args.type == 0:
