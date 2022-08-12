@@ -113,7 +113,7 @@ def tec_RHGN_pre_process(df):
 def divide_data(df):
     df_user = df[['user_id', 'gender', 'age_range']].copy()
     df_item = df[['item_id', 'cid1', 'cid2', 'cid3', 'cid1_name', 'cid2_name', 'brand_code', 'price', 'item_name', 'seg_name']].copy()
-    df_click = df[['user_id', 'item_id', 'datetime', 'dt']].copy()
+    df_click = df[['user_id', 'item_id']].copy()
 
     return df_user, df_item, df_click
 

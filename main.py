@@ -10,6 +10,7 @@ from FairGNN.src.train_fairGNN import train_FairGNN
 from alibaba_processing.ali_RHGN_pre_processing import ali_RHGN_pre_process
 from alibaba_processing.ali_CatGCN_pre_processing import ali_CatGCN_pre_processing
 from tecent_processing.tecent_RHGN_pre_processing import tec_RHGN_pre_process
+from tecent_processing.tecent_CatGCN_pre_processing import tec_CatGCN_pre_process 
 import dgl
 import torch
 
@@ -113,9 +114,9 @@ def CatGCN_pre_processing(data_extension):
                     
     
     if args.dataset_name == 'alibaba':
-        label, pid_cid, uid_pid = ali_CatGCN_pre_processing(df)
+        user_edge, user_field, user_buy = ali_CatGCN_pre_processing(df)
     elif args.dataset_name == 'tecent':
-        G = tec_CatGCN_pre_processing(df)
+        user_edge, user_field, user_age = tec_CatGCN_pre_process(df)
     
     return print('Training CatGCN is done.')
 
