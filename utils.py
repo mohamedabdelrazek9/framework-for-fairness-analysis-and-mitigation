@@ -5,6 +5,7 @@ import numpy as np
 import networkx as nx
 import scipy.sparse as sp
 import re
+from alibaba_processing.ali_CatGCN_pre_processing import get_count, filter_triplets, col_map, label_map
 
 def load_networkx_file(model_type, data_extension, dataset_name, dataset_path, dataset_user_id_name, onehot_bin_columns, onehot_cat_columns):
 
@@ -38,10 +39,13 @@ def load_networkx_file(model_type, data_extension, dataset_name, dataset_path, d
         df_nodes = df_nodes.astype({dataset_user_id_name: int})
 
     # todo if dataset will be used for RHGN or CatGCN then return, else we assume for FairGNN then complete the onehot encoding process
-    if model_type == 'alibaba' or dataset_name == 'tecent':
+    if model_type == 'RHGN' or dataset_name == 'CatGCN':
         return df_nodes
 
-    else:
+    else: # FairGNN
+        if dataset_name == 'alibaba' or dataset_name == 'tecent':
+            edges_path = create_edges(df_nodes, dataset_name)
+            df_edge_list = edges_path
         # todo add one-hot encoding
         # add binary onehot encoding if needed
         if onehot_bin_columns is not None:
@@ -50,10 +54,11 @@ def load_networkx_file(model_type, data_extension, dataset_name, dataset_path, d
         if onehot_cat_columns is not None:
             df_nodes = apply_cat_columns(df_nodes, onehot_cat_columns)
 
-        # load graph edges
-        df_edge_list = nx.to_pandas_edgelist(data)
+        if dataset_name == 'nba' or dataset_name == 'pokec':
+            # load graph edges
+            df_edge_list = nx.to_pandas_edgelist(data)
 
-        #save them edges as .txt file
+        #save the edges as .txt file
         edges_path = './FairGNN_data_relationship'
         df_edge_list.to_csv(r'{}.txt'.format(edges_path), header=None, index=None, sep=' ', mode='a')
 
@@ -224,6 +229,139 @@ def apply_cat_columns(df, onehot_cat_columns):
     df_nodes = pd.get_dummies(df_nodes, columns=onehot_cat_columns)
 
     return df_nodes
+
+def create_edges(df_nodes, dataset_name):
+
+    if dataset_name == 'alibaba':
+        # divide data
+        df_user = df_nodes[['userid', 'final_gender_code', 'age_level', 'pvalue_level', 'occupation', 'new_user_class_level']].copy()
+        df_item = df_nodes[['adgroup_id', 'cate_id', 'cate_id', 'campaign_id', 'brand']].copy()
+        df_click = df_nodes[['userid', 'adgroup_id', 'clk']].copy()
+
+        df_user.dropna(inplace=True)
+        df_user.rename(columns={'userid':'uid', 'final_gender_code':'gender','age_level':'age', 'pvalue_level':'buy', 'occupation':'student', 'new_user_class_level ':'city'}, inplace=True)
+
+        df_item.rename(columns={'adgroup_id':'pid','cate_id':'cid'}, inplace=True)
+
+        df_click.rename(columns={'user':'uid','adgroup_id':'pid'}, inplace=True)
+        df_click = df_click[df_click['clk']>0]
+        df_click.drop('clk', axis=1, inplace=True)
+        df_click = df_click[df_click['uid'].isin(df_user['uid'])]
+        df_click = df_click[df_click['pid'].isin(df_click['pid'])]
+
+        df_click.drop_duplicates(inplace=True)
+
+        uid_pid, uid_activity, pid_popularity = filter_triplets(df_click, 'uid', 'pid', min_uc=0, min_sc=0) # min_sc>=2
+        sparsity = 1. * uid_pid.shape[0] / (uid_activity.shape[0] * pid_popularity.shape[0])
+
+        uid_pid_cid = pd.merge(uid_pid, df_item, how='inner', on='pid')
+        raw_uid_cid = uid_pid_cid.drop('pid', axis=1, inplace=False)
+        raw_uid_cid.drop_duplicates(inplace=True)
+
+        uid_cid, uid_activity, cid_popularity = filter_triplets(raw_uid_cid, 'uid', 'cid', min_uc=0, min_sc=0) # min_sc>=2
+        sparsity = 1. * uid_cid.shape[0] / (uid_activity.shape[0] * cid_popularity.shape[0])
+
+        uid_pid = uid_pid[uid_pid['uid'].isin(uid_cid['uid'])]
+        uid_pid_1 = uid_pid[['uid','pid']].copy()
+        uid_pid_1.rename(columns={'uid':'uid1'}, inplace=True)
+        uid_pid_2 = uid_pid[['uid','pid']].copy()
+        uid_pid_2.rename(columns={'uid':'uid2'}, inplace=True)
+
+        uid_pid_uid = pd.merge(uid_pid_1, uid_pid_2, how='inner', on='pid')
+        uid_uid = uid_pid_uid.drop('pid', axis=1, inplace=False)
+        uid_uid.drop_duplicates(inplace=True)
+
+        del uid_pid_1, uid_pid_2, uid_pid_uid
+
+        # map
+        user_label = df_user[df_user['uid'].isin(uid_cid['uid'])]
+        uid2id = {num: i for i, num in enumerate(user_label['uid'])}
+        cid2id = {num: i for i, num in enumerate(pd.unique(uid_cid['cid']))}
+
+        user_label = col_map(user_label, 'uid', uid2id)
+        user_label = label_map(user_label, user_label.columns[1:])
+
+        user_edge = uid_uid[uid_uid['uid1'].isin(uid_cid['uid'])]
+        user_edge = user_edge[user_edge['uid2'].isin(uid_cid['uid'])]
+
+        user_edge = col_map(user_edge, 'uid1', uid2id)
+        user_edge = col_map(user_edge, 'uid2', uid2id)
+
+        return user_edge
+
+    elif dataset_name == 'tecent':
+        df_user = df_nodes[['user_id', 'gender', 'age_range']].copy()
+        df_user.dropna(inplace=True)
+        df_user.rename(columns={"user_id":"uid", "age_range":"age"}, inplace=True)
+
+        df_item = df_nodes[['item_id', 'cid3']].copy()
+        df_item.dropna(inplace=True)
+        df_item.rename(columns={"item_id":"pid", "cid3":"cid"}, inplace=True)
+        df_item.reset_index(drop=True, inplace=True)
+
+        df_click = df_nodes[['user_id', 'item_id']].copy()
+        df_click.dropna(inplace=True)
+        df_click.rename(columns={"user_id":"uid", "item_id":"pid"}, inplace=True)
+        df_click.reset_index(drop=True, inplace=True)
+
+        df_item = df_item.sample(frac=0.15, random_state=11)
+        df_item.reset_index(drop=True, inplace=True)
+
+        df_click = df_click.sample(frac=0.15, random_state=11)
+        df_click.reset_index(drop=True, inplace=True)
+
+        df_click = df_click[df_click["uid"].isin(df_user["uid"])]
+        df_click = df_click[df_click["pid"].isin(df_item["pid"])]
+
+        df_click.drop_duplicates(inplace=True)
+        df_click.reset_index(drop=True, inplace=True)
+
+        df_click, uid_activity, pid_popularity = filter_triplets(df_click, 'uid', 'pid', min_uc=0, min_sc=2)
+        sparsity = 1. * df_click.shape[0] / (uid_activity.shape[0] * pid_popularity.shape[0])
+
+        df_click_item = pd.merge(df_click, df_item, how="inner", on="pid")
+        raw_click_item = df_click_item.drop("pid", axis=1, inplace=False)
+        raw_click_item.drop_duplicates(inplace=True)
+
+        df_click_item, uid_activity, cid_popularity = filter_triplets(raw_click_item, 'uid', 'cid', min_uc=0, min_sc=2)
+        sparsity = 1. * df_click_item.shape[0] / (uid_activity.shape[0] * cid_popularity.shape[0])
+
+        df_click = df_click[df_click["uid"].isin(df_click_item["uid"])]
+        df_click_1 = df_click[["uid", "pid"]].copy()
+        df_click_1.rename(columns={"uid":"uid1"}, inplace=True)
+        df_click_2 = df_click[["uid", "pid"]].copy()
+        df_click_2.rename(columns={"uid":"uid2"}, inplace=True)
+
+        df_click1_click2 = pd.merge(df_click_1, df_click_2, how="inner", on="pid")
+        df_uid_uid = df_click1_click2.drop("pid", axis=1, inplace=False)
+        df_uid_uid.drop_duplicates(inplace=True)
+
+        del df_click_1, df_click_2, df_click1_click2
+
+        # map
+        df_label = df_user[df_user["uid"].isin(df_click_item["uid"])]
+        uid2id = {num: i for i, num in enumerate(df_label['uid'])}
+        cid2id = {num: i for i, num in enumerate(pd.unique(df_click_item['cid']))}
+
+        df_label = col_map(df_label, 'uid', uid2id)
+        df_label = label_map(df_label, df_label.columns[1:])
+
+        user_edge = df_uid_uid[df_uid_uid['uid1'].isin(df_click_item['uid'])]
+        user_edge = user_edge[user_edge['uid2'].isin(df_click_item['uid'])]
+
+        user_edge = col_map(user_edge, 'uid1', uid2id)
+        user_edge = col_map(user_edge, 'uid2', uid2id)
+
+        return user_edge
+
+
+
+
+
+
+
+
+
 
 
 

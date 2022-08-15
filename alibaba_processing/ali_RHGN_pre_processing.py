@@ -157,7 +157,8 @@ def generate_graph(df_user, df_item, df_click, user_dic, item_dic, cate_dic, cam
     # process with fastext model
     # Todo install fasttext in the repo
     # Todo test this in Jupyter (not tested)
-    model = fasttext.load_model('../fastText/cc.zh.200.bin')
+    #model = fasttext.load_model('../fastText/cc.zh.200.bin')
+    model = fasttext.load_model('./fasttext/cc.zh.200.bin')
 
     temp1 = {k: model.get_sentence_vector(v) for v,k in cate_dic.items()}
     cid1_feature = torch.tensor([temp1[k] for _, k in cate_dic.items()])

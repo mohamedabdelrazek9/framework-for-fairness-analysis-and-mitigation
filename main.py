@@ -117,6 +117,12 @@ def CatGCN_pre_processing(data_extension):
         user_edge, user_field, user_buy = ali_CatGCN_pre_processing(df)
     elif args.dataset_name == 'tecent':
         user_edge, user_field, user_age = tec_CatGCN_pre_process(df)
+
+    # Todo implment CatGCN processing for NBA dataset
+
+    # Todo implment CatGCN processing for Pokec dataset
+
+    # Add model training after data processing
     
     return print('Training CatGCN is done.')
 
@@ -141,6 +147,14 @@ def RHGN_pre_processing():
         G, cid1_feature, cid2_feature, cid3_feature = ali_RHGN_pre_process(df)
     elif args.dataset_name == 'tecent':
         G, cid1_feature, cid2_feature, cid3_feature, brand_feature = tec_RHGN_pre_process(df)
+
+    # Todo implment RHGN processing for NBA dataset
+
+
+    # Todo implment RHGN processing for Pokec dataset
+
+
+    # Add model training after data processing
 
     return print('Training RHGN is done.')
 
