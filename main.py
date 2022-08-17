@@ -145,7 +145,6 @@ def CatGCN_pre_processing(data_extension):
     # Todo implment CatGCN processing for Pokec dataset
 
     # Add model training after data processing
-    ali_mai
     
     return print('Training CatGCN is done.')
 
