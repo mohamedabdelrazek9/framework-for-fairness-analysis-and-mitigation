@@ -11,6 +11,7 @@ from alibaba_processing.ali_RHGN_pre_processing import ali_RHGN_pre_process
 from alibaba_processing.ali_CatGCN_pre_processing import ali_CatGCN_pre_processing
 from tecent_processing.tecent_RHGN_pre_processing import tec_RHGN_pre_process
 from tecent_processing.tecent_CatGCN_pre_processing import tec_CatGCN_pre_process 
+from RHGN.ali_main import ali_training_main
 import dgl
 import torch
 
@@ -43,6 +44,21 @@ parser.add_argument('--acc', type=float, default=0.688, help='the selected FairG
 parser.add_argument('--uneeded_columns', nargs="+", help="(OPTIONAL) choose which columns that will not be needed in the dataset and the fairness experiment (e.g. description)")
 parser.add_argument('--onehot_bin_columns', nargs="+", help='(OPTIONAL) Decide which of the columns of your dataset are binary (e.g. False/True) to be later on processed')
 parser.add_argument('--onehot_cat_columns', nargs="+", help='(OPTIONAL) choose which columns in the dataset will be transofrmed as one-hot encoded')
+#################
+# for RHGN
+#n_epoch --> epochs
+parser.add_argument('--batch_size', type=int, default=512)
+#n_hidden --> num_hidden
+parser.add_argument('--n_inp',   type=int, default=200)
+parser.add_argument('--clip',    type=int, default=1.0)
+#max_lr --> lr
+parser.add_argument('--label',  type=str, default='gender')
+parser.add_argument('--gpu',  type=int, default=0, choices=[0,1,2,3,4,5,6,7])
+parser.add_argument('--graph',  type=str, default='G_ori')
+# model ---> model_type
+parser.add_argument('--data_dir',  type=str, default='../data/sample')
+
+
 
 
 args = parser.parse_known_args()[0]
@@ -123,6 +139,7 @@ def CatGCN_pre_processing(data_extension):
     # Todo implment CatGCN processing for Pokec dataset
 
     # Add model training after data processing
+    ali_mai
     
     return print('Training CatGCN is done.')
 
@@ -155,6 +172,7 @@ def RHGN_pre_processing():
 
 
     # Add model training after data processing
+    ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, args)
 
     return print('Training RHGN is done.')
 
