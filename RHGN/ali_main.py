@@ -274,7 +274,7 @@ def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, args):
         model = ali_RHGN(G,
                     node_dict, edge_dict,
                     n_inp=args.n_inp,
-                    n_hid=args.n_hid,
+                    n_hid=args.num_hidden,
                     n_out=labels.max().item()+1,
                     n_layers=2,
                     n_heads=4,
