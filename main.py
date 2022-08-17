@@ -56,7 +56,13 @@ parser.add_argument('--label',  type=str, default='gender')
 parser.add_argument('--gpu',  type=int, default=0, choices=[0,1,2,3,4,5,6,7])
 parser.add_argument('--graph',  type=str, default='G_ori')
 # model ---> model_type
-parser.add_argument('--data_dir',  type=str, default='../data/sample')
+#data_dir --> dataset_path
+parser.add_argument('--patience', type=int, default=10)
+parser.add_argument('--log_tags', type=str, default='')
+parser.add_argument('--multiclass-pred', type=bool, default=False)
+parser.add_argument('--multiclass-sens', type=bool, default=False)
+
+
 
 
 

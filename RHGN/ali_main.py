@@ -11,7 +11,7 @@ import time
 #import neptune.new as neptune
 
 from fairness import Fairness
-
+'''
 parser = argparse.ArgumentParser(description='for Alibaba Dataset')
 
 parser.add_argument('--n_epoch', type=int, default=50)
@@ -35,12 +35,8 @@ parser.add_argument('--multiclass-pred', type=bool, default=False)
 parser.add_argument('--multiclass-sens', type=bool, default=False)
 
 args = parser.parse_args()
-'''Fixed random seeds'''
-np.random.seed(args.seed)
-torch.manual_seed(args.seed)
-if torch.cuda.is_available():
-    torch.cuda.manual_seed(args.seed)
-    torch.cuda.manual_seed_all(args.seed)
+'''
+
 
 '''
 # Instantiate Neptune client and log arguments
@@ -186,7 +182,14 @@ def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, t
 
 
 ######################################################################
-def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, args=args):
+def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, args):
+
+    '''Fixed random seeds'''
+    np.random.seed(args.seed)
+    torch.manual_seed(args.seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(args.seed)
+        torch.cuda.manual_seed_all(args.seed)
 
     device = torch.device("cuda:{}".format(args.gpu))
 
