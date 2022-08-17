@@ -5,8 +5,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 import dgl.function as fn
 from dgl.nn.functional import edge_softmax
-from layers import *
-from layers import RHGNLayer
+from RHGN.layers import *
+from RHGN.layers import RHGNLayer
 
 
 class ali_RHGN(nn.Module):
