@@ -4,7 +4,8 @@ import dgl
 import math
 import torch
 import numpy as np
-from model import *
+#from model import *
+from RHGN.model import *
 import argparse
 from sklearn import metrics
 import time
