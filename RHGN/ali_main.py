@@ -11,7 +11,7 @@ from sklearn import metrics
 import time
 #import neptune.new as neptune
 
-from fairness import Fairness
+from RHGN.fairness import Fairness
 '''
 parser = argparse.ArgumentParser(description='for Alibaba Dataset')
 
