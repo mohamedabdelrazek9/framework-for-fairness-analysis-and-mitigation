@@ -71,6 +71,7 @@ args = parser.parse_known_args()[0]
 args.cuda = not args.no_cuda and torch.cuda.is_available()
 
 networkx_format_list = ['.graphml', '.gexf', '.gml', '.leda', '.net']
+print(args.dataset_path)
 data_extension = os.path.splitext(args.dataset_path)[1]
 
 def FairGNN_pre_processing(data_extension):
