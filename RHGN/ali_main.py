@@ -285,8 +285,8 @@ def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, args):
                     use_norm = True).to(device)
         optimizer = torch.optim.AdamW(model.parameters())
 
-        scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, epochs=args.n_epoch,
-                                                        steps_per_epoch=int(train_idx.shape[0]/args.batch_size)+1,max_lr = args.max_lr)
+        scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, epochs=args.epochs,
+                                                        steps_per_epoch=int(train_idx.shape[0]/args.batch_size)+1,max_lr = args.lr)
         print('Training RHGN with #param: %d' % (get_n_params(model)))
         targets, predictions = Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, test_dataloader)
 
