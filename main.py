@@ -150,7 +150,7 @@ def CatGCN_pre_processing(data_extension):
     return print('Training CatGCN is done.')
 
 
-def RHGN_pre_processing():
+def RHGN_pre_processing(data_extension):
     # todo do suitable pre-processing for the choosen dataset
 
     if data_extension in networkx_format_list:
@@ -158,7 +158,9 @@ def RHGN_pre_processing():
                                 data_extension,
                                 args.dataset_name,
                                 args.dataset_path, 
-                                args.dataset_user_id_name) #argument may change
+                                args.dataset_user_id_name
+                                onehot_bin_columns=None,
+                                onehot_cat_columns=None) #argument may change
         # todo later on: add condition for other datasets
     else:
         df = load_neo4j_file(args.model_type, 
@@ -186,7 +188,7 @@ def RHGN_pre_processing():
 if args.type == 0:
     fair_pre_processing = FairGNN_pre_processing(data_extension)
     cat_pre_processing = CatGCN_pre_processing()
-    rhgn_pre_processing = RHGN_pre_processing()
+    rhgn_pre_processing = RHGN_pre_processing(data_extension)
 
 elif args.type == 1:
     if args.model_type == 'FairGNN':
@@ -194,7 +196,7 @@ elif args.type == 1:
     if args.model_type == 'CatGCN':
         cat_pre_processing = CatGCN_pre_processing()
     if args.model_type == 'RHGN':
-        rhgn_pre_processing = RHGN_pre_processing()
+        rhgn_pre_processing = RHGN_pre_processing(data_extension)
 
 elif args.type == 2:
      if args.model_type == 'FairGNN' and args.model_type == 'CatGCN':
@@ -203,8 +205,8 @@ elif args.type == 2:
 
      if args.model_type == 'FairGNN' and args.model_type == 'RHGN':
         fair_pre_processing = FairGNN_pre_processing(data_extension)
-        rhgn_pre_processing = RHGN_pre_processing()
+        rhgn_pre_processing = RHGN_pre_processing(data_extension)
 
      if args.model_type == 'CatGCN' and args.model_type == 'RHGN':
         cat_pre_processing = CatGCN_pre_processing()
-        rhgn_pre_processing = RHGN_pre_processing()
+        rhgn_pre_processing = RHGN_pre_processing(data_extension)
