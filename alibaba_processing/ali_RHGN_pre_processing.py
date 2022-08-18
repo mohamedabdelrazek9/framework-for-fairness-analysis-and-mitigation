@@ -88,7 +88,7 @@ def ali_RHGN_pre_process(df):
 def divide_data(df):
     # divide data into 3 (df_user, df_item, df_click)
     df_user = df[['userid', 'final_gender_code', 'age_level', 'pvalue_level', 'occupation', 'new_user_class_level']].copy()
-    df_item = df[['adgroup_id', 'cate_id', 'cate_id', 'campaign_id', 'brand']].copy()
+    df_item = df[['adgroup_id', 'cate_id', 'campaign_id', 'brand']].copy() 
     df_click = df[['userid', 'adgroup_id', 'clk']].copy()
 
     return df_user, df_item, df_click
