@@ -79,8 +79,8 @@ def FairGNN_pre_processing(data_extension):
     # todo do suitable pre-processing for the choosen dataset
     # check if data is in form of networkx (.graphml) or neo4j
     # Train FairGNN model
-    print('data extension: ', data_extension)
     if data_extension in networkx_format_list:
+        print('data extension is networkx format', data_extension)
         df_nodes, edges_path = load_networkx_file(data_extension, 
                                                   args.model_type,
                                                   args.dataset_path, 
@@ -99,6 +99,7 @@ def FairGNN_pre_processing(data_extension):
                                                                                             args.seed,
                                                                                             test_idx=True)
     else:
+        print('data is neo4j format')
         # todo pre-process if data is in format neo4j  
         df_nodes, edges_path = load_neo4j_file(args.model_type,
                                                args.dataset_path, 
