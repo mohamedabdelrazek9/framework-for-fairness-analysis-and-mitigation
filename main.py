@@ -99,7 +99,7 @@ def FairGNN_pre_processing(data_extension):
     else:
         print('data is neo4j format')
         # todo pre-process if data is in format neo4j  
-        df_nodes, edges_path = load_nseo4j_file(args.model_type,
+        df_nodes, edges_path = load_neo4j_file(args.model_type,
                                                args.dataset_path, 
                                                args.dataset_name,
                                                args.uneeded_columns, 
@@ -180,7 +180,7 @@ def RHGN_pre_processing(data_extension):
 
 
     # Add model training after data processing
-    ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, args)
+    ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, args=args)
 
     return print('Training RHGN is done.')
 
