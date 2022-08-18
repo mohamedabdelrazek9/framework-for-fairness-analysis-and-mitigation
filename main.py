@@ -158,7 +158,7 @@ def RHGN_pre_processing(data_extension):
                                 data_extension,
                                 args.dataset_name,
                                 args.dataset_path, 
-                                args.dataset_user_id_name
+                                args.dataset_user_id_name,
                                 onehot_bin_columns=None,
                                 onehot_cat_columns=None) #argument may change
         # todo later on: add condition for other datasets
