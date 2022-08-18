@@ -71,8 +71,6 @@ args = parser.parse_known_args()[0]
 args.cuda = not args.no_cuda and torch.cuda.is_available()
 
 networkx_format_list = ['.graphml', '.gexf', '.gml', '.leda', '.net']
-print(args.dataset_path)
-print(args.dataset_name)
 data_extension = os.path.splitext(args.dataset_path)[1]
 
 def FairGNN_pre_processing(data_extension):
@@ -81,10 +79,10 @@ def FairGNN_pre_processing(data_extension):
     # Train FairGNN model
     if data_extension in networkx_format_list:
         print('data extension is networkx format', data_extension)
-        df_nodes, edges_path = load_networkx_file(data_extension, 
-                                                  args.model_type,
-                                                  args.dataset_path, 
+        df_nodes, edges_path = load_networkx_file(args.model_type,
+                                                  data_extension, 
                                                   args.dataset_name,
+                                                  args.dataset_path,
                                                   args.dataset_user_id_name, 
                                                   args.onehot_bin_columns, 
                                                   args.onehot_cat_columns)
@@ -101,7 +99,7 @@ def FairGNN_pre_processing(data_extension):
     else:
         print('data is neo4j format')
         # todo pre-process if data is in format neo4j  
-        df_nodes, edges_path = load_neo4j_file(args.model_type,
+        df_nodes, edges_path = load_nseo4j_file(args.model_type,
                                                args.dataset_path, 
                                                args.dataset_name,
                                                args.uneeded_columns, 
@@ -156,10 +154,10 @@ def RHGN_pre_processing():
     # todo do suitable pre-processing for the choosen dataset
 
     if data_extension in networkx_format_list:
-        df = load_networkx_file(data_extension,
-                                args.model_type, 
-                                args.dataset_path, 
+        df = load_networkx_file(args.model_type,
+                                data_extension,
                                 args.dataset_name,
+                                args.dataset_path, 
                                 args.dataset_user_id_name) #argument may change
         # todo later on: add condition for other datasets
     else:
@@ -191,22 +189,22 @@ if args.type == 0:
     rhgn_pre_processing = RHGN_pre_processing()
 
 elif args.type == 1:
-    if args.model_type == 'fairGNN':
+    if args.model_type == 'FairGNN':
         fair_pre_processing = FairGNN_pre_processing(data_extension)
-    if args.model_type == 'catGCN':
+    if args.model_type == 'CatGCN':
         cat_pre_processing = CatGCN_pre_processing()
-    if args.model_type == 'rhgn':
+    if args.model_type == 'RHGN':
         rhgn_pre_processing = RHGN_pre_processing()
 
 elif args.type == 2:
-     if args.model_type == 'fairGNN' and args.model_type == 'catGCN':
+     if args.model_type == 'FairGNN' and args.model_type == 'CatGCN':
         fair_pre_processing = FairGNN_pre_processing(data_extension)
         cat_pre_processing = CatGCN_pre_processing()
 
-     if args.model_type == 'fairGNN' and args.model_type == 'rhgn':
+     if args.model_type == 'FairGNN' and args.model_type == 'RHGN':
         fair_pre_processing = FairGNN_pre_processing(data_extension)
         rhgn_pre_processing = RHGN_pre_processing()
 
-     if args.model_type == 'catGCN' and args.model_type == 'rhgn':
+     if args.model_type == 'CatGCN' and args.model_type == 'RHGN':
         cat_pre_processing = CatGCN_pre_processing()
         rhgn_pre_processing = RHGN_pre_processing()
