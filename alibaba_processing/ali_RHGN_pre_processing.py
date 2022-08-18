@@ -9,7 +9,7 @@ def ali_RHGN_pre_process(df):
 
     # df_user =  label
     df_user, df_item, df_click = divide_data(df)
-    df_user.rename(columns={'userid':'uid', 'final_gender_code':'gender','age_level':'age', 'pvalue_level':'buy', 'occupation':'student', 'new_user_class_level ':'city'}, inplace=True)
+    df_user.rename(columns={'userid':'uid', 'final_gender_code':'gender','age_level':'age', 'pvalue_level':'buy', 'occupation':'student', 'new_user_class_level':'city'}, inplace=True)
     df_user.dropna(inplace=True)
     df_user = apply_bin_age(df_user)
     df_user = apply_bin_buy(df_user)
