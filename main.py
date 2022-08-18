@@ -180,7 +180,23 @@ def RHGN_pre_processing(data_extension):
 
 
     # Add model training after data processing
-    ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, args=args)
+    ali_training_main(G, 
+                      cid1_feature, 
+                      cid2_feature, 
+                      cid3_feature, 
+                      args.model_type,
+                      args.seed, 
+                      args.gpu, 
+                      args.label, 
+                      args.n_inp, 
+                      args.batch_size, 
+                      args.num_hidden, 
+                      args.epochs, 
+                      args.lr, 
+                      args.sens_attr, 
+                      args.multiclass_pred, 
+                      args.multiclass_sens, 
+                      args.clip)
 
     return print('Training RHGN is done.')
 

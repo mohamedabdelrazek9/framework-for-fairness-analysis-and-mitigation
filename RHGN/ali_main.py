@@ -66,27 +66,27 @@ def get_n_params(model):
     return pp
 
 
-def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, test_dataloader):
+def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, test_dataloader, epochs, label, clip):
     tic = time.perf_counter() # start counting time
 
     best_val_acc = 0
     best_test_acc = 0
     train_step = 0
     Minloss_val = 10000.0
-    for epoch in np.arange(args.n_epoch) + 1:
+    for epoch in np.arange(epochs) + 1:
         model.train()
         '''---------------------------train------------------------'''
         total_loss = 0
         total_acc = 0
         count = 0
         for input_nodes, output_nodes, blocks in train_dataloader:
-            Batch_logits,Batch_labels = model(input_nodes,output_nodes,blocks, out_key='user',label_key=args.label, is_train=True)
+            Batch_logits,Batch_labels = model(input_nodes,output_nodes,blocks, out_key='user',label_key=label, is_train=True)
 
             # The loss is computed only for labeled nodes.
             loss = F.cross_entropy(Batch_logits, Batch_labels)
             optimizer.zero_grad()
             loss.backward()
-            torch.nn.utils.clip_grad_norm_(model.parameters(), args.clip)
+            torch.nn.utils.clip_grad_norm_(model.parameters(), clip)
             optimizer.step()
             train_step += 1
             scheduler.step(train_step)
@@ -108,7 +108,7 @@ def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, t
                 preds=[]
                 labels=[]
                 for input_nodes, output_nodes, blocks in val_dataloader:
-                    Batch_logits,Batch_labels = model(input_nodes, output_nodes,blocks, out_key='user',label_key=args.label, is_train=False)
+                    Batch_logits,Batch_labels = model(input_nodes, output_nodes,blocks, out_key='user',label_key=label, is_train=False)
                     loss = F.cross_entropy(Batch_logits, Batch_labels)
                     acc   = torch.sum(Batch_logits.argmax(1)==Batch_labels).item()
                     preds.extend(Batch_logits.argmax(1).tolist())
@@ -127,7 +127,7 @@ def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, t
                 labels = []
 
                 for input_nodes, output_nodes, blocks in test_dataloader:
-                    Batch_logits, Batch_labels = model(input_nodes, output_nodes, blocks, out_key='user', label_key=args.label, is_train=False)
+                    Batch_logits, Batch_labels = model(input_nodes, output_nodes, blocks, out_key='user', label_key=label, is_train=False)
                     loss = F.cross_entropy(Batch_logits, Batch_labels)
                     acc   = torch.sum(Batch_logits.argmax(1)==Batch_labels).item()
                     preds.extend(Batch_logits.argmax(1).tolist())
@@ -183,21 +183,21 @@ def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, t
 
 
 ######################################################################
-def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, args):
+def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, model_type, seed, gpu, label, n_inp, batch_size, num_hidden, epochs, lr, sens_attr, multiclass_pred, multiclass_sens, clip):
 
     '''Fixed random seeds'''
-    np.random.seed(args.seed)
-    torch.manual_seed(args.seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
     if torch.cuda.is_available():
-        torch.cuda.manual_seed(args.seed)
-        torch.cuda.manual_seed_all(args.seed)
+        torch.cuda.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
 
-    device = torch.device("cuda:{}".format(args.gpu))
+    device = torch.device("cuda:{}".format(gpu))
 
     '''Loading charts and labels'''
     #G=torch.load('{}/{}.pkl'.format(args.data_dir,args.graph))
     print(G)
-    labels=G.nodes['user'].data[args.label]
+    labels=G.nodes['user'].data[label]
     print(labels.max().item()+1)
 
     # generate train/val/test split
@@ -233,7 +233,7 @@ def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, args):
     #     G.nodes[ntype].data['inp'] = emb
 
     for ntype in G.ntypes:
-        emb = nn.Parameter(torch.Tensor(G.number_of_nodes(ntype), args.n_inp), requires_grad = False)
+        emb = nn.Parameter(torch.Tensor(G.number_of_nodes(ntype), n_inp), requires_grad = False)
         nn.init.xavier_uniform_(emb)
         G.nodes[ntype].data['inp'] = emb
 
@@ -247,35 +247,35 @@ def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, args):
 
     train_dataloader = dgl.dataloading.NodeDataLoader(
         G, {'user':train_idx.to(device)}, sampler,
-        batch_size=args.batch_size,
+        batch_size=batch_size,
         shuffle=False,
         drop_last=False,
         device=device)
 
     val_dataloader = dgl.dataloading.NodeDataLoader(
         G, {'user':val_idx.to(device)}, sampler,
-        batch_size=args.batch_size,
+        batch_size=batch_size,
         shuffle=False,
         drop_last=False,
         device=device)
 
     test_dataloader = dgl.dataloading.NodeDataLoader(
         G, {'user':test_idx.to(device)}, sampler,
-        batch_size=args.batch_size,
+        batch_size=batch_size,
         shuffle=False,
         drop_last=False,
         device=device)
 
 
-    if args.model_type=='RHGN':
+    if model_type=='RHGN':
         #cid1_feature = torch.load('{}/cid1_feature.npy'.format(args.data_dir))
         #cid2_feature = torch.load('{}/cid2_feature.npy'.format(args.data_dir))
         #cid3_feature = torch.load('{}/cid3_feature.npy'.format(args.data_dir))
 
         model = ali_RHGN(G,
                     node_dict, edge_dict,
-                    n_inp=args.n_inp,
-                    n_hid=args.num_hidden,
+                    n_inp=n_inp,
+                    n_hid=num_hidden,
                     n_out=labels.max().item()+1,
                     n_layers=2,
                     n_heads=4,
@@ -286,13 +286,13 @@ def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, args):
                     use_norm = True).to(device)
         optimizer = torch.optim.AdamW(model.parameters())
 
-        scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, epochs=args.epochs,
-                                                        steps_per_epoch=int(train_idx.shape[0]/args.batch_size)+1,max_lr = args.lr)
+        scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, epochs=epochs,
+                                                        steps_per_epoch=int(train_idx.shape[0]/batch_size)+1,max_lr = lr)
         print('Training RHGN with #param: %d' % (get_n_params(model)))
-        targets, predictions = Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, test_dataloader)
+        targets, predictions = Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, test_dataloader, epochs, label, clip)
 
         # Compute fairness
-        fair_obj = Fairness(G, test_idx, targets, predictions, args.sens_attr, neptune_run, args.multiclass_pred, args.multiclass_sens)
+        fair_obj = Fairness(G, test_idx, targets, predictions, sens_attr, neptune_run, multiclass_pred, multiclass_sens)
         fair_obj.statistical_parity()
         fair_obj.equal_opportunity()
         fair_obj.overall_accuracy_equality()
