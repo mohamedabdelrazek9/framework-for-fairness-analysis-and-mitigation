@@ -18,7 +18,7 @@ def ali_RHGN_pre_process(df):
     df_item.dropna(axis=0, subset=['cate_id', 'campaign_id', 'brand'], inplace=True)
     df_item.rename(columns={'adgroup_id':'pid', 'cate_id':'cid'}, inplace=True)
 
-    df_click.rename(columns={'user':'uid', 'adgroup_id':'pid'}, inplace=True)
+    df_click.rename(columns={'userid':'uid', 'adgroup_id':'pid'}, inplace=True)
     df_click = df_click[df_click['clk']>0]
 
     df_click.drop('clk', axis=1, inplace=True)
