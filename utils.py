@@ -12,7 +12,9 @@ def load_networkx_file(model_type, data_extension, dataset_name, dataset_path, d
     # load data from graphml to csv
     print('Loading dataset for FairGNN...')
 
+    print(data_extension)
     if data_extension == '.graphml':
+        print('we will extract .graphml format')
         data = nx.read_graphml(dataset_path)
     elif data_extension == '.gexf':
         data = nx.read_gexf(dataset_path)
