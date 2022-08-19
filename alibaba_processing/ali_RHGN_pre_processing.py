@@ -74,6 +74,9 @@ def ali_RHGN_pre_process(df):
         c2.append(campaign_dic[df_item.at[i,'campaign_id']])
         c3.append(brand_dic[df_item.at[i,'brand']])
 
+    print(min(c1), min(c2), min(c3))
+    print(len(cate_dic), len(campaign_dic), len(brand_dic))
+
     df_click=df_click[df_click['pid'].isin(item_dic)]
     df_click=df_click[df_click['uid'].isin(user_dic)]
     df_click.reset_index(drop=True, inplace=True)
@@ -81,6 +84,10 @@ def ali_RHGN_pre_process(df):
 
     # Generate graph
     G, cid1_feature, cid2_feature, cid3_feature = generate_graph(df_user, df_item, df_click, user_dic, item_dic, cate_dic, campaign_dic, brand_dic, c1, c2, c3)
+    print(G)
+    print(cid1_feature.shape)
+    print(cid2_feature.shape)
+    print(cid3_feature.shape)
 
     return G, cid1_feature, cid2_feature, cid3_feature # use this graph for the input of the model (see RHGN repo for details)
 
