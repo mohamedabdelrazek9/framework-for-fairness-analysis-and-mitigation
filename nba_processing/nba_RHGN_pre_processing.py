@@ -39,13 +39,15 @@ def nba_RHGN_pre_process(df, dataset_user_id_name):
     model = fasttext.load_model('../cc.zh.200.bin')
 
     temp1 = {k: model.get_sentence_vector(v) for v, k in age_dic.items()}
-    cid1_feature = torch.tensor(temp1[k] for _, k in age_dic.items())
+    cid1_feature = torch.tensor([temp1[k] for _, k in age_dic.items()])
 
     temp2 = {k: model.get_sentence_vector(v) for v, k in mp_dic.items()}
-    cid2_feature = torch.tensor(temp1[k] for _, k in mp_dic.items()) 
+    cid2_feature = torch.tensor([temp2[k] for _, k in mp_dic.items()])
+ 
 
     temp3 = {k: model.get_sentence_vector(v) for v, k in fg_dic.items()}
-    cid3_feature = torch.tensor(temp1[k] for _, k in fg_dic.items())
+    cid3_feature = torch.tensor([temp3[k] for _, k in fg_dic.items()])
+
 
     uid2id = {num: i for i, num in enumerate(df[dataset_user_id_name])}
 
