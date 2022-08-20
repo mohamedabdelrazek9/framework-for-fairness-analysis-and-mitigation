@@ -57,7 +57,7 @@ def nba_RHGN_pre_process(df, dataset_user_id_name):
     # todo let the user define what to have in the graph?
     label_age = user_label.AGE
     label_height = user_label.player_height
-    label_weight = user_label.weight
+    label_weight = user_label.player_weight
     label_country = user_label.country
     label_teams = user_label.teams
     label_salary = user_label.SALARY
