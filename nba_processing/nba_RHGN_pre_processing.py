@@ -34,6 +34,9 @@ def nba_RHGN_pre_process(df, dataset_user_id_name):
         ("mp", "is_made_by", "user"): (torch.tensor(is_made_by_user), torch.tensor(has_user))
     }
 
+    node1 = 'user'
+    node2 = 'mp'
+
     G = dgl.heterograph(data_dict)
 
     model = fasttext.load_model('../cc.zh.200.bin')
@@ -62,24 +65,25 @@ def nba_RHGN_pre_process(df, dataset_user_id_name):
     label_teams = user_label.teams
     label_salary = user_label.SALARY
 
-    G.nodes['user'].data['age'] = torch.tensor(label_age[:G.number_of_nodes('user')])
-    G.nodes['user'].data['height'] = torch.tensor(label_height[:G.number_of_nodes('user')])
-    G.nodes['user'].data['weight'] = torch.tensor(label_weight[:G.number_of_nodes('user')])
-    G.nodes['user'].data['country'] = torch.tensor(label_country[:G.number_of_nodes('user')])
-    G.nodes['user'].data['teams'] = torch.tensor(label_teams[:G.number_of_nodes('user')])
-    G.nodes['user'].data['salary'] = torch.tensor(label_salary[:G.number_of_nodes('user')])
+    G.nodes[node1].data['age'] = torch.tensor(label_age[:G.number_of_nodes(node1)])
+    G.nodes[node1].data['height'] = torch.tensor(label_height[:G.number_of_nodes(node1)])
+    G.nodes[node1].data['weight'] = torch.tensor(label_weight[:G.number_of_nodes(node1)])
+    G.nodes[node1].data['country'] = torch.tensor(label_country[:G.number_of_nodes(node1)])
+    G.nodes[node1].data['teams'] = torch.tensor(label_teams[:G.number_of_nodes(node1)])
+    G.nodes[node1].data['salary'] = torch.tensor(label_salary[:G.number_of_nodes(node1)])
 
-    G.nodes['mp'].data['cid1'] = torch.tensor(c1[:G.number_of_nodes('mp')])
-    G.nodes['mp'].data['cid2'] = torch.tensor(c2[:G.number_of_nodes('mp')])
-    G.nodes['mp'].data['cid3'] = torch.tensor(c3[:G.number_of_nodes('mp')])
+    G.nodes[node2].data['cid1'] = torch.tensor(c1[:G.number_of_nodes(node2)])
+    G.nodes[node2].data['cid2'] = torch.tensor(c2[:G.number_of_nodes(node2)])
+    G.nodes[node2].data['cid3'] = torch.tensor(c3[:G.number_of_nodes(node2)])
 
+    
     print(G)
     print(cid1_feature.shape)
     print(cid2_feature.shape)
     print(cid3_feature.shape)
 
 
-    return G, cid1_feature, cid2_feature, cid3_feature
+    return G, cid1_feature, cid2_feature, cid3_feature, node1, node2
 
 
 def col_map(df, col, num2id):

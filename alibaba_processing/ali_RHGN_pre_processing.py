@@ -83,10 +83,10 @@ def ali_RHGN_pre_process(df):
 
 
     # Generate graph
-    G, cid1_feature, cid2_feature, cid3_feature = generate_graph(df_user, df_item, df_click, user_dic, item_dic, cate_dic, campaign_dic, brand_dic, c1, c2, c3)
+    G, cid1_feature, cid2_feature, cid3_feature, node1, node2 = generate_graph(df_user, df_item, df_click, user_dic, item_dic, cate_dic, campaign_dic, brand_dic, c1, c2, c3)
 
 
-    return G, cid1_feature, cid2_feature, cid3_feature # use this graph for the input of the model (see RHGN repo for details)
+    return G, cid1_feature, cid2_feature, cid3_feature, node1, node2 # use this graph for the input of the model (see RHGN repo for details)
 
 
 def divide_data(df):
@@ -156,6 +156,9 @@ def generate_graph(df_user, df_item, df_click, user_dic, item_dic, cate_dic, cam
         ("item", "click_by", "user"): (torch.tensor(click_item), torch.tensor(click_user))
     }
 
+    node1 = 'user'
+    node2 = 'item'
+
     G = dgl.heterograph(data_dict)
 
     # process with fastext model
@@ -186,20 +189,20 @@ def generate_graph(df_user, df_item, df_click, user_dic, item_dic, cate_dic, cam
     label_city = user_label.city
     label_bin_buy = user_label.bin_buy
 
-    G.nodes['user'].data['gender'] = torch.tensor(label_gender[:G.number_of_nodes('user')])
-    G.nodes['user'].data['age'] = torch.tensor(label_age[:G.number_of_nodes('user')])
-    G.nodes['user'].data['buy'] = torch.tensor(label_buy[:G.number_of_nodes('user')])
-    G.nodes['user'].data['student'] = torch.tensor(label_student[:G.number_of_nodes('user')])
-    G.nodes['user'].data['city'] = torch.tensor(label_city[:G.number_of_nodes('user')])
-    G.nodes['user'].data['bin_buy'] = torch.tensor(label_bin_buy[:G.number_of_nodes('user')])
+    G.nodes[node1].data['gender'] = torch.tensor(label_gender[:G.number_of_nodes(node1)])
+    G.nodes[node1].data['age'] = torch.tensor(label_age[:G.number_of_nodes(node1)])
+    G.nodes[node1].data['buy'] = torch.tensor(label_buy[:G.number_of_nodes(node1)])
+    G.nodes[node1].data['student'] = torch.tensor(label_student[:G.number_of_nodes(node1)])
+    G.nodes[node1].data['city'] = torch.tensor(label_city[:G.number_of_nodes(node1)])
+    G.nodes[node1].data['bin_buy'] = torch.tensor(label_bin_buy[:G.number_of_nodes(node1)])
 
-    G.nodes['item'].data['cid1'] = torch.tensor(c1[:G.number_of_nodes('item')])
-    G.nodes['item'].data['cid2'] = torch.tensor(c2[:G.number_of_nodes('item')])
-    G.nodes['item'].data['cid3'] = torch.tensor(c3[:G.number_of_nodes('item')])
+    G.nodes[node2].data['cid1'] = torch.tensor(c1[:G.number_of_nodes(node2)])
+    G.nodes[node2].data['cid2'] = torch.tensor(c2[:G.number_of_nodes(node2)])
+    G.nodes[node2].data['cid3'] = torch.tensor(c3[:G.number_of_nodes(node2)])
 
     print(G)
     print(cid1_feature.shape,)
     print(cid2_feature.shape,)
     print(cid3_feature.shape,)
 
-    return G, cid1_feature, cid2_feature, cid3_feature
+    return G, cid1_feature, cid2_feature, cid3_feature, node1, node2
