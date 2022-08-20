@@ -10,7 +10,8 @@ from FairGNN.src.train_fairGNN import train_FairGNN
 from alibaba_processing.ali_RHGN_pre_processing import ali_RHGN_pre_process
 from alibaba_processing.ali_CatGCN_pre_processing import ali_CatGCN_pre_processing
 from tecent_processing.tecent_RHGN_pre_processing import tec_RHGN_pre_process
-from tecent_processing.tecent_CatGCN_pre_processing import tec_CatGCN_pre_process 
+from tecent_processing.tecent_CatGCN_pre_processing import tec_CatGCN_pre_process
+from nba_processing.nba_RHGN_pre_processing import nba_RHGN_pre_process 
 from RHGN.ali_main import ali_training_main
 import dgl
 import torch
@@ -174,6 +175,8 @@ def RHGN_pre_processing(data_extension):
         G, cid1_feature, cid2_feature, cid3_feature, brand_feature = tec_RHGN_pre_process(df)
 
     # Todo implment RHGN processing for NBA dataset
+    elif args.dataset_name == 'nba':
+        G, cid1_feature, cid2_feature, cid3_feature = nba_RHGN_pre_process(df, args.dataset_user_id_name)
 
 
     # Todo implment RHGN processing for Pokec dataset

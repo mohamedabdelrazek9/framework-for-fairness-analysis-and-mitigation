@@ -41,7 +41,7 @@ def load_networkx_file(model_type, data_extension, dataset_name, dataset_path, d
         df_nodes = df_nodes.astype({dataset_user_id_name: int})
 
     # todo if dataset will be used for RHGN or CatGCN then return, else we assume for FairGNN then complete the onehot encoding process
-    if model_type == 'RHGN' or dataset_name == 'CatGCN':
+    if model_type == 'RHGN'  or model_type == 'CatGCN':
         return df_nodes
 
     else: # FairGNN
