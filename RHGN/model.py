@@ -67,7 +67,7 @@ class ali_RHGN(nn.Module):
         cid3_feature=cid1_feature
          
         item_feature = blocks[0].srcnodes['item'].data['inp']
-        user_feature = blocks[0].srcnodes['item'].data['inp']
+        user_feature = blocks[0].srcnodes['user'].data['inp']
         # brand_feature = blocks[0].srcnodes['brand'].data['inp']
 
         inputs=torch.cat((cid1_feature,cid2_feature,cid3_feature),1)        #(N,4,200)
@@ -85,7 +85,7 @@ class ali_RHGN(nn.Module):
 
         h = {}
         h['item']=F.gelu(self.adapt_ws[self.node_dict['item']](item_feature))
-        h['item']=F.gelu(self.adapt_ws[self.node_dict['user']](user_feature))
+        h['user']=F.gelu(self.adapt_ws[self.node_dict['user']](user_feature))
         # h['brand']=F.gelu(self.adapt_ws[self.node_dict['brand']](brand_feature))
 
         for i in range(self.n_layers):
