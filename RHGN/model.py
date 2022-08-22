@@ -50,7 +50,7 @@ class ali_RHGN(nn.Module):
         self.value = nn.Linear(200, n_inp)
         self.skip = nn.Parameter(torch.ones(1))
 
-    def forward(self, input_nodes, output_nodes,blocks, out_key,label_key, is_train=True,print_flag=False, node1, node2):
+    def forward(self, input_nodes, output_nodes,blocks,  node1, node2, out_key,label_key, is_train=True,print_flag=False):
 
         item_cid1=blocks[0].srcnodes[node2].data['cid1'].unsqueeze(1)        #(N,1)
         cid1_feature = self.cid1_feature(item_cid1)     #       #(N,1,200)
