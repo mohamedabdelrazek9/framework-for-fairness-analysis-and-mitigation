@@ -30,7 +30,7 @@ def nba_RHGN_pre_process(df, dataset_user_id_name):
 
 
     data_dict = {
-        ("user", "has", "mp"): (torch.tensor(has_user), torch.tensor(is_made_by_user)),
+        ("user", "has", "item"): (torch.tensor(has_user), torch.tensor(is_made_by_user)),
         ("item", "is_made_by", "user"): (torch.tensor(is_made_by_user), torch.tensor(has_user))
     }
 
