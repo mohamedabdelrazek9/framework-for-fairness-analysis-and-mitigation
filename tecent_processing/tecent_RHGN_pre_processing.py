@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import torch
 import dgl
+import fasttext
 
 def tec_RHGN_pre_process(df):
     # load and clean data
@@ -164,7 +165,7 @@ def generate_graph(df_user, df_item, df_click, user_dic, item_dic, cid1_dic, cid
     G = dgl.heterograph(data_dict)
 
     # todo import the fasttext correctly
-    model = fasttext.load_model('/home/purificato/papers_code/CIKM21_RHGN/jd_data/fasttext/fastText/cc.zh.200.bin')
+    model = fasttext.load_model('../cc.zh.200.bin')
 
     temp = {k: model.get_sentence_vector(v) for v, k in cid1_dic.items()}
     cid1_feature = torch.tensor([temp[k] for _, k in cid1_dic.items()])

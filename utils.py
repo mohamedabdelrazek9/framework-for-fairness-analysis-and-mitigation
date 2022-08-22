@@ -228,9 +228,9 @@ def apply_bin_columns(df, onehot_bin_columns):
     return df
 
 def apply_cat_columns(df, onehot_cat_columns):
-    df_nodes = pd.get_dummies(df_nodes, columns=onehot_cat_columns)
+    df = pd.get_dummies(df, columns=onehot_cat_columns)
 
-    return df_nodes
+    return df
 
 def create_edges(df_nodes, dataset_name):
 
