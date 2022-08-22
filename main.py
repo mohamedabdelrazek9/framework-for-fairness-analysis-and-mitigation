@@ -170,6 +170,7 @@ def RHGN_pre_processing(data_extension):
 
     
     if args.dataset_name == 'alibaba':
+        #G, cid1_feature, cid2_feature, cid3_feature = ali_RHGN_pre_process(df)
         G, cid1_feature, cid2_feature, cid3_feature = ali_RHGN_pre_process(df)
     elif args.dataset_name == 'tecent':
         G, cid1_feature, cid2_feature, cid3_feature = tec_RHGN_pre_process(df)

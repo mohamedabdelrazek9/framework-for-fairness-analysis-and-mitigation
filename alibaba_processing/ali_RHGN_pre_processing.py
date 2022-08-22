@@ -86,7 +86,8 @@ def ali_RHGN_pre_process(df):
     G, cid1_feature, cid2_feature, cid3_feature = generate_graph(df_user, df_item, df_click, user_dic, item_dic, cate_dic, campaign_dic, brand_dic, c1, c2, c3)
 
 
-    return G, cid1_feature, cid2_feature, cid3_feature # use this graph for the input of the model (see RHGN repo for details)
+    #return G, cid1_feature, cid2_feature, cid3_feature # use this graph for the input of the model (see RHGN repo for details)
+    return G, cid1_feature, cid2_feature, cid3_feature
 
 
 def divide_data(df):
