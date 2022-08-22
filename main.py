@@ -172,11 +172,11 @@ def RHGN_pre_processing(data_extension):
     if args.dataset_name == 'alibaba':
         G, cid1_feature, cid2_feature, cid3_feature = ali_RHGN_pre_process(df)
     elif args.dataset_name == 'tecent':
-        G, cid1_feature, cid2_feature, cid3_feature, node1, node2 = tec_RHGN_pre_process(df)
+        G, cid1_feature, cid2_feature, cid3_feature = tec_RHGN_pre_process(df)
 
     # Todo implment RHGN processing for NBA dataset
     elif args.dataset_name == 'nba':
-        G, cid1_feature, cid2_feature, cid3_feature, node1, node2 = nba_RHGN_pre_process(df, args.dataset_user_id_name)
+        G, cid1_feature, cid2_feature, cid3_feature = nba_RHGN_pre_process(df, args.dataset_user_id_name)
 
 
     # Todo implment RHGN processing for Pokec dataset
@@ -187,8 +187,6 @@ def RHGN_pre_processing(data_extension):
                       cid1_feature, 
                       cid2_feature, 
                       cid3_feature,
-                      node1,
-                      node2, 
                       args.model_type,
                       args.seed, 
                       args.gpu, 

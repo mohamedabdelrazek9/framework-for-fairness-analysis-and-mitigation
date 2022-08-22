@@ -50,24 +50,24 @@ class ali_RHGN(nn.Module):
         self.value = nn.Linear(200, n_inp)
         self.skip = nn.Parameter(torch.ones(1))
 
-    def forward(self, input_nodes, output_nodes,blocks,  node1, node2, out_key,label_key, is_train=True,print_flag=False):
+    def forward(self, input_nodes, output_nodes,blocks, out_key,label_key, is_train=True,print_flag=False):
 
-        item_cid1=blocks[0].srcnodes[node2].data['cid1'].unsqueeze(1)        #(N,1)
+        item_cid1=blocks[0].srcnodes['item'].data['cid1'].unsqueeze(1)        #(N,1)
         cid1_feature = self.cid1_feature(item_cid1)     #       #(N,1,200)
 	
 
-        item_cid2=blocks[0].srcnodes[node2].data['cid2'].unsqueeze(1)        #(N,1)
+        item_cid2=blocks[0].srcnodes['item'].data['cid2'].unsqueeze(1)        #(N,1)
         cid2_feature = self.cid2_feature(item_cid2)     #       #(N,1,200)
 
-        item_cid3=blocks[0].srcnodes[node2].data['cid3'].unsqueeze(1)        #(N,1)
+        item_cid3=blocks[0].srcnodes['item'].data['cid3'].unsqueeze(1)        #(N,1)
         cid3_feature = self.cid3_feature(item_cid3)     #       #(N,1,200)
  
         
         cid2_feature=cid1_feature
         cid3_feature=cid1_feature
          
-        item_feature = blocks[0].srcnodes[node2].data['inp']
-        user_feature = blocks[0].srcnodes[node2].data['inp']
+        item_feature = blocks[0].srcnodes['item'].data['inp']
+        user_feature = blocks[0].srcnodes['item'].data['inp']
         # brand_feature = blocks[0].srcnodes['brand'].data['inp']
 
         inputs=torch.cat((cid1_feature,cid2_feature,cid3_feature),1)        #(N,4,200)
@@ -84,8 +84,8 @@ class ali_RHGN(nn.Module):
         item_feature = alpha*(torch.mean(temp, dim=-2).squeeze(-2))  + (1-alpha)*item_feature   # #(N,200)
 
         h = {}
-        h[node2]=F.gelu(self.adapt_ws[self.node_dict[node2]](item_feature))
-        h[node2]=F.gelu(self.adapt_ws[self.node_dict[node1]](user_feature))
+        h['item']=F.gelu(self.adapt_ws[self.node_dict['item']](item_feature))
+        h['item']=F.gelu(self.adapt_ws[self.node_dict['user']](user_feature))
         # h['brand']=F.gelu(self.adapt_ws[self.node_dict['brand']](brand_feature))
 
         for i in range(self.n_layers):

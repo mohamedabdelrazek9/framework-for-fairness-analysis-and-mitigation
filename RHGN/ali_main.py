@@ -66,7 +66,7 @@ def get_n_params(model):
     return pp
 
 
-def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, test_dataloader, epochs, label, clip, node1, node2):
+def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, test_dataloader, epochs, label, clip):
     tic = time.perf_counter() # start counting time
 
     best_val_acc = 0
@@ -80,7 +80,7 @@ def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, t
         total_acc = 0
         count = 0
         for input_nodes, output_nodes, blocks in train_dataloader:
-            Batch_logits,Batch_labels = model(input_nodes,output_nodes,blocks, node1, node2, out_key='user',label_key=label, is_train=True)
+            Batch_logits,Batch_labels = model(input_nodes,output_nodes,blocks, 'user', 'item', out_key='user',label_key=label, is_train=True)
 
             # The loss is computed only for labeled nodes.
             loss = F.cross_entropy(Batch_logits, Batch_labels)
@@ -92,9 +92,9 @@ def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, t
             scheduler.step(train_step)
 
             acc = torch.sum(Batch_logits.argmax(1) == Batch_labels).item()
-            total_loss += loss.item() * len(output_nodes[node1].cpu())
+            total_loss += loss.item() * len(output_nodes['user'].cpu())
             total_acc += acc
-            count += len(output_nodes[node1].cpu())
+            count += len(output_nodes['user'].cpu())
 
         train_loss, train_acc = total_loss / count, total_acc / count
 
@@ -113,9 +113,9 @@ def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, t
                     acc   = torch.sum(Batch_logits.argmax(1)==Batch_labels).item()
                     preds.extend(Batch_logits.argmax(1).tolist())
                     labels.extend(Batch_labels.tolist())
-                    total_loss += loss.item() * len(output_nodes[node1].cpu())
+                    total_loss += loss.item() * len(output_nodes['user'].cpu())
                     total_acc +=acc
-                    count += len(output_nodes[node1].cpu())
+                    count += len(output_nodes['user'].cpu())
 
                 val_f1 = metrics.f1_score(preds, labels, average='macro')
                 val_loss,val_acc   = total_loss / count, total_acc / count
@@ -132,9 +132,9 @@ def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, t
                     acc   = torch.sum(Batch_logits.argmax(1)==Batch_labels).item()
                     preds.extend(Batch_logits.argmax(1).tolist())
                     labels.extend(Batch_labels.tolist())
-                    total_loss += loss.item() * len(output_nodes[node1].cpu())
+                    total_loss += loss.item() * len(output_nodes['user'].cpu())
                     total_acc +=acc
-                    count += len(output_nodes[node1].cpu())
+                    count += len(output_nodes['user'].cpu())
                    
 
                 test_f1 = metrics.f1_score(preds,labels, average='macro')
@@ -183,7 +183,7 @@ def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, t
 
 
 ######################################################################
-def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, node1, node2, model_type, seed, gpu, label, n_inp, batch_size, num_hidden, epochs, lr, sens_attr, multiclass_pred, multiclass_sens, clip):
+def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, model_type, seed, gpu, label, n_inp, batch_size, num_hidden, epochs, lr, sens_attr, multiclass_pred, multiclass_sens, clip):
 
     '''Fixed random seeds'''
     np.random.seed(seed)
@@ -197,7 +197,7 @@ def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, node1, node2,
     '''Loading charts and labels'''
     #G=torch.load('{}/{}.pkl'.format(args.data_dir,args.graph))
     print(G)
-    labels=G.nodes[node1].data[label]
+    labels=G.nodes['user'].data[label]
     print(labels.max().item()+1)
 
     # generate train/val/test split
@@ -239,28 +239,28 @@ def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, node1, node2,
 
 
     G = G.to(device)
-    train_idx_item=torch.tensor(shuffle[0:int(G.number_of_nodes(node2) * 0.75)]).long()
-    val_idx_item = torch.tensor(shuffle[int(G.number_of_nodes(node2)*0.75):int(G.number_of_nodes(node2)*0.875)]).long()
-    test_idx_item = torch.tensor(shuffle[int(G.number_of_nodes(node2)*0.875):]).long()
+    train_idx_item=torch.tensor(shuffle[0:int(G.number_of_nodes('item') * 0.75)]).long()
+    val_idx_item = torch.tensor(shuffle[int(G.number_of_nodes('item')*0.75):int(G.number_of_nodes('item')*0.875)]).long()
+    test_idx_item = torch.tensor(shuffle[int(G.number_of_nodes('item')*0.875):]).long()
     '''Sampling'''
     sampler = dgl.dataloading.MultiLayerFullNeighborSampler(2)
 
     train_dataloader = dgl.dataloading.NodeDataLoader(
-        G, {node1:train_idx.to(device)}, sampler,
+        G, {'user':train_idx.to(device)}, sampler,
         batch_size=batch_size,
         shuffle=False,
         drop_last=False,
         device=device)
 
     val_dataloader = dgl.dataloading.NodeDataLoader(
-        G, {node1:val_idx.to(device)}, sampler,
+        G, {'user':val_idx.to(device)}, sampler,
         batch_size=batch_size,
         shuffle=False,
         drop_last=False,
         device=device)
 
     test_dataloader = dgl.dataloading.NodeDataLoader(
-        G, {node1:test_idx.to(device)}, sampler,
+        G, {'user':test_idx.to(device)}, sampler,
         batch_size=batch_size,
         shuffle=False,
         drop_last=False,
@@ -289,7 +289,7 @@ def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, node1, node2,
         scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, epochs=epochs,
                                                         steps_per_epoch=int(train_idx.shape[0]/batch_size)+1,max_lr = lr)
         print('Training RHGN with #param: %d' % (get_n_params(model)))
-        targets, predictions = Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, test_dataloader, epochs, label, clip, node1, node2)
+        targets, predictions = Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, test_dataloader, epochs, label, clip)
 
         # Compute fairness
         fair_obj = Fairness(G, test_idx, targets, predictions, sens_attr, neptune_run, multiclass_pred, multiclass_sens)
