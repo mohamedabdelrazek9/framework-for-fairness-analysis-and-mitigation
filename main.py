@@ -155,9 +155,7 @@ def CatGCN_pre_processing(data_extension):
 
 def RHGN_pre_processing(data_extension):
     # todo do suitable pre-processing for the choosen dataset
-    if args.dataset_name == 'pokec_z':
-        df = pd.read_csv(args.dataset_path)
-
+    
     if data_extension in networkx_format_list:
         df = load_networkx_file(args.model_type,
                                 data_extension,
@@ -168,9 +166,10 @@ def RHGN_pre_processing(data_extension):
                                 onehot_cat_columns=None) #argument may change
         # todo later on: add condition for other datasets
     else:
-        df = load_neo4j_file(args.model_type, 
-                             args.dataset_path, 
-                             args.dataset_name)
+        #df = load_neo4j_file(args.model_type, 
+        #                     args.dataset_path, 
+        #                     args.dataset_name)
+        df = pd.read_csv(args.dataset_path)
 
     
     if args.dataset_name == 'alibaba':
