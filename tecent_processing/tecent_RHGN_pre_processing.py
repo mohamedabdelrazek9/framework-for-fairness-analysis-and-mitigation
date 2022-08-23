@@ -108,7 +108,7 @@ def tec_RHGN_pre_process(df):
                                                                                 brand)
     
 
-    return G, cid1_feature, cid2_feature, cid3_feature, brand_feature # brand_feature not used (same as cid4_feature?)
+    return G, cid1_feature, cid2_feature, cid3_feature # brand_feature not used (same as cid4_feature?)
 
 
 def divide_data(df):
