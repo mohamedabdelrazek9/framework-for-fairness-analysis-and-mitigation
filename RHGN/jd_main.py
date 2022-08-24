@@ -11,6 +11,7 @@ import neptune.new as neptune
 
 from fairness import Fairness
 
+'''
 parser = argparse.ArgumentParser(description='for JD Dataset')
 
 parser.add_argument('--n_epoch', type=int, default=50)
@@ -33,12 +34,6 @@ parser.add_argument('--multiclass-pred', type=bool, default=False)
 parser.add_argument('--multiclass-sens', type=bool, default=False)
 
 args = parser.parse_args()
-'''Fixed random seeds'''
-np.random.seed(args.seed)
-torch.manual_seed(args.seed)
-if torch.cuda.is_available():
-    torch.cuda.manual_seed(args.seed)
-    torch.cuda.manual_seed_all(args.seed)
 
 
 # Instantiate Neptune client and log arguments
@@ -55,7 +50,7 @@ neptune_run["num_epochs"] = args.n_epoch
 neptune_run["n_hid"] = args.n_hid
 neptune_run["lr"] = args.max_lr
 neptune_run["clip"] = args.clip
-
+'''
 
 def get_n_params(model):
     pp=0
@@ -67,27 +62,27 @@ def get_n_params(model):
     return pp
 
 
-def Batch_train(model):
+def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, test_dataloader, epochs, label, clip, device):
     tic = time.perf_counter() # start counting time
 
     best_val_acc = 0
     best_test_acc = 0
     train_step = 0
     Minloss_val = 10000.0
-    for epoch in np.arange(args.n_epoch) + 1:
+    for epoch in np.arange(epochs) + 1:
         model.train()
         '''---------------------------train------------------------'''
         total_loss = 0
         total_acc = 0
         count = 0
         for input_nodes, output_nodes, blocks in train_dataloader:
-            Batch_logits,Batch_labels = model(input_nodes,output_nodes,blocks, out_key='user',label_key=args.label, is_train=True)
+            Batch_logits,Batch_labels = model(input_nodes,output_nodes,blocks, out_key='user',label_key=label, is_train=True)
 
             # The loss is computed only for labeled nodes.
             loss = F.cross_entropy(Batch_logits, Batch_labels)
             optimizer.zero_grad()
             loss.backward()
-            torch.nn.utils.clip_grad_norm_(model.parameters(), args.clip)
+            torch.nn.utils.clip_grad_norm_(model.parameters(), clip)
             optimizer.step()
             train_step += 1
             scheduler.step(train_step)
@@ -109,7 +104,7 @@ def Batch_train(model):
                 preds=[]
                 labels=[]
                 for input_nodes, output_nodes, blocks in val_dataloader:
-                    Batch_logits,Batch_labels = model(input_nodes, output_nodes,blocks, out_key='user',label_key=args.label, is_train=False)
+                    Batch_logits,Batch_labels = model(input_nodes, output_nodes,blocks, out_key='user',label_key=label, is_train=False)
                     loss = F.cross_entropy(Batch_logits, Batch_labels)
                     acc   = torch.sum(Batch_logits.argmax(1)==Batch_labels).item()
                     preds.extend(Batch_logits.argmax(1).tolist())
@@ -128,7 +123,7 @@ def Batch_train(model):
                 labels=[]
                 for input_nodes, output_nodes, blocks in test_dataloader:
 
-                    Batch_logits,Batch_labels = model(input_nodes, output_nodes,blocks, out_key='user',label_key=args.label, is_train=False)
+                    Batch_logits,Batch_labels = model(input_nodes, output_nodes,blocks, out_key='user',label_key=label, is_train=False)
                     loss = F.cross_entropy(Batch_logits, Batch_labels)
                     acc   = torch.sum(Batch_logits.argmax(1)==Batch_labels).item()
                     preds.extend(Batch_logits.argmax(1).tolist())
@@ -207,123 +202,132 @@ def Batch_train(model):
     print("\nElapsed time: {:.4f} minutes".format(elapsed_time))
 
     # Log result on Neptune
-    neptune_run["test/accuracy"] = best_test_acc
-    neptune_run["test/f1_score"] = test_f1
+    #neptune_run["test/accuracy"] = best_test_acc
+    #neptune_run["test/f1_score"] = test_f1
     # neptune_run["test/auc"] = auc
     # neptune_run["test/tpr"] = tpr
     # neptune_run["test/fpr"] = fpr
-    neptune_run["conf_matrix"] = confusion_matrix
-    neptune_run["elaps_time"] = elapsed_time
+    #neptune_run["conf_matrix"] = confusion_matrix
+    #neptune_run["elaps_time"] = elapsed_time
 
     return labels, preds
 
 ####################################################################################
+def tecent_training_main(G, cid1_feature, cid2_feature, cid3_feature, cid4_feature, model_type, seed, gpu, label, n_inp, batch_size, num_hidden, epochs, lr, sens_attr, multiclass_pred, multiclass_sens, clip):
 
-device = torch.device("cuda:{}".format(args.gpu))
-
-'''Loading charts and labels'''
-G=torch.load('{}/{}.pkl'.format(args.data_dir,args.graph))
-print(G)
-labels=G.nodes['user'].data[args.label]
-
-
-# generate train/val/test split
-pid = np.arange(len(labels))
-shuffle = np.random.permutation(pid)
-train_idx = torch.tensor(shuffle[0:int(len(labels)*0.75)]).long()
-val_idx = torch.tensor(shuffle[int(len(labels)*0.75):int(len(labels)*0.875)]).long()
-test_idx = torch.tensor(shuffle[int(len(labels)*0.875):]).long()
-
-print(train_idx.shape)
-print(val_idx.shape)
-print(test_idx.shape)
-
-node_dict = {}
-edge_dict = {}
-for ntype in G.ntypes:
-    node_dict[ntype] = len(node_dict)
-for etype in G.etypes:
-    edge_dict[etype] = len(edge_dict)
-    G.edges[etype].data['id'] = torch.ones(G.number_of_edges(etype), dtype=torch.long) * edge_dict[etype]
-
-#     Initialize input feature
-# import fasttext
-# model = fasttext.load_model('../data/fasttext/fastText/cc.zh.200.bin')
-# sentence_dic=torch.load('../data/sentence_dic.pkl')
-# sentence_vec = [model.get_sentence_vector(sentence_dic[k]) for k, v in enumerate(G.nodes('item').tolist())]
-# for ntype in G.ntypes:
-#     if ntype=='item':
-#         emb=nn.Parameter(torch.Tensor(sentence_vec), requires_grad = False)
-#     else:
-#         emb = nn.Parameter(torch.Tensor(G.number_of_nodes(ntype), 200), requires_grad = False)
-#         nn.init.xavier_uniform_(emb)
-#     G.nodes[ntype].data['inp'] = emb
-#
-for ntype in G.ntypes:
-    emb = nn.Parameter(torch.Tensor(G.number_of_nodes(ntype), 200), requires_grad = False)
-    nn.init.xavier_uniform_(emb)
-    G.nodes[ntype].data['inp'] = emb
-
-G = G.to(device)
-train_idx_item=torch.tensor(shuffle[0:int(G.number_of_nodes('item') * 0.75)]).long()
-val_idx_item = torch.tensor(shuffle[int(G.number_of_nodes('item')*0.75):int(G.number_of_nodes('item')*0.875)]).long()
-test_idx_item = torch.tensor(shuffle[int(G.number_of_nodes('item')*0.875):]).long()
-'''Sampling'''
-sampler = dgl.dataloading.MultiLayerFullNeighborSampler(2)
-train_dataloader = dgl.dataloading.NodeDataLoader(
-    G, {'user':train_idx.to(device)}, sampler,
-    batch_size=args.batch_size,
-    shuffle=False,
-    drop_last=False,
-    device=device)
-
-val_dataloader = dgl.dataloading.NodeDataLoader(
-    G, {'user':val_idx.to(device)}, sampler,
-    batch_size=args.batch_size,
-    shuffle=False,
-    drop_last=False,
-    device=device)
-
-test_dataloader = dgl.dataloading.NodeDataLoader(
-    G, {'user':test_idx.to(device)}, sampler,
-    batch_size=args.batch_size,
-    shuffle=False,
-    drop_last=False,
-    device=device)
+    '''Fixed random seeds'''
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
 
 
-if args.model=='RHGN':
-    cid1_feature = torch.load('{}/cid1_feature.npy'.format(args.data_dir))
-    cid2_feature = torch.load('{}/cid2_feature.npy'.format(args.data_dir))
-    cid3_feature = torch.load('{}/cid3_feature.npy'.format(args.data_dir))
-    cid4_feature = torch.load('{}/brand_feature.npy'.format(args.data_dir))
-    # cid4_feature = torch.load('{}/cid4_feature.npy'.format(args.data_dir))
+    device = torch.device("cuda:{}".format(gpu))
 
-    model = jd_RHGN(G,
-                node_dict, edge_dict,
-                n_inp=args.n_inp,
-                n_hid=args.n_hid,
-                n_out=labels.max().item()+1,
-                n_layers=2,
-                n_heads=4,
-                cid1_feature=cid1_feature,
-                cid2_feature=cid2_feature,
-                cid3_feature=cid3_feature,
-                cid4_feature=cid4_feature,
-                use_norm = True).to(device)
-    optimizer = torch.optim.AdamW(model.parameters())
+    '''Loading charts and labels'''
+    #G=torch.load('{}/{}.pkl'.format(args.data_dir,args.graph))
+    print(G)
+    labels=G.nodes['user'].data[label]
 
-    scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, epochs=args.n_epoch,
-                                                    steps_per_epoch=int(train_idx.shape[0]/args.batch_size)+1,max_lr = args.max_lr)
-    print('Training RHGN with #param: %d' % (get_n_params(model)))
-    
-    targets, predictions = Batch_train(model)
 
-    ### Compute fairness ###
-    fair_obj = Fairness(G, test_idx, targets, predictions, args.sens_attr, neptune_run, args.multiclass_pred, args.multiclass_sens)
-    fair_obj.statistical_parity()
-    fair_obj.equal_opportunity()
-    fair_obj.overall_accuracy_equality()
-    fair_obj.treatment_equality()
+    # generate train/val/test split
+    pid = np.arange(len(labels))
+    shuffle = np.random.permutation(pid)
+    train_idx = torch.tensor(shuffle[0:int(len(labels)*0.75)]).long()
+    val_idx = torch.tensor(shuffle[int(len(labels)*0.75):int(len(labels)*0.875)]).long()
+    test_idx = torch.tensor(shuffle[int(len(labels)*0.875):]).long()
 
-    neptune_run.stop()
+    print(train_idx.shape)
+    print(val_idx.shape)
+    print(test_idx.shape)
+
+    node_dict = {}
+    edge_dict = {}
+    for ntype in G.ntypes:
+        node_dict[ntype] = len(node_dict)
+    for etype in G.etypes:
+        edge_dict[etype] = len(edge_dict)
+        G.edges[etype].data['id'] = torch.ones(G.number_of_edges(etype), dtype=torch.long) * edge_dict[etype]
+
+    #     Initialize input feature
+    # import fasttext
+    # model = fasttext.load_model('../data/fasttext/fastText/cc.zh.200.bin')
+    # sentence_dic=torch.load('../data/sentence_dic.pkl')
+    # sentence_vec = [model.get_sentence_vector(sentence_dic[k]) for k, v in enumerate(G.nodes('item').tolist())]
+    # for ntype in G.ntypes:
+    #     if ntype=='item':
+    #         emb=nn.Parameter(torch.Tensor(sentence_vec), requires_grad = False)
+    #     else:
+    #         emb = nn.Parameter(torch.Tensor(G.number_of_nodes(ntype), 200), requires_grad = False)
+    #         nn.init.xavier_uniform_(emb)
+    #     G.nodes[ntype].data['inp'] = emb
+    #
+    for ntype in G.ntypes:
+        emb = nn.Parameter(torch.Tensor(G.number_of_nodes(ntype), 200), requires_grad = False)
+        nn.init.xavier_uniform_(emb)
+        G.nodes[ntype].data['inp'] = emb
+
+    G = G.to(device)
+    train_idx_item=torch.tensor(shuffle[0:int(G.number_of_nodes('item') * 0.75)]).long()
+    val_idx_item = torch.tensor(shuffle[int(G.number_of_nodes('item')*0.75):int(G.number_of_nodes('item')*0.875)]).long()
+    test_idx_item = torch.tensor(shuffle[int(G.number_of_nodes('item')*0.875):]).long()
+    '''Sampling'''
+    sampler = dgl.dataloading.MultiLayerFullNeighborSampler(2)
+    train_dataloader = dgl.dataloading.NodeDataLoader(
+        G, {'user':train_idx.to(device)}, sampler,
+        batch_size=batch_size,
+        shuffle=False,
+        drop_last=False,
+        device=device)
+
+    val_dataloader = dgl.dataloading.NodeDataLoader(
+        G, {'user':val_idx.to(device)}, sampler,
+        batch_size=batch_size,
+        shuffle=False,
+        drop_last=False,
+        device=device)
+
+    test_dataloader = dgl.dataloading.NodeDataLoader(
+        G, {'user':test_idx.to(device)}, sampler,
+        batch_size=batch_size,
+        shuffle=False,
+        drop_last=False,
+        device=device)
+
+
+    if model=='RHGN':
+        #cid1_feature = torch.load('{}/cid1_feature.npy'.format(args.data_dir))
+        #cid2_feature = torch.load('{}/cid2_feature.npy'.format(args.data_dir))
+        #cid3_feature = torch.load('{}/cid3_feature.npy'.format(args.data_dir))
+        #cid4_feature = torch.load('{}/brand_feature.npy'.format(args.data_dir))
+        # cid4_feature = torch.load('{}/cid4_feature.npy'.format(args.data_dir))
+
+        model = jd_RHGN(G,
+                    node_dict, edge_dict,
+                    n_inp=n_inp,
+                    n_hid=num_hidden,
+                    n_out=labels.max().item()+1,
+                    n_layers=2,
+                    n_heads=4,
+                    cid1_feature=cid1_feature,
+                    cid2_feature=cid2_feature,
+                    cid3_feature=cid3_feature,
+                    cid4_feature=cid4_feature,
+                    use_norm = True).to(device)
+        optimizer = torch.optim.AdamW(model.parameters())
+
+        scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, epochs=epochs,
+                                                        steps_per_epoch=int(train_idx.shape[0]/batch_size)+1,max_lr = lr)
+        print('Training RHGN with #param: %d' % (get_n_params(model)))
+        
+        targets, predictions = Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, test_dataloader, epochs, label, clip, device)
+
+        ### Compute fairness ###
+        fair_obj = Fairness(G, test_idx, targets, predictions, sens_attr, neptune_run, multiclass_pred, multiclass_sens)
+        fair_obj.statistical_parity()
+        fair_obj.equal_opportunity()
+        fair_obj.overall_accuracy_equality()
+        fair_obj.treatment_equality()
+
+        neptune_run.stop()

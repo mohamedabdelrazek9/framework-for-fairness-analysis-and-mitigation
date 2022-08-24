@@ -14,6 +14,7 @@ from tecent_processing.tecent_CatGCN_pre_processing import tec_CatGCN_pre_proces
 from nba_processing.nba_RHGN_pre_processing import nba_RHGN_pre_process 
 from pokec_processing.pokec_RHGN_pre_processing import pokec_z_RHGN_pre_process
 from RHGN.ali_main import ali_training_main
+from RHGN.jd_main import tecent_training_main
 import dgl
 import torch
 import pandas as pd
@@ -175,7 +176,7 @@ def RHGN_pre_processing(data_extension):
         #G, cid1_feature, cid2_feature, cid3_feature = ali_RHGN_pre_process(df)
         G, cid1_feature, cid2_feature, cid3_feature = ali_RHGN_pre_process(df)
     elif args.dataset_name == 'tecent':
-        G, cid1_feature, cid2_feature, cid3_feature = tec_RHGN_pre_process(df)
+        G, cid1_feature, cid2_feature, cid3_feature, cid4_feature = tec_RHGN_pre_process(df)
 
     # Todo implment RHGN processing for NBA dataset
     elif args.dataset_name == 'nba':
@@ -187,23 +188,44 @@ def RHGN_pre_processing(data_extension):
         G, cid1_feature, cid2_feature, cid3_feature = pokec_z_RHGN_pre_process(df, args.dataset_user_id_name)
 
     # Add model training after data processing
-    ali_training_main(G, 
-                      cid1_feature, 
-                      cid2_feature, 
-                      cid3_feature,
-                      args.model_type,
-                      args.seed, 
-                      args.gpu, 
-                      args.label, 
-                      args.n_inp, 
-                      args.batch_size, 
-                      args.num_hidden, 
-                      args.epochs, 
-                      args.lr, 
-                      args.sens_attr, 
-                      args.multiclass_pred, 
-                      args.multiclass_sens, 
-                      args.clip)
+    if args.dataset_name == 'tecent':
+        tecent_training_main(G,
+                            cid1_feature,
+                            cid2_feature,
+                            cid3_feature,
+                            cid4_feature,
+                            args.model_type,
+                            args.seed,
+                            args.gpu,
+                            args.label,
+                            args.n_inp,
+                            args.batch_size,
+                            args.num_hidden,
+                            args.epochs,
+                            args.lr,
+                            args.sens_attr,
+                            args.multiclass_pred,
+                            args.multiclass_sens,
+                            args.clip)
+
+    else:
+        ali_training_main(G, 
+                        cid1_feature, 
+                        cid2_feature, 
+                        cid3_feature,
+                        args.model_type,
+                        args.seed, 
+                        args.gpu, 
+                        args.label, 
+                        args.n_inp, 
+                        args.batch_size, 
+                        args.num_hidden, 
+                        args.epochs, 
+                        args.lr, 
+                        args.sens_attr, 
+                        args.multiclass_pred, 
+                        args.multiclass_sens, 
+                        args.clip)
 
     return print('Training RHGN is done.')
 
