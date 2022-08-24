@@ -3,13 +3,14 @@ import dgl
 import math
 import torch
 import numpy as np
-from model import *
+#from model import *
+from RHGN.model import *
 import argparse
 from sklearn import metrics
 import time
-import neptune.new as neptune
+#import neptune.new as neptune
 
-from fairness import Fairness
+from RHGN.fairness import Fairness
 
 '''
 parser = argparse.ArgumentParser(description='for JD Dataset')
