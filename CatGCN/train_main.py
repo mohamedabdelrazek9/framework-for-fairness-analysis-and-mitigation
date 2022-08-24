@@ -11,23 +11,24 @@ import time
 
 from fairness import Fairness
 
-def main():
+def train_CatGCN(user_edge, user_field, user_gender, user_labels, seed, label, args):
     start_time = time.perf_counter()
 
     """
     Parsing command line parameters, reading data, graph decomposition, fitting and scoring the model.
     """
-    args = parameter_parser()
-    np.random.seed(args.seed)
-    torch.manual_seed(args.seed)
+    #args = parameter_parser()
+    np.random.seed(seed)
+    torch.manual_seed(seed)
     if torch.cuda.is_available():
-        torch.cuda.manual_seed(args.seed)
-    tab_printer(args)
-    graph = graph_reader(args.edge_path)
-    field_index = field_reader(args.field_path)
-    target = target_reader(args.target_path)
-    user_labels = label_reader(args.labels_path)
+        torch.cuda.manual_seed(seed)
+   # tab_printer(args)
+    graph = graph_reader(user_edge)
+    field_index = field_reader(user_field)
+    target = target_reader(user_gender)
+    user_labels = label_reader(user_labels)
 
+    '''
     # Instantiate Neptune client and log arguments
     neptune_run = neptune.init(
         project = args.neptune_project,
@@ -47,16 +48,16 @@ def main():
     neptune_run["gnn_units"] = args.gnn_units
     neptune_run["balance_ratio"] = args.balance_ratio
     # neptune_run["n_epochs"] = args.epochs
-
+    '''
     clustering_machine = ClusteringMachine(args, graph, field_index, target)
     clustering_machine.decompose()
-    gnn_trainer = ClusterGNNTrainer(args, clustering_machine, neptune_run)
+    gnn_trainer = ClusterGNNTrainer(args, clustering_machine) # todo add later neptune_run
     gnn_trainer.train_val_test()
 
     ## Compute accuracy per sensitive attribute group
-    pos_preds_distr = pos_preds_attr_distr(user_labels, gnn_trainer.targets, gnn_trainer.predictions, clustering_machine.sg_test_nodes[0], args.label, "age")
+    pos_preds_distr = pos_preds_attr_distr(user_labels, gnn_trainer.targets, gnn_trainer.predictions, clustering_machine.sg_test_nodes[0], label, "age")
     print(pos_preds_distr)
-    neptune_run["pos_preds_distr"] = pos_preds_distr
+    #neptune_run["pos_preds_distr"] = pos_preds_distr
 
     ## Compute fairness metrics
     print("Fairness metrics on sensitive attributes '{}':".format(args.sens_attr))
@@ -67,9 +68,9 @@ def main():
     fair_obj.treatment_equality()
 
     elaps_time = (time.perf_counter() - start_time)/60
-    neptune_run["elaps_time"] = elaps_time
+    #neptune_run["elaps_time"] = elaps_time
 
-    neptune_run.stop()
+    #neptune_run.stop()
 
 if __name__ == "__main__":
-    main()
+    train_CatGCN()

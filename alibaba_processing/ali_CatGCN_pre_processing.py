@@ -96,6 +96,7 @@ def ali_CatGCN_pre_processing(df):
     user_label[['uid','city']].to_csv(os.path.join(save_path, 'user_city.csv'), index=False)
     user_label[['uid','age']].to_csv(os.path.join(save_path, 'user_age.csv'), index=False)
     user_label[['uid','gender']].to_csv(os.path.join(save_path, 'user_gender.csv'), index=False)
+    user_gender = user_label[['uid', 'gender']]
     user_label[['uid','student']].to_csv(os.path.join(save_path, 'user_student.csv'), index=False)
     user_label[['uid','bin_age']].to_csv(os.path.join(save_path, 'user_bin_age.csv'), index=False)
     user_label[['uid','bin_buy']].to_csv(os.path.join(save_path, 'user_bin_buy.csv'), index=False)
@@ -120,7 +121,7 @@ def ali_CatGCN_pre_processing(df):
 
     user_field_new = sample_neighs
     
-    return user_edge, user_field_new, user_buy
+    return user_edge, user_field_new, user_gender, user_label
 
 
 def divide_data(df):

@@ -16,7 +16,7 @@ class ClusterGNNTrainer(object):
     def __init__(self, args, clustering_machine, neptune_run):
         self.args = args
         self.clustering_machine = clustering_machine
-        self.neptune_run = neptune_run
+        #self.neptune_run = neptune_run
         self.device = torch.device("cuda:{}".format(args.gpu) if torch.cuda.is_available() else "cpu")
         self.class_weight = clustering_machine.class_weight.to(self.device)
         self.create_model()
@@ -194,6 +194,7 @@ class ClusterGNNTrainer(object):
             "accuracy: {:.4f}".format(acc_score),
             "macro-f1: {:.4f}".format(macro_f1))        
 
+        '''
         # Save results on Neptune
         self.neptune_run["best_epoch"] = best_epoch
         self.neptune_run["test/loss"] = test_loss
@@ -204,3 +205,4 @@ class ClusterGNNTrainer(object):
         # self.neptune_run["test/fpr"] = fpr
         self.neptune_run["conf_matrix"] = confusion_matrix
         self.neptune_run["train_time"] = train_time
+        '''

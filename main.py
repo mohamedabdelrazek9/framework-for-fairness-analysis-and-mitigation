@@ -15,6 +15,7 @@ from nba_processing.nba_RHGN_pre_processing import nba_RHGN_pre_process
 from pokec_processing.pokec_RHGN_pre_processing import pokec_z_RHGN_pre_process
 from RHGN.ali_main import ali_training_main
 from RHGN.jd_main import tecent_training_main
+from CatGCN.train_main import train_CatGCN
 import dgl
 import torch
 import pandas as pd
@@ -141,7 +142,7 @@ def CatGCN_pre_processing(data_extension):
                     
     
     if args.dataset_name == 'alibaba':
-        user_edge, user_field, user_buy = ali_CatGCN_pre_processing(df)
+        user_edge, user_field, user_gender, user_labels = ali_CatGCN_pre_processing(df)
     elif args.dataset_name == 'tecent':
         user_edge, user_field, user_age = tec_CatGCN_pre_process(df)
 
@@ -150,6 +151,7 @@ def CatGCN_pre_processing(data_extension):
     # Todo implment CatGCN processing for Pokec dataset
 
     # Add model training after data processing
+    train_CatGCN(user_edge, user_field, user_gender, user_labels, args.seed, args.label, args)
     
     return print('Training CatGCN is done.')
 
