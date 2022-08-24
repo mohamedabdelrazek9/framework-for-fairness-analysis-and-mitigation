@@ -66,7 +66,20 @@ parser.add_argument('--patience', type=int, default=10)
 parser.add_argument('--log_tags', type=str, default='')
 parser.add_argument('--multiclass-pred', type=bool, default=False)
 parser.add_argument('--multiclass-sens', type=bool, default=False)
+#####################
 
+# for CatGCN
+parser.add_argument('diag-probe', type = float,default = 1., help = "Diag probe coefficient. Default is 1.0.")
+parser.add_argument('--graph-refining', nargs = "?", default='agc', help="Optimize the field feature, use 'agc', 'fignn', or 'none'.")
+parser.add_argument('--aggr-pooling', nargs = "?", default='mean', help="Aggregate the field feature. Default is 'mean'.")
+parser.add_argument("--grn-units",type=str, default="64", help="Hidden units for global interaction modeling, splitted with comma, maybe none.")
+parser.add_argument('--bi-interaction', nargs = "?",default='nfm', help="Compute the user feature with nfm, use 'nfm' or 'none'.")
+parser.add_argument("--nfm-units",type=str, default="64", help="Hidden units for local interaction modeling, splitted with comma, maybe none.")
+parser.add_argument('--graph-layer', nargs = "?",default='sgc', help="Optimize the user feature, use 'pna', 'sgc', 'appnp', etc.")
+parser.add_argument("--gnn-hops", type = int, default = 1, help = "Hops number of pure neighborhood aggregation. Default is 1.")
+parser.add_argument("--gnn-units",type=str, default="64", help="Hidden units for baseline models, splitted with comma, maybe none.")
+parser.add_argument('--aggr-style', nargs = "?", default='sum', help="Aggregate the user feature, use 'sum' or 'none'.")
+parser.add_argument("--balance-ratio", type = float, default = 0.5, help = "Balance ratio parameter when aggr_style is 'sum'. Default is 0.5.")
 
 
 
