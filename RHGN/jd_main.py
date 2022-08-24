@@ -297,7 +297,7 @@ def tecent_training_main(G, cid1_feature, cid2_feature, cid3_feature, cid4_featu
         device=device)
 
 
-    if model=='RHGN':
+    if model_type=='RHGN':
         #cid1_feature = torch.load('{}/cid1_feature.npy'.format(args.data_dir))
         #cid2_feature = torch.load('{}/cid2_feature.npy'.format(args.data_dir))
         #cid3_feature = torch.load('{}/cid3_feature.npy'.format(args.data_dir))
@@ -331,4 +331,4 @@ def tecent_training_main(G, cid1_feature, cid2_feature, cid3_feature, cid4_featu
         fair_obj.overall_accuracy_equality()
         fair_obj.treatment_equality()
 
-        neptune_run.stop()
+        #neptune_run.stop()
