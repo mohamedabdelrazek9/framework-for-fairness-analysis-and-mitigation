@@ -7,8 +7,7 @@ import numpy as np
 from sklearn import metrics
 from tqdm import trange, tqdm
 
-from layers import StackedGNN
-
+from CatGCN.layers import StackedGNN
 class ClusterGNNTrainer(object):
     """
     Training a huge graph cluster partition strategy.

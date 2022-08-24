@@ -2,14 +2,13 @@ import torch
 import numpy as np
 import neptune.new as neptune
 
-from parser import parameter_parser
-from clustering import ClusteringMachine
-from clustergnn import ClusterGNNTrainer
+#from parser import parameter_parser
+from CatGCN.clustering import ClusteringMachine
+from CatGCN.clustergnn import ClusterGNNTrainer
 
-from utils import pos_preds_attr_distr, tab_printer, graph_reader, field_reader, target_reader, label_reader
+from CatGCN.utils import pos_preds_attr_distr, tab_printer, graph_reader, field_reader, target_reader, label_reader
 import time
-
-from fairness import Fairness
+from CatGCN.fairness import Fairness
 
 def train_CatGCN(user_edge, user_field, user_gender, user_labels, seed, label, args):
     start_time = time.perf_counter()
