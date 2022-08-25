@@ -98,10 +98,10 @@ def field_reader(path):
     field_index = sp.csr_matrix((np.ones_like(user_index), (user_index, field_index)), shape=(user_count, field_count))
     return field_index
 
-user_field = field_reader(os.path.join(save_path, 'user_field.csv'))
+#user_field = field_reader(os.path.join(save_path, 'user_field.csv'))
 
-print("Shapes of user with field:", user_field.shape)
-print("Number of user with field:", np.count_nonzero(np.sum(user_field, axis=1)))
+#print("Shapes of user with field:", user_field.shape)
+#print("Number of user with field:", np.count_nonzero(np.sum(user_field, axis=1)))
 
 def get_neighs(csr):
     neighs = []
