@@ -1,6 +1,6 @@
 import torch
 import numpy as np
-import neptune.new as neptune
+#import neptune.new as neptune
 
 #from parser import parameter_parser
 from CatGCN.clustering import ClusteringMachine
