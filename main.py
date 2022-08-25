@@ -12,7 +12,9 @@ from alibaba_processing.ali_CatGCN_pre_processing import ali_CatGCN_pre_processi
 from tecent_processing.tecent_RHGN_pre_processing import tec_RHGN_pre_process
 from tecent_processing.tecent_CatGCN_pre_processing import tec_CatGCN_pre_process
 from nba_processing.nba_RHGN_pre_processing import nba_RHGN_pre_process 
+from nba_processing.nba_CatGCN_pre_processing import nba_CatGCN_pre_process
 from pokec_processing.pokec_RHGN_pre_processing import pokec_z_RHGN_pre_process
+from pokec_processing.pokec_CatGCN_pre_processing import pokec_z_CatGCN_pre_process
 from RHGN.ali_main import ali_training_main
 from RHGN.jd_main import tecent_training_main
 from CatGCN.train_main import train_CatGCN
@@ -142,29 +144,37 @@ def FairGNN_pre_processing(data_extension):
 def CatGCN_pre_processing(data_extension):
     # todo do suitable pre-processing for the choosen dataset
     if data_extension in networkx_format_list:
-        df = load_networkx_file(data_extension, 
+        df, df_edge_list = load_networkx_file(data_extension, 
                                 args.model_type,
                                 args.dataset_path, 
                                 args.dataset_name, 
                                 args.dataset_user_id_name)
 
     else:
-        df = load_neo4j_file(args.model_type, 
+        df, df_edge_list = load_neo4j_file(args.model_type, 
                              args.dataset_path, 
                             args.dataset_name)
                     
     
     if args.dataset_name == 'alibaba':
         user_edge, user_field, user_gender, user_labels = ali_CatGCN_pre_processing(df)
+        target = user_gender
     elif args.dataset_name == 'tecent':
-        user_edge, user_field, user_age = tec_CatGCN_pre_process(df)
+        user_edge, user_field, user_gender, user_labels = tec_CatGCN_pre_process(df)
+        target = user_gender
 
     # Todo implment CatGCN processing for NBA dataset
+    elif args.dataset_name == 'nba':
+        user_edge, user_field, user_salary, user_labels = nba_CatGCN_pre_process(df, df_edge_list)
+        target = user_salary
 
     # Todo implment CatGCN processing for Pokec dataset
+    elif args.dataset_name == 'pokec_z':
+        user_edge, user_field, user_work, user_labels = pokec_z_CatGCN_pre_process(df, df_edge_list)
+        target = user_work
 
     # Add model training after data processing
-    train_CatGCN(user_edge, user_field, user_gender, user_labels, args.seed, args.label, args)
+    train_CatGCN(user_edge, user_field, target, user_labels, args.seed, args.label, args)
     
     return print('Training CatGCN is done.')
 

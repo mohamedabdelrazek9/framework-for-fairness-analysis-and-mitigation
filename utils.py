@@ -41,8 +41,15 @@ def load_networkx_file(model_type, data_extension, dataset_name, dataset_path, d
         df_nodes = df_nodes.astype({dataset_user_id_name: int})
 
     # todo if dataset will be used for RHGN or CatGCN then return, else we assume for FairGNN then complete the onehot encoding process
-    if model_type == 'RHGN'  or model_type == 'CatGCN':
+    if model_type == 'RHGN':
         return df_nodes
+
+    elif model_type == 'CatGCN':
+        if dataset_name == 'nba' or dataset_name == 'pokec':
+            df_edge_list = nx.to_pandas_edgelist(data)
+            return df_nodes, df_edge_list
+        else:
+            return df_nodes
 
     else: # FairGNN
         if dataset_name == 'alibaba' or dataset_name == 'tecent':
@@ -128,7 +135,7 @@ def load_neo4j_file(model_type, dataset_path, dataset_name, uneeded_columns, one
 
 ############################################
     #extract edges relationships
-    if dataset_name == 'alibab' or dataset_name == 'tecent':
+    if dataset_name == 'alibaba' or dataset_name == 'tecent':
         return new_nodes_df
     else:
         edges_df = df.loc[(df['type'] == 'relationship')]
@@ -149,7 +156,7 @@ def load_neo4j_file(model_type, dataset_path, dataset_name, uneeded_columns, one
     edges_path = './FairGNN_data_relationship'
     edges_relation.to_csv(r'{}.txt'.format(edges_path), sep='\t', header=False, index=False)
 
-    return new_nodes_df, edges_path
+    return new_nodes_df, edges_relation
 
 
 def remove_column_from_df(column, df):

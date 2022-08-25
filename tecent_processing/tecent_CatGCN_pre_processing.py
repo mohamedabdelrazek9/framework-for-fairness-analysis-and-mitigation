@@ -106,7 +106,7 @@ def tec_CatGCN_pre_process(df):
     user_field = col_map(user_field, 'cid', cid2id)
 
     # Save?
-    save_path = './input_tecent_CatGCN_data/new_data_with_age_split'
+    save_path = './input_tecent_CatGCN_data'
     user_edge.to_csv(os.path.join(save_path, "user_edge.csv"), index=False)
     user_field.to_csv(os.path.join(save_path, "user_field.csv"), index=False)
 
@@ -117,6 +117,7 @@ def tec_CatGCN_pre_process(df):
     user_age = df_label[["uid", "age"]]
     df_label[["uid", "bin_age"]].to_csv(os.path.join(save_path, "user_bin_age.csv"), index=False)
     df_label[["uid", "gender"]].to_csv(os.path.join(save_path, "user_gender.csv"), index=False)
+    user_gender = df_label[["uid", "gender"]]
 
     NUM_FIELD = 10
 
@@ -133,7 +134,7 @@ def tec_CatGCN_pre_process(df):
 
     user_field_new = sample_neighs
 
-    return user_edge, user_field_new, user_age
+    return user_edge, user_field_new, user_gender, df_label
 
 
 def divide_data(df):
