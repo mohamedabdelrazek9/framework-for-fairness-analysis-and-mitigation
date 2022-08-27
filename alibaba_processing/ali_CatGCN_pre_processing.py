@@ -8,7 +8,7 @@ def ali_CatGCN_pre_processing(df):
 
     # load ana clean data
     label, pid_cid, uid_pid = divide_data(df)
-    label.rename(columns={'userid':'uid', 'final_gender_code':'gender','age_level':'age', 'pvalue_level':'buy', 'occupation':'student', 'new_user_class_level ':'city'}, inplace=True)
+    label.rename(columns={'userid':'uid', 'final_gender_code':'gender','age_level':'age', 'pvalue_level':'buy', 'occupation':'student', 'new_user_class_level':'city'}, inplace=True)
     label.dropna(inplace=True)
     label = apply_bin_age(label)
     label = apply_bin_buy(label)
