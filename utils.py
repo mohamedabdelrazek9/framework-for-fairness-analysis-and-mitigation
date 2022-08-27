@@ -26,6 +26,8 @@ def load_networkx_file(model_type, data_extension, dataset_name, dataset_path, d
         data = nx.read_pajek(dataset_path)
         
     # load graph nodes
+    print('Data extension', data_extension)
+    print('Data', data)
     df_nodes = pd.DataFrame.from_dict(dict(data.nodes(data=True)), orient='index')
     
     # check if user_id column is not assigned as the index
