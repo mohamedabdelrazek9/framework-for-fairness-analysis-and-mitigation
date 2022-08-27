@@ -105,7 +105,7 @@ def ali_CatGCN_pre_processing(df):
 
     # re_process
     NUM_FIELD = 10
-    np.random_seed(42)
+    #np.random_seed(42)
 
     # load user_field.csv
     #user_field = field_reader(os.path.join(save_path, 'user_field.csv'))
