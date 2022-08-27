@@ -8,9 +8,12 @@ import numpy as np
 import networkx as nx
 from torch_geometric.nn import GCNConv, GATConv, SGConv, APPNP
 
-from gnn_layers import BatchAGC, BatchFiGNN, BatchGAT
-from pna_layer import PNAConv
-from gcnii_layer import GCNIIConv
+#from gnn_layers import BatchAGC, BatchFiGNN, BatchGAT
+from CatGCN.gnn_layers import BatchAGC, BatchFiGNN, BatchGAT
+#from pna_layer import PNAConv
+from CatGCN.pna_layer import PNAConv
+#from gcnii_layer import GCNIIConv
+from CatGCN.gcnii_layer import GCNIIConv
 
 class StackedGNN(nn.Module):
     """
