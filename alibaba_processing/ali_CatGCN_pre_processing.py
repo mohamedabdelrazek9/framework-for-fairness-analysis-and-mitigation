@@ -90,6 +90,8 @@ def ali_CatGCN_pre_processing(df):
     user_field.to_csv(os.path.join(save_path, 'user_field.csv'), index=False)
     user_label.to_csv(os.path.join(save_path, 'user_labels.csv'), index=False)
 
+    print('user_label columns', user_label.columns.tolist())
+
     user_label[['uid','buy']].to_csv(os.path.join(save_path, 'user_buy.csv'), index=False)
     # create the user_buy variable for the return of the function 
     user_buy = user_label[['uid','buy']]
