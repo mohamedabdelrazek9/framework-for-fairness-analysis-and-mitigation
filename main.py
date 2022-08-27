@@ -144,10 +144,10 @@ def FairGNN_pre_processing(data_extension):
 def CatGCN_pre_processing(data_extension):
     # todo do suitable pre-processing for the choosen dataset
     if data_extension in networkx_format_list:
-        df, df_edge_list = load_networkx_file(data_extension, 
-                                args.model_type,
-                                args.dataset_path, 
-                                args.dataset_name, 
+        df, df_edge_list = load_networkx_file(args.model_type, 
+                                data_extension,
+                                args.dataset_name,
+                                args.dataset_path,  
                                 args.dataset_user_id_name,
                                 onehot_bin_columns=None,
                                 onehot_cat_columns=None)
