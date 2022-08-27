@@ -50,8 +50,9 @@ def load_networkx_file(model_type, data_extension, dataset_name, dataset_path, d
         if dataset_name == 'nba' or dataset_name == 'pokec':
             df_edge_list = nx.to_pandas_edgelist(data)
             return df_nodes, df_edge_list
-        else:
-            return df_nodes
+        else: ## Data is either Alibaba or tecent and they will get their edges later on
+            df_edge_list = None
+            return df_nodes, df_edge_list
 
     else: # FairGNN
         if dataset_name == 'alibaba' or dataset_name == 'tecent':
