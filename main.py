@@ -148,7 +148,9 @@ def CatGCN_pre_processing(data_extension):
                                 args.model_type,
                                 args.dataset_path, 
                                 args.dataset_name, 
-                                args.dataset_user_id_name)
+                                args.dataset_user_id_name,
+                                onehot_bin_columns=None,
+                                onehot_cat_columns=None)
 
     else:
         df, df_edge_list = load_neo4j_file(args.model_type, 
