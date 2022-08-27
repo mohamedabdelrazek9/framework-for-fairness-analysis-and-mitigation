@@ -128,7 +128,7 @@ def divide_data(df):
     # divide data into 3 
     label = df[['userid', 'final_gender_code', 'age_level', 'pvalue_level', 'occupation', 'new_user_class_level']].copy()
     pid_cid = df[['adgroup_id', 'cate_id']].copy()
-    uid_pid = df[['user', 'adgroup_id', 'clk']].copy()
+    uid_pid = df[['userid', 'adgroup_id', 'clk']].copy()
 
     return label, pid_cid, uid_pid
 
