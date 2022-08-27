@@ -17,7 +17,7 @@ def ali_CatGCN_pre_processing(df):
     pid_cid.rename(columns={'adgroup_id':'pid','cate_id':'cid'}, inplace=True)
 
     #uid_pid
-    uid_pid.rename(columns={'user':'uid','adgroup_id':'pid'}, inplace=True)
+    uid_pid.rename(columns={'userid':'uid','adgroup_id':'pid'}, inplace=True)
     uid_pid = uid_pid[uid_pid['clk']>0]
 
     uid_pid.drop('clk', axis=1, inplace=True)
