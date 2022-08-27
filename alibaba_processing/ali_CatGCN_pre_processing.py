@@ -85,7 +85,7 @@ def ali_CatGCN_pre_processing(df):
     user_field = col_map(user_field, 'cid', cid2id)
 
     # save ?
-    save_path = './input_ali_CatGCN_data'
+    save_path = './'
     user_edge.to_csv(os.path.join(save_path, 'user_edge.csv'), index=False)
     user_field.to_csv(os.path.join(save_path, 'user_field.csv'), index=False)
     user_label.to_csv(os.path.join(save_path, 'user_labels.csv'), index=False)
