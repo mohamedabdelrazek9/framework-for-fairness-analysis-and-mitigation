@@ -257,26 +257,26 @@ def RHGN_pre_processing(data_extension):
 
 if args.type == 0:
     fair_pre_processing = FairGNN_pre_processing(data_extension)
-    cat_pre_processing = CatGCN_pre_processing()
+    cat_pre_processing = CatGCN_pre_processing(data_extension)
     rhgn_pre_processing = RHGN_pre_processing(data_extension)
 
 elif args.type == 1:
     if args.model_type == 'FairGNN':
         fair_pre_processing = FairGNN_pre_processing(data_extension)
     if args.model_type == 'CatGCN':
-        cat_pre_processing = CatGCN_pre_processing()
+        cat_pre_processing = CatGCN_pre_processing(data_extension)
     if args.model_type == 'RHGN':
         rhgn_pre_processing = RHGN_pre_processing(data_extension)
 
 elif args.type == 2:
      if args.model_type == 'FairGNN' and args.model_type == 'CatGCN':
         fair_pre_processing = FairGNN_pre_processing(data_extension)
-        cat_pre_processing = CatGCN_pre_processing()
+        cat_pre_processing = CatGCN_pre_processing(data_extension)
 
      if args.model_type == 'FairGNN' and args.model_type == 'RHGN':
         fair_pre_processing = FairGNN_pre_processing(data_extension)
         rhgn_pre_processing = RHGN_pre_processing(data_extension)
 
      if args.model_type == 'CatGCN' and args.model_type == 'RHGN':
-        cat_pre_processing = CatGCN_pre_processing()
+        cat_pre_processing = CatGCN_pre_processing(data_extension)
         rhgn_pre_processing = RHGN_pre_processing(data_extension)
