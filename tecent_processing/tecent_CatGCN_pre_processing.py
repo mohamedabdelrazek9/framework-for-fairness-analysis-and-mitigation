@@ -106,15 +106,12 @@ def tec_CatGCN_pre_process(df):
     user_field = col_map(user_field, 'cid', cid2id)
 
     # Save?
-    save_path = './input_tecent_CatGCN_data'
+    save_path = './'
     user_edge.to_csv(os.path.join(save_path, "user_edge.csv"), index=False)
     user_field.to_csv(os.path.join(save_path, "user_field.csv"), index=False)
-
     df_label.to_csv(os.path.join(save_path, "user_labels.csv"), index=False)
 
     df_label[["uid", "age"]].to_csv(os.path.join(save_path, "user_age.csv"), index=False)
-    # create the user_age variable for the return of the function 
-    user_age = df_label[["uid", "age"]]
     df_label[["uid", "bin_age"]].to_csv(os.path.join(save_path, "user_bin_age.csv"), index=False)
     df_label[["uid", "gender"]].to_csv(os.path.join(save_path, "user_gender.csv"), index=False)
     user_gender = df_label[["uid", "gender"]]
@@ -134,7 +131,12 @@ def tec_CatGCN_pre_process(df):
 
     user_field_new = sample_neighs
 
-    return user_edge, user_field_new, user_gender, df_label
+    user_edge_path = './user_edge.csv'
+    user_field_new_path = './user_field.npy'
+    user_gender_path = './user_gender.csv'
+    user_label_path = './user_labels.csv'
+
+    return user_edge_path, user_field_new_path, user_gender_path, user_label_path
 
 
 def divide_data(df):
