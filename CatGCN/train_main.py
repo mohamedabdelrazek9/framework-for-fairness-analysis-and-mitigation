@@ -61,7 +61,7 @@ def train_CatGCN(user_edge, user_field, user_gender, user_labels, seed, label, a
 
     ## Compute fairness metrics
     print("Fairness metrics on sensitive attributes '{}':".format(args.sens_attr))
-    fair_obj = Fairness(user_labels, clustering_machine.sg_test_nodes[0], gnn_trainer.targets, gnn_trainer.predictions, args.sens_attr, neptune_run, args.multiclass_pred, args.multiclass_sens)
+    fair_obj = Fairness(user_labels, clustering_machine.sg_test_nodes[0], gnn_trainer.targets, gnn_trainer.predictions, args.sens_attr, args.multiclass_pred, args.multiclass_sens) #todo add neptune_run later
     fair_obj.statistical_parity()
     fair_obj.equal_opportunity()
     fair_obj.overall_accuracy_equality()
