@@ -85,7 +85,7 @@ parser.add_argument("--balance-ratio", type = float, default = 0.5, help = "Bala
 parser.add_argument('--weight-balanced', nargs = "?", default='True', help="Adjust weights inversely proportional to class frequencies.")
 parser.add_argument("--clustering-method", nargs = "?", default = "none", help = "Clustering method for graph decomposition, use 'metis', 'random', or 'none'.")
 parser.add_argument("--train-ratio", type = float, default = 0.8, help = "Train data ratio. Default is 0.8.")
-parser.add_argument("--patience", type = int, default = 10, help = "Number of training patience. Default is 10.")
+#parser.add_argument("--patience", type = int, default = 10, help = "Number of training patience. Default is 10.")
 parser.add_argument('--weight-decay', type=float, default=1e-5, help='Weight decay (L2 loss on parameters).')
 parser.add_argument("--cluster-number", type = int, default = 100, help = "Number of clusters extracted. Default is 100.")
 parser.add_argument("--field-dim", type = int, default = 64, help = "Number of field dims. Default is 64.")
