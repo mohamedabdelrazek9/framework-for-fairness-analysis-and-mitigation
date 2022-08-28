@@ -37,7 +37,7 @@ def pokec_z_CatGCN_pre_process(df, df_edge_list):
     user_label[['user_id','spoken_languages_indicator']].to_csv(os.path.join(save_path, 'user_spoken_languages_indicator.csv'), index=False)
 
     NUM_FIELD = 10
-    np.random_seed(42)
+    #np.random_seed(42)
 
     neighs = get_neighs(user_field)
 

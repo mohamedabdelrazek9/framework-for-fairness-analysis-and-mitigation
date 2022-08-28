@@ -39,7 +39,7 @@ def nba_CatGCN_pre_process(df, df_edge_list):
     user_label[['userid','player_weight']].to_csv(os.path.join(save_path, 'user_player_weight.csv'), index=False)
 
     NUM_FIELD = 10
-    np.random_seed(42)
+    #np.random_seed(42)
 
     neighs = get_neighs(user_field)
 
