@@ -122,8 +122,13 @@ def ali_CatGCN_pre_processing(df):
     np.save(os.path.join(save_path, 'user_field.npy'), sample_neighs)
 
     user_field_new = sample_neighs
+
+    user_edge_path = './user_edge.csv'
+    user_field_new_path = './user_field.npy'
+    user_gender_path = './user_gender.csv'
+    user_label_path = './user_label.csv'
     
-    return user_edge, user_field_new, user_gender, user_label
+    return user_edge_path, user_field_new_path, user_gender_path, user_label_path
 
 
 def divide_data(df):
