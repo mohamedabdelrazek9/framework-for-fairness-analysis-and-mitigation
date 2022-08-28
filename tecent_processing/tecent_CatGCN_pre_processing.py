@@ -129,6 +129,8 @@ def tec_CatGCN_pre_process(df):
         sample_neighs.append(list(sample_neigh(neighs[i], NUM_FIELD)))
     sample_neighs = np.array(sample_neighs)
 
+    np.save(os.path.join(save_path, 'user_field.npy'), sample_neighs)
+
     user_field_new = sample_neighs
 
     user_edge_path = './user_edge.csv'
