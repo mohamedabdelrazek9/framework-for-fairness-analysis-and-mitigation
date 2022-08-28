@@ -71,7 +71,7 @@ parser.add_argument('--multiclass-sens', type=bool, default=False)
 #####################
 
 # for CatGCN
-parser.add_argument('diag-probe', type = float,default = 1., help = "Diag probe coefficient. Default is 1.0.")
+parser.add_argument('--diag-probe', type = float,default = 1., help = "Diag probe coefficient. Default is 1.0.")
 parser.add_argument('--graph-refining', nargs = "?", default='agc', help="Optimize the field feature, use 'agc', 'fignn', or 'none'.")
 parser.add_argument('--aggr-pooling', nargs = "?", default='mean', help="Aggregate the field feature. Default is 'mean'.")
 parser.add_argument("--grn-units",type=str, default="64", help="Hidden units for global interaction modeling, splitted with comma, maybe none.")
