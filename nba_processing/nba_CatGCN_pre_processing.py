@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import os
+import scipy.sparse as sp
 
 
 def nba_CatGCN_pre_process(df, df_edge_list):
