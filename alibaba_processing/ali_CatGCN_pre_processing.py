@@ -126,7 +126,7 @@ def ali_CatGCN_pre_processing(df):
     user_edge_path = './user_edge.csv'
     user_field_new_path = './user_field.npy'
     user_gender_path = './user_gender.csv'
-    user_label_path = './user_label.csv'
+    user_label_path = './user_labels.csv'
     
     return user_edge_path, user_field_new_path, user_gender_path, user_label_path
 
