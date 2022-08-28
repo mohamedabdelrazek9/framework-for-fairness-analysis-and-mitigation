@@ -23,7 +23,7 @@ def nba_CatGCN_pre_process(df, df_edge_list):
     user_label = label_map(user_label, user_label.columns[1:])
 
     # save_path = "./input_ali_data"
-    save_path = "./input_nba_CatGCN/data"
+    save_path = "./"
 
     df_edge_list.to_csv(os.path.join(save_path, 'user_edge.csv'), index=False)
     user_field.to_csv(os.path.join(save_path, 'user_field.csv'), index=False)
@@ -52,7 +52,12 @@ def nba_CatGCN_pre_process(df, df_edge_list):
 
     user_field_new = sample_neighs
 
-    return df_edge_list, user_field_new, user_salary, user_label
+    user_edge_path = './user_edge.csv'
+    user_field_new_path = './user_field.npy'
+    user_salary_path = './user_salary.csv'
+    user_label_path = './user_labels.csv'
+
+    return user_edge_path, user_field_new_path, user_salary_path, user_label_path
 
 def get_count(tp, id):
     playcount_groupbyid = tp[[id]].groupby(id, as_index=True)
