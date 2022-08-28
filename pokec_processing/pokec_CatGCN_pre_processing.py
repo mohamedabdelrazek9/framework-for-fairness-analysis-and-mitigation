@@ -6,6 +6,7 @@ def pokec_z_CatGCN_pre_process(df, df_edge_list):
 
     uid_age = df[['user_id', 'AGE']].copy()
     uid_age.dropna(inplace=True)
+    uid_age = df[['user_id', 'AGE']].copy()
 
     #create uid2id
     uid2id = {num: i for i, num in enumerate(df['user_id'])}
@@ -43,7 +44,7 @@ def pokec_z_CatGCN_pre_process(df, df_edge_list):
     user_field = field_reader(os.path.join(save_path, 'user_field.csv'))
     print("Shapes of user with field:", user_field.shape)
     print("Number of user with field:", np.count_nonzero(np.sum(user_field, axis=1)))
-    
+
     neighs = get_neighs(user_field)
 
     sample_neighs = []

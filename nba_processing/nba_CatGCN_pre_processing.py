@@ -21,7 +21,7 @@ def nba_CatGCN_pre_process(df, df_edge_list):
     user_field = col_map(user_field, 'AGE', age2id)
 
     #create user_label
-    user_label = df[df['userid'].isin(uid_age2['AGE'])]
+    user_label = df[df['userid'].isin(uid_age2['userid'])]
     user_label = col_map(user_label, 'userid', uid2id)
     user_label = label_map(user_label, user_label.columns[1:])
     print('User label size', user_label.size)
