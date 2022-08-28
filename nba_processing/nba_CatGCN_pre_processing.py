@@ -101,8 +101,8 @@ def field_reader(path):
     :return field: csr matrix of field.
     """
     user_field = pd.read_csv(path)
-    user_index = user_field["uid"].values.tolist()
-    field_index = user_field["cid"].values.tolist()
+    user_index = user_field["userid"].values.tolist()
+    field_index = user_field["AGE"].values.tolist()
     user_count = max(user_index)+1
     field_count = max(field_index)+1
     field_index = sp.csr_matrix((np.ones_like(user_index), (user_index, field_index)), shape=(user_count, field_count))
