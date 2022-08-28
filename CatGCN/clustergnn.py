@@ -115,7 +115,7 @@ class ClusterGNNTrainer(object):
         bad_counter = 0
         best_loss = np.inf
         best_epoch = 0
-        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.args.learning_rate, weight_decay=self.args.weight_decay)
+        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.args.lr, weight_decay=self.args.weight_decay)
         for epoch in range(1, self.args.epochs+1):
             epoch_start_time = time.time()
             np.random.shuffle(self.clustering_machine.clusters)
