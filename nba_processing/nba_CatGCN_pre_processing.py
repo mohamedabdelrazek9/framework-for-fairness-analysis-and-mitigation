@@ -24,7 +24,7 @@ def nba_CatGCN_pre_process(df, df_edge_list):
     user_label = df[df['userid'].isin(uid_age2['AGE'])]
     user_label = col_map(user_label, 'userid', uid2id)
     user_label = label_map(user_label, user_label.columns[1:])
-
+    print('User label size', user_label.size)
     # save_path = "./input_ali_data"
     save_path = "./"
 
@@ -34,6 +34,7 @@ def nba_CatGCN_pre_process(df, df_edge_list):
 
     user_label[['userid','SALARY']].to_csv(os.path.join(save_path, 'user_salary.csv'), index=False)
     user_salary = user_label[['userid', 'SALARY']]
+    print('User salary size', user_salary.size)
     user_label[['userid','AGE']].to_csv(os.path.join(save_path, 'user_age.csv'), index=False)
     user_label[['userid','MP']].to_csv(os.path.join(save_path, 'user_mp.csv'), index=False)
     user_label[['userid','FG']].to_csv(os.path.join(save_path, 'user_fg.csv'), index=False)
