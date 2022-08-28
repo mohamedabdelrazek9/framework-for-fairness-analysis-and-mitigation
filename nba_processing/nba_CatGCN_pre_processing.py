@@ -9,6 +9,7 @@ def nba_CatGCN_pre_process(df, df_edge_list):
     #for the nba dataset we choose age as the mapping option to the userid
     uid_age = df[['userid', 'AGE']].copy()
     uid_age.dropna(inplace=True)
+    uid_age2 = df[['userid', 'AGE']].copy()
 
     #create uid2id
     uid2id = {num: i for i, num in enumerate(df['userid'])}
@@ -20,7 +21,7 @@ def nba_CatGCN_pre_process(df, df_edge_list):
     user_field = col_map(user_field, 'AGE', age2id)
 
     #create user_label
-    user_label = df[df['userid'].isin(uid_age['AGE'])]
+    user_label = df[df['userid'].isin(uid_age2['AGE'])]
     user_label = col_map(user_label, 'userid', uid2id)
     user_label = label_map(user_label, user_label.columns[1:])
 
