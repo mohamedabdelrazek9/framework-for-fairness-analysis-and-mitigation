@@ -26,6 +26,7 @@ def train_CatGCN(user_edge, user_field, user_gender, user_labels, seed, label, a
     field_index = field_reader(user_field)
     target = target_reader(user_gender)
     user_labels = label_reader(user_labels)
+    print('args', args)
 
     '''
     # Instantiate Neptune client and log arguments
