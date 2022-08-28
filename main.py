@@ -82,6 +82,8 @@ parser.add_argument("--gnn-hops", type = int, default = 1, help = "Hops number o
 parser.add_argument("--gnn-units",type=str, default="64", help="Hidden units for baseline models, splitted with comma, maybe none.")
 parser.add_argument('--aggr-style', nargs = "?", default='sum', help="Aggregate the user feature, use 'sum' or 'none'.")
 parser.add_argument("--balance-ratio", type = float, default = 0.5, help = "Balance ratio parameter when aggr_style is 'sum'. Default is 0.5.")
+parser.add_argument('--weight-balanced', nargs = "?", default='True', help="Adjust weights inversely proportional to class frequencies.")
+parser.add_argument("--clustering-method", nargs = "?", default = "none", help = "Clustering method for graph decomposition, use 'metis', 'random', or 'none'.")
 
 
 
