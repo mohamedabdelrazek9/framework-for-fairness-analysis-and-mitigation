@@ -41,6 +41,11 @@ def nba_CatGCN_pre_process(df, df_edge_list):
     NUM_FIELD = 10
     #np.random_seed(42)
 
+     # load user_field.csv
+    user_field = field_reader(os.path.join(save_path, 'user_field.csv'))
+    print("Shapes of user with field:", user_field.shape)
+    print("Number of user with field:", np.count_nonzero(np.sum(user_field, axis=1)))
+
     neighs = get_neighs(user_field)
 
     sample_neighs = []
