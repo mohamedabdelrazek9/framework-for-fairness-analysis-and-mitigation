@@ -25,7 +25,7 @@ def nba_CatGCN_pre_process(df, df_edge_list):
     user_label = col_map(user_label, 'userid', uid2id)
     user_label = label_map(user_label, user_label.columns[1:])
     print('User label size', user_label.size)
-    
+
     # save_path = "./input_ali_data"
     save_path = "./"
 
@@ -35,7 +35,7 @@ def nba_CatGCN_pre_process(df, df_edge_list):
 
     source = []
     target = []
-    for i in range(df_edge_list.size):
+    for i in range(df_edge_list.shape[0]):
         if any(df.userid == df_edge_list.source[i]) == True and any(df.userid == df_edge_list.target[i]) == True:
             index = df.userid[df.userid == df_edge_list.source[i]].index.tolist()[0]
             source.append(index)

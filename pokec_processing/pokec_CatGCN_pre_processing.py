@@ -29,7 +29,7 @@ def pokec_z_CatGCN_pre_process(df, df_edge_list):
 
     source = []
     target = []
-    for i in range(df_edge_list.size):
+    for i in range(df_edge_list.shape[0]):
         if any(df.userid == df_edge_list.source[i]) == True and any(df.userid == df_edge_list.target[i]) == True:
             index = df.userid[df.userid == df_edge_list.source[i]].index.tolist()[0]
             source.append(index)
