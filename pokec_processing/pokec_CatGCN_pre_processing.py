@@ -53,7 +53,7 @@ def pokec_z_CatGCN_pre_process(df, df_edge_list):
     user_label[['user_id','gender']].to_csv(os.path.join(save_path, 'user_gender.csv'), index=False)
     user_label[['user_id','region']].to_csv(os.path.join(save_path, 'user_region.csv'), index=False)
     user_label[['user_id','AGE']].to_csv(os.path.join(save_path, 'user_age.csv'), index=False)
-    user_label[['user_id','I_am_working_in_field']].to_csv(os.path.join(save_path, 'user_I_am_working_in_field.csv'), index=False)
+    user_label[['user_id','I_am_working_in_field']].to_csv(os.path.join(save_path, 'user_work.csv'), index=False)
     user_work = user_label[['user_id','I_am_working_in_field']]
     user_label[['user_id','spoken_languages_indicator']].to_csv(os.path.join(save_path, 'user_spoken_languages_indicator.csv'), index=False)
 
@@ -76,7 +76,12 @@ def pokec_z_CatGCN_pre_process(df, df_edge_list):
 
     user_field_new = sample_neighs
 
-    return df_edge_list, user_field_new, user_work, user_label
+    user_edge_path = './user_edge.csv'
+    user_field_new_path = './user_field.npy'
+    user_work_path = './user_work.csv'
+    user_label_path = './user_labels.csv'
+
+    return user_edge_path, user_field_new_path, user_work_path, user_label_path
 
 
 def get_count(tp, id):

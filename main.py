@@ -194,8 +194,8 @@ def CatGCN_pre_processing(data_extension):
 
     # Todo implment CatGCN processing for Pokec dataset
     elif args.dataset_name == 'pokec_z':
-        user_edge, user_field, user_work, user_labels = pokec_z_CatGCN_pre_process(df, df_edge_list)
-        target = user_work
+        user_edge_path, user_field_path, user_work_path, user_labels_path = pokec_z_CatGCN_pre_process(df, df_edge_list)
+        target = user_work_path
 
     # Add model training after data processing
     train_CatGCN(user_edge_path, user_field_path, target, user_labels_path, args.seed, args.label, args)
