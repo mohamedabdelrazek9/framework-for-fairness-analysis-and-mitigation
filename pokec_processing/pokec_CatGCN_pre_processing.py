@@ -31,16 +31,17 @@ def pokec_z_CatGCN_pre_process(df, df_edge_list):
     source = []
     target = []
     print('adjusting edge list')
-    for i in range(df_edge_list.shape[0]):
-        print(i)
-        if any(df.user_id == df_edge_list.source[i]) == True and any(df.user_id == df_edge_list.target[i]) == True:
-            index = df.user_id[df.user_id == df_edge_list.source[i]].index.tolist()[0]
-            source.append(index)
-            index2 = df.user_id[df.user_id == df_edge_list.target[i]].index.tolist()[0]
-            target.append(index2)
+    #for i in range(df_edge_list.shape[0]):
+    #    print(i)
+    #    if any(df.user_id == df_edge_list.source[i]) == True and any(df.user_id == df_edge_list.target[i]) == True:
+    #        index = df.user_id[df.user_id == df_edge_list.source[i]].index.tolist()[0]
+    #        source.append(index)
+    #        index2 = df.user_id[df.user_id == df_edge_list.target[i]].index.tolist()[0]
+    #        target.append(index2)
 
-    user_edge_new = pd.DataFrame({'uid': source, 'uid2': target})
+    #user_edge_new = pd.DataFrame({'uid': source, 'uid2': target})
     print('saving edge list')
+    user_edge_new = df_edge_list
     user_edge_new.to_csv(os.path.join(save_path, 'user_edge.csv'), index=False)
     user_field.to_csv(os.path.join(save_path, 'user_field.csv'), index=False)
     user_label.to_csv(os.path.join(save_path, 'user_labels.csv'), index=False)
@@ -49,7 +50,7 @@ def pokec_z_CatGCN_pre_process(df, df_edge_list):
     user_label[['user_id','completion_percentage']].to_csv(os.path.join(save_path, 'user_completion_percentage.csv'), index=False)
     user_label[['user_id','gender']].to_csv(os.path.join(save_path, 'user_gender.csv'), index=False)
     user_label[['user_id','region']].to_csv(os.path.join(save_path, 'user_region.csv'), index=False)
-    user_label[['user_id','age']].to_csv(os.path.join(save_path, 'user_age.csv'), index=False)
+    user_label[['user_id','AGE']].to_csv(os.path.join(save_path, 'user_age.csv'), index=False)
     user_label[['user_id','I_am_working_in_field']].to_csv(os.path.join(save_path, 'user_I_am_working_in_field.csv'), index=False)
     user_work = user_label[['user_id','I_am_working_in_field']]
     user_label[['user_id','spoken_languages_indicator']].to_csv(os.path.join(save_path, 'user_spoken_languages_indicator.csv'), index=False)
