@@ -25,10 +25,26 @@ def nba_CatGCN_pre_process(df, df_edge_list):
     user_label = col_map(user_label, 'userid', uid2id)
     user_label = label_map(user_label, user_label.columns[1:])
     print('User label size', user_label.size)
+    
     # save_path = "./input_ali_data"
     save_path = "./"
 
-    df_edge_list.to_csv(os.path.join(save_path, 'user_edge.csv'), index=False)
+    # process edge list
+    df_edge_list['source'] = df_edge_list['source'].astype(str).astype(np.int64)
+    df_edge_list['target'] = df_edge_list['target'].astype(str).astype(np.int64)
+
+    source = []
+    target = []
+    for i in range(df_edge_list.size):
+        if any(df.userid == df_edge_list.source[i]) == True and any(df.userid == df_edge_list.target[i]) == True:
+            index = df.userid[df.userid == df_edge_list.source[i]].index.tolist()[0]
+            source.append(index)
+            index2 = df.userid[df.userid == df_edge_list.target[i]].index.tolist()[0]
+            target.append(index2)
+
+    user_edge_new = pd.DataFrame({'uid': source, 'uid2': target})
+
+    user_edge_new.to_csv(os.path.join(save_path, 'user_edge.csv'), index=False)
     user_field.to_csv(os.path.join(save_path, 'user_field.csv'), index=False)
     user_label.to_csv(os.path.join(save_path, 'user_labels.csv'), index=False)
 
