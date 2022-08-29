@@ -47,7 +47,7 @@ def load_networkx_file(model_type, data_extension, dataset_name, dataset_path, d
         return df_nodes
 
     elif model_type == 'CatGCN':
-        if dataset_name == 'nba' or dataset_name == 'pokec':
+        if dataset_name == 'nba' or dataset_name == 'pokec_z' or dataset_name == 'pokec_n':
             df_edge_list = nx.to_pandas_edgelist(data)
             return df_nodes, df_edge_list
         else: ## Data is either Alibaba or tecent and they will get their edges later on
