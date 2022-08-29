@@ -15,7 +15,8 @@ def pokec_z_CatGCN_pre_process(df, df_edge_list):
     age2id = {num: i for i, num in enumerate(pd.unique(uid_age['AGE']))}
 
     #create user_field
-    user_field = col_map(uid_age, 'AGE', age2id)
+    user_field = col_map(uid_age, 'user_id', uid2id)
+    user_field = col_map(user_field, 'AGe', age2id)
 
     #create user_label
     user_label = df[df['user_id'].isin(uid_age['user_id'])]
