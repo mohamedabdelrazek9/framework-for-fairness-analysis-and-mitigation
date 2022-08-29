@@ -24,9 +24,9 @@ def pokec_z_CatGCN_pre_process(df, df_edge_list):
     # save_path = "./input_ali_data"
     save_path = "./"
     # process edge list
-    if df_edge_list['source'].dtype != 'int64':
-        df_edge_list['source'] = df_edge_list['source'].astype(str).astype(np.int64)
-        df_edge_list['target'] = df_edge_list['target'].astype(str).astype(np.int64)
+    #if df_edge_list['source'].dtype != 'int64':
+    #    df_edge_list['source'] = df_edge_list['source'].astype(str).astype(np.int64)
+    #    df_edge_list['target'] = df_edge_list['target'].astype(str).astype(np.int64)
 
     source = []
     target = []
