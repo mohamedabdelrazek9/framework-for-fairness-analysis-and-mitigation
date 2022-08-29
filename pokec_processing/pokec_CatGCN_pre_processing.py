@@ -32,6 +32,7 @@ def pokec_z_CatGCN_pre_process(df, df_edge_list):
     target = []
     print('adjusting edge list')
     for i in range(df_edge_list.shape[0]):
+        print(i)
         if any(df.user_id == df_edge_list.source[i]) == True and any(df.user_id == df_edge_list.target[i]) == True:
             index = df.user_id[df.user_id == df_edge_list.source[i]].index.tolist()[0]
             source.append(index)
