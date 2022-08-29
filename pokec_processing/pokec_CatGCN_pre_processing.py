@@ -30,6 +30,7 @@ def pokec_z_CatGCN_pre_process(df, df_edge_list):
 
     source = []
     target = []
+    print('adjusting edge list')
     for i in range(df_edge_list.shape[0]):
         if any(df.user_id == df_edge_list.source[i]) == True and any(df.user_id == df_edge_list.target[i]) == True:
             index = df.user_id[df.user_id == df_edge_list.source[i]].index.tolist()[0]
@@ -38,7 +39,7 @@ def pokec_z_CatGCN_pre_process(df, df_edge_list):
             target.append(index2)
 
     user_edge_new = pd.DataFrame({'uid': source, 'uid2': target})
-
+    print('saving edge list')
     user_edge_new.to_csv(os.path.join(save_path, 'user_edge.csv'), index=False)
     user_field.to_csv(os.path.join(save_path, 'user_field.csv'), index=False)
     user_label.to_csv(os.path.join(save_path, 'user_labels.csv'), index=False)
