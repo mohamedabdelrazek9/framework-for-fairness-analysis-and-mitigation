@@ -90,6 +90,7 @@ class ClusteringMachine(object):
             self.sg_test_nodes = {}
             self.sg_field_index = {}
             for cluster in self.clusters:
+                print('Cluster', cluster)
                 subgraph = self.graph.subgraph([node for node in sorted(self.graph.nodes()) if self.cluster_membership[node] == cluster])
                 self.sg_nodes[cluster] = [node for node in sorted(subgraph.nodes())]
                 self.sg_targets[cluster] = self.target[self.sg_nodes[cluster],:]
