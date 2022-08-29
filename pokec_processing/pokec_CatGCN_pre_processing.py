@@ -76,7 +76,7 @@ def pokec_z_CatGCN_pre_process(df, df_edge_list):
 
     user_field_new = sample_neighs
 
-    user_edge_path = './user_edge.csv'
+    user_edge_path = '../user_edge.csv'
     user_field_new_path = './user_field.npy'
     user_work_path = './user_work.csv'
     user_label_path = './user_labels.csv'
