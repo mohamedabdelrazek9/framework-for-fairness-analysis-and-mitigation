@@ -31,10 +31,10 @@ def pokec_z_CatGCN_pre_process(df, df_edge_list):
     source = []
     target = []
     for i in range(df_edge_list.shape[0]):
-        if any(df.userid == df_edge_list.source[i]) == True and any(df.userid == df_edge_list.target[i]) == True:
-            index = df.userid[df.userid == df_edge_list.source[i]].index.tolist()[0]
+        if any(df.user_id == df_edge_list.source[i]) == True and any(df.user_id == df_edge_list.target[i]) == True:
+            index = df.user_id[df.user_id == df_edge_list.source[i]].index.tolist()[0]
             source.append(index)
-            index2 = df.userid[df.userid == df_edge_list.target[i]].index.tolist()[0]
+            index2 = df.user_id[df.user_id == df_edge_list.target[i]].index.tolist()[0]
             target.append(index2)
 
     user_edge_new = pd.DataFrame({'uid': source, 'uid2': target})
