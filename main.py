@@ -106,14 +106,15 @@ args.cuda = not args.no_cuda and torch.cuda.is_available()
 networkx_format_list = ['.graphml', '.gexf', '.gml', '.leda', '.net']
 data_extension = os.path.splitext(args.dataset_path)[1]
 
-print(args.model_type)
 def FairGNN_pre_processing(data_extension):
     # todo do suitable pre-processing for the choosen dataset
     # check if data is in form of networkx (.graphml) or neo4j
     # Train FairGNN model
+    model_type = args.model_type[args.model_type.index('FairGNN')]
+
     if data_extension in networkx_format_list:
         print('data extension is networkx format', data_extension)
-        df_nodes, edges_path = load_networkx_file(args.model_type,
+        df_nodes, edges_path = load_networkx_file(model_type,
                                                   data_extension, 
                                                   args.dataset_name,
                                                   args.dataset_path,
@@ -133,7 +134,7 @@ def FairGNN_pre_processing(data_extension):
     else:
         print('data is neo4j format')
         # todo pre-process if data is in format neo4j  
-        df_nodes, edges_path = load_neo4j_file(args.model_type,
+        df_nodes, edges_path = load_neo4j_file(model_type,
                                                args.dataset_path, 
                                                args.dataset_name,
                                                args.uneeded_columns, 
@@ -156,9 +157,12 @@ def FairGNN_pre_processing(data_extension):
 
 
 def CatGCN_pre_processing(data_extension):
+
+    model_type = args.model_type[args.model_type.index('CatGCN')]
+
     # todo do suitable pre-processing for the choosen dataset
     if data_extension in networkx_format_list:
-        df, df_edge_list = load_networkx_file(args.model_type, 
+        df, df_edge_list = load_networkx_file(model_type, 
                                 data_extension,
                                 args.dataset_name,
                                 args.dataset_path,  
@@ -167,7 +171,7 @@ def CatGCN_pre_processing(data_extension):
                                 onehot_cat_columns=None)
 
     elif data_extension == '.json':
-        df, df_edge_list = load_neo4j_file(args.model_type, 
+        df, df_edge_list = load_neo4j_file(model_type, 
                              args.dataset_path, 
                             args.dataset_name,
                             args.dataset_user_id_name,
@@ -210,8 +214,10 @@ def CatGCN_pre_processing(data_extension):
 def RHGN_pre_processing(data_extension):
     # todo do suitable pre-processing for the choosen dataset
     
+    model_type = args.model_type[args.model_type.index('RHGN')]
+
     if data_extension in networkx_format_list:
-        df = load_networkx_file(args.model_type,
+        df = load_networkx_file(model_type,
                                 data_extension,
                                 args.dataset_name,
                                 args.dataset_path, 
@@ -220,7 +226,7 @@ def RHGN_pre_processing(data_extension):
                                 onehot_cat_columns=None) #argument may change
         # todo later on: add condition for other datasets
     else:
-        df = load_neo4j_file(args.model_type, 
+        df = load_neo4j_file(model_type, 
                              args.dataset_path, 
                              args.dataset_name)
 
@@ -247,7 +253,7 @@ def RHGN_pre_processing(data_extension):
                             cid2_feature,
                             cid3_feature,
                             cid4_feature,
-                            args.model_type,
+                            model_type,
                             args.seed,
                             args.gpu,
                             args.label,
@@ -266,7 +272,7 @@ def RHGN_pre_processing(data_extension):
                         cid1_feature, 
                         cid2_feature, 
                         cid3_feature,
-                        args.model_type,
+                        model_type,
                         args.seed, 
                         args.gpu, 
                         args.label, 
@@ -289,22 +295,20 @@ if args.type == 0:
     rhgn_pre_processing = RHGN_pre_processing(data_extension)
 
 elif args.type == 1:
-    if args.model_type == 'FairGNN':
-        fair_pre_processing = FairGNN_pre_processing(data_extension)
-    if args.model_type == 'CatGCN':
-        cat_pre_processing = CatGCN_pre_processing(data_extension)
-    if args.model_type == 'RHGN':
-        rhgn_pre_processing = RHGN_pre_processing(data_extension)
+    if 'FairGNN' in args.model_type:
+        FairGNN_pre_processing(data_extension)
+    if 'CatGCN' in args.model_type:
+        CatGCN_pre_processing(data_extension)
+    if 'RHGN' in args.model_type:
+        RHGN_pre_processing(data_extension)
 
 elif args.type == 2:
-     if args.model_type == 'FairGNN' and args.model_type == 'CatGCN':
-        fair_pre_processing = FairGNN_pre_processing(data_extension)
-        cat_pre_processing = CatGCN_pre_processing(data_extension)
-
-     if args.model_type == 'FairGNN' and args.model_type == 'RHGN':
-        fair_pre_processing = FairGNN_pre_processing(data_extension)
-        rhgn_pre_processing = RHGN_pre_processing(data_extension)
-
-     if args.model_type == 'CatGCN' and args.model_type == 'RHGN':
-        cat_pre_processing = CatGCN_pre_processing(data_extension)
-        rhgn_pre_processing = RHGN_pre_processing(data_extension)
+    if 'FairGNN' in args.model_type and 'CatGCN' in args.model_type:
+        FairGNN_pre_processing(data_extension)
+        CatGCN_pre_processing(data_extension)
+    if 'FairGNN' in args.model_type and 'RHGN' in args.model_type:
+        FairGNN_pre_processing(data_extension)
+        RHGN_pre_processing(data_extension)
+    if 'CatGCN' in args.model_type and 'RHGN' in args.model_type:
+        CatGCN_pre_processing(data_extension)
+        RHGN_pre_processing(data_extension)
