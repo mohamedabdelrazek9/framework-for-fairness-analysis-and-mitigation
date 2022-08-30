@@ -297,18 +297,18 @@ if args.type == 0:
 elif args.type == 1:
     if 'FairGNN' in args.model_type:
         FairGNN_pre_processing(data_extension)
-    if 'CatGCN' in args.model_type:
+    elif 'CatGCN' in args.model_type:
         CatGCN_pre_processing(data_extension)
-    if 'RHGN' in args.model_type:
+    elif 'RHGN' in args.model_type:
         RHGN_pre_processing(data_extension)
 
 elif args.type == 2:
     if 'FairGNN' in args.model_type and 'CatGCN' in args.model_type:
         FairGNN_pre_processing(data_extension)
         CatGCN_pre_processing(data_extension)
-    if 'FairGNN' in args.model_type and 'RHGN' in args.model_type:
+    elif 'FairGNN' in args.model_type and 'RHGN' in args.model_type:
         FairGNN_pre_processing(data_extension)
         RHGN_pre_processing(data_extension)
-    if 'CatGCN' in args.model_type and 'RHGN' in args.model_type:
+    elif 'CatGCN' in args.model_type and 'RHGN' in args.model_type:
         CatGCN_pre_processing(data_extension)
         RHGN_pre_processing(data_extension)
