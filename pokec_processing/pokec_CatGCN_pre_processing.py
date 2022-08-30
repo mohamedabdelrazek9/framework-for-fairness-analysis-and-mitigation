@@ -26,24 +26,24 @@ def pokec_z_CatGCN_pre_process(df, df_edge_list):
     # save_path = "./input_ali_data"
     save_path = "./"
     # process edge list
-    #if df_edge_list['source'].dtype != 'int64':
-    #    df_edge_list['source'] = df_edge_list['source'].astype(str).astype(np.int64)
-    #    df_edge_list['target'] = df_edge_list['target'].astype(str).astype(np.int64)
+    if df_edge_list['source'].dtype != 'int64':
+        df_edge_list['source'] = df_edge_list['source'].astype(str).astype(np.int64)
+        df_edge_list['target'] = df_edge_list['target'].astype(str).astype(np.int64)
 
     source = []
     target = []
     print('adjusting edge list')
-    #for i in range(df_edge_list.shape[0]):
-    #    print(i)
-    #    if any(df.user_id == df_edge_list.source[i]) == True and any(df.user_id == df_edge_list.target[i]) == True:
-    #        index = df.user_id[df.user_id == df_edge_list.source[i]].index.tolist()[0]
-    #        source.append(index)
-    #        index2 = df.user_id[df.user_id == df_edge_list.target[i]].index.tolist()[0]
-    #        target.append(index2)
+    for i in range(df_edge_list.shape[0]):
+        print(i)
+        if any(df.user_id == df_edge_list.source[i]) == True and any(df.user_id == df_edge_list.target[i]) == True:
+            index = df.user_id[df.user_id == df_edge_list.source[i]].index.tolist()[0]
+            source.append(index)
+            index2 = df.user_id[df.user_id == df_edge_list.target[i]].index.tolist()[0]
+            target.append(index2)
 
-    #user_edge_new = pd.DataFrame({'uid': source, 'uid2': target})
+    user_edge_new = pd.DataFrame({'uid': source, 'uid2': target})
     print('saving edge list')
-    user_edge_new = df_edge_list
+    #user_edge_new = df_edge_list
     user_edge_new.to_csv(os.path.join(save_path, 'user_edge.csv'), index=False)
     user_field.to_csv(os.path.join(save_path, 'user_field.csv'), index=False)
     user_label.to_csv(os.path.join(save_path, 'user_labels.csv'), index=False)
@@ -76,7 +76,7 @@ def pokec_z_CatGCN_pre_process(df, df_edge_list):
 
     user_field_new = sample_neighs
 
-    user_edge_path = '../user_edge.csv'
+    user_edge_path = './user_edge.csv'
     user_field_new_path = './user_field.npy'
     user_work_path = './user_work.csv'
     user_label_path = './user_labels.csv'
