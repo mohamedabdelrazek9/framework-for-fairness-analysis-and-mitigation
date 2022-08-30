@@ -140,7 +140,7 @@ def FairGNN_pre_processing(data_extension):
                                                args.uneeded_columns, 
                                                args.onehot_bin_columns, 
                                                args.onehot_cat_columns)                 
-
+    
     G = dgl.DGLGraph()
     G.from_scipy_sparse_matrix(adj)
     if args.dataset_name == 'nba':
@@ -289,31 +289,28 @@ def RHGN_pre_processing(data_extension):
     return print('Training RHGN is done.')
 
 
-#if args.type == 0:
-#    fair_pre_processing = FairGNN_pre_processing(data_extension)
-#    cat_pre_processing = CatGCN_pre_processing(data_extension)
-#    rhgn_pre_processing = RHGN_pre_processing(data_extension)
+if args.type == 0:
+    #fair_pre_processing = FairGNN_pre_processing(data_extension)
+    cat_pre_processing = CatGCN_pre_processing(data_extension)
+    rhgn_pre_processing = RHGN_pre_processing(data_extension)
 
 if args.type == 1:
-    if 'FairGNN' in args.model_type:
-        FairGNN_pre_processing(data_extension)
-    elif 'CatGCN' in args.model_type:
-        CatGCN_pre_processing(data_extension)
-    elif 'RHGN' in args.model_type:
-        RHGN_pre_processing(data_extension)
+    #if 'FairGNN' in args.model_type:
+    #    fair_pre_processing = FairGNN_pre_processing(data_extension)
+    if 'CatGCN' in args.model_type:
+        cat_pre_processing = CatGCN_pre_processing(data_extension)
+    if 'RHGN' in args.model_type:
+        rhgn_pre_processing = RHGN_pre_processing(data_extension)
 
 elif args.type == 2:
-    if 'FairGNN' in args.model_type and 'CatGCN' in args.model_type:
-        FairGNN_pre_processing(data_extension)
-        CatGCN_pre_processing(data_extension)
-    elif 'FairGNN' in args.model_type and 'RHGN' in args.model_type:
-        FairGNN_pre_processing(data_extension)
-        RHGN_pre_processing(data_extension)
-    elif 'CatGCN' in args.model_type and 'RHGN' in args.model_type:
-        CatGCN_pre_processing(data_extension)
-        RHGN_pre_processing(data_extension)
+    #if args.model_type == 'FairGNN' and args.model_type == 'CatGCN':
+    #    fair_pre_processing = FairGNN_pre_processing(data_extension)
+    #    cat_pre_processing = CatGCN_pre_processing(data_extension)
 
-else:
-    FairGNN_pre_processing(data_extension)
-    CatGCN_pre_processing(data_extension)
-    RHGN_pre_processing(data_extension)
+    #if args.model_type == 'FairGNN' and args.model_type == 'RHGN':
+    #    fair_pre_processing = FairGNN_pre_processing(data_extension)
+    #    rhgn_pre_processing = RHGN_pre_processing(data_extension)
+
+    if args.model_type == 'CatGCN' and args.model_type == 'RHGN':
+        cat_pre_processing = CatGCN_pre_processing(data_extension)
+        rhgn_pre_processing = RHGN_pre_processing(data_extension)
