@@ -163,13 +163,22 @@ def CatGCN_pre_processing(data_extension):
                                 onehot_bin_columns=None,
                                 onehot_cat_columns=None)
 
-    else:
+    elif data_extension == '.json':
         df, df_edge_list = load_neo4j_file(args.model_type, 
                              args.dataset_path, 
                             args.dataset_name,
                             args.dataset_user_id_name,
                             onehot_bin_columns=None,
                             onehot_cat_columns=None)
+    else:
+        #simple test for pokec
+        df = pd.read_csv(args.dataset_path)
+        #df_edge_list = pd.read_csv('./region_job_relationship.txt', sep=" ", header=None)
+        #df_edge_list = pd.read_csv('./region_job_relationship.txt', delimiter= "\t", header=None)
+        #df_edge_list.rename(columns={0: "source", 1: "target"}, inplace=True)
+        df_edge_list = pd.read_csv('region_job_relationship.txt', delimiter= "\t", header=None)
+
+         
     
     if args.dataset_name == 'alibaba':
         user_edge_path, user_field_path, user_gender_path, user_labels_path = ali_CatGCN_pre_processing(df)
