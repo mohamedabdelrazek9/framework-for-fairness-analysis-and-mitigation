@@ -51,6 +51,7 @@ parser.add_argument('--acc', type=float, default=0.688, help='the selected FairG
 parser.add_argument('--uneeded_columns', nargs="+", help="(OPTIONAL) choose which columns that will not be needed in the dataset and the fairness experiment (e.g. description)")
 parser.add_argument('--onehot_bin_columns', nargs="+", help='(OPTIONAL) Decide which of the columns of your dataset are binary (e.g. False/True) to be later on processed')
 parser.add_argument('--onehot_cat_columns', nargs="+", help='(OPTIONAL) choose which columns in the dataset will be transofrmed as one-hot encoded')
+
 #################
 # for RHGN
 #n_epoch --> epochs
@@ -175,8 +176,9 @@ def CatGCN_pre_processing(data_extension):
         df = pd.read_csv(args.dataset_path)
         #df_edge_list = pd.read_csv('./region_job_relationship.txt', sep=" ", header=None)
         #df_edge_list = pd.read_csv('./region_job_relationship.txt', delimiter= "\t", header=None)
-        df_edge_list = pd.read_csv('./region_job_relationship.txt', delimiter= "\t", header=None)
-        df_edge_list.rename(columns={0: "source", 1: "target"}, inplace=True)
+        #df_edge_list = pd.read_csv('./region_job_relationship.txt', delimiter= "\t", header=None)
+        #df_edge_list.rename(columns={0: "source", 1: "target"}, inplace=True)
+        df_edge_list = pd.read_csv('../user_edge.csv')
 
          
     
