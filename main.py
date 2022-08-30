@@ -176,7 +176,7 @@ def CatGCN_pre_processing(data_extension):
         #df_edge_list = pd.read_csv('./region_job_relationship.txt', sep=" ", header=None)
         #df_edge_list = pd.read_csv('./region_job_relationship.txt', delimiter= "\t", header=None)
         #df_edge_list.rename(columns={0: "source", 1: "target"}, inplace=True)
-        df_edge_list = pd.read_csv('region_job_relationship.txt', delimiter= "\t", header=None)
+        df_edge_list = pd.read_csv('./region_job_relationship.txt', delimiter= "\t", header=None)
 
          
     
