@@ -25,7 +25,7 @@ import pandas as pd
 
 parser = argparse.ArgumentParser()
 # Todo add arguments for the pre-processing
-#parser.add_argument('--type', type=int, default=0, choices=[0, 1, 2], help="choose if you want to run the frameowkr 0 for all models or 1, and 2 models")
+parser.add_argument('--type', type=int, default=0, choices=[0, 1, 2], help="choose if you want to run the frameowkr 0 for all models or 1, and 2 models")
 #parser.add_argument('--model_type', type=str, choices=['FairGNN', 'CatGCN', 'RHGN'], help="only for the case if 1 or 2 models are choosen then we choose from either FairGNN, CatGCN, RHGN")
 parser.add_argument('--model_type', nargs='+', default=[])
 parser.add_argument('--dataset_name', type=str, choices=['pokec_z', 'pokec_n', 'nba', 'alibaba', 'tecent'], help="choose which dataset you want to apply on the models")
@@ -299,18 +299,18 @@ def RHGN_pre_processing(data_extension):
 #    cat_pre_processing = CatGCN_pre_processing(data_extension)
 #    rhgn_pre_processing = RHGN_pre_processing(data_extension)
 
-#if args.type == 1:
-#    if 'FairGNN' in args.model_type:
-#        fair_pre_processing = FairGNN_pre_processing(data_extension)
-#    if 'CatGCN' in args.model_type:
-#        cat_pre_processing = CatGCN_pre_processing(data_extension)
-#    if 'RHGN' in args.model_type:
-#        rhgn_pre_processing = RHGN_pre_processing(data_extension)
+if args.type == 1:
+    if 'FairGNN' in args.model_type:
+        fair_pre_processing = FairGNN_pre_processing(data_extension)
+    if 'CatGCN' in args.model_type:
+        cat_pre_processing = CatGCN_pre_processing(data_extension)
+    if 'RHGN' in args.model_type:
+        rhgn_pre_processing = RHGN_pre_processing(data_extension)
 
-if 'FairGNN' in args.model_type:
-    fair_pre_processing = FairGNN_pre_processing(data_extension)
-    cat_pre_processing = CatGCN_pre_processing(data_extension)
-    rhgn_pre_processing = RHGN_pre_processing(data_extension)
+#if 'FairGNN' in args.model_type:
+#    fair_pre_processing = FairGNN_pre_processing(data_extension)
+#    cat_pre_processing = CatGCN_pre_processing(data_extension)
+#    rhgn_pre_processing = RHGN_pre_processing(data_extension)
 
 # not needed, model can work with only given the names of model
 #elif args.type == 2:
