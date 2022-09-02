@@ -143,7 +143,7 @@ def FairGNN_pre_processing(data_extension):
     
     G = dgl.DGLGraph()
     #G.from_scipy_sparse_matrix(adj)
-    G = dgl.from_scipy(adj)
+    G = dgl.from_scipy(adj, device='cuda:0')
     
     if args.dataset_name == 'nba':
         features = feature_norm(features)
