@@ -142,7 +142,8 @@ def FairGNN_pre_processing(data_extension):
                                                args.onehot_cat_columns)                 
     
     G = dgl.DGLGraph()
-    G.from_scipy_sparse_matrix(adj)
+    #G.from_scipy_sparse_matrix(adj)
+    G.from_scipy(adj)
     if args.dataset_name == 'nba':
         features = feature_norm(features)
 
