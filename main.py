@@ -25,7 +25,7 @@ import pandas as pd
 
 parser = argparse.ArgumentParser()
 # Todo add arguments for the pre-processing
-parser.add_argument('--type', type=int, default=0, choices=[0, 1, 2], help="choose if you want to run the frameowkr 0 for all models or 1, and 2 models")
+#parser.add_argument('--type', type=int, default=0, choices=[0, 1, 2], help="choose if you want to run the frameowkr 0 for all models or 1, and 2 models")
 #parser.add_argument('--model_type', type=str, choices=['FairGNN', 'CatGCN', 'RHGN'], help="only for the case if 1 or 2 models are choosen then we choose from either FairGNN, CatGCN, RHGN")
 parser.add_argument('--model_type', nargs='+', default=[])
 parser.add_argument('--dataset_name', type=str, choices=['pokec_z', 'pokec_n', 'nba', 'alibaba', 'tecent'], help="choose which dataset you want to apply on the models")
@@ -111,9 +111,9 @@ def FairGNN_pre_processing(data_extension):
     # check if data is in form of networkx (.graphml) or neo4j
     # Train FairGNN model
     model_type = args.model_type[args.model_type.index('FairGNN')]
-
+    print('Loading dataset for FairGNN...')
     if data_extension in networkx_format_list:
-        print('data extension is networkx format', data_extension)
+       # print('data extension is networkx format', data_extension)
         df_nodes, edges_path = load_networkx_file(model_type,
                                                   data_extension, 
                                                   args.dataset_name,
@@ -132,7 +132,7 @@ def FairGNN_pre_processing(data_extension):
                                                                                             args.seed,
                                                                                             test_idx=True)
     else:
-        print('data is neo4j format')
+        #print('data is neo4j format')
         # todo pre-process if data is in format neo4j  
         df_nodes, edges_path = load_neo4j_file(model_type,
                                                args.dataset_path, 
@@ -150,6 +150,7 @@ def FairGNN_pre_processing(data_extension):
     if args.sens_attr:
         sens[sens>0]=1
 
+    print('Starting FairGNN training')
     # define Model and optimizer and train
     train_FairGNN(G, features, labels, idx_train, idx_val, idx_test, sens, idx_sens_train, args.dataset_name, args.sens_number, args)
 
@@ -161,6 +162,7 @@ def CatGCN_pre_processing(data_extension):
     model_type = args.model_type[args.model_type.index('CatGCN')]
 
     # todo do suitable pre-processing for the choosen dataset
+    print('Loading dataset for CatGCN...')
     if data_extension in networkx_format_list:
         df, df_edge_list = load_networkx_file(model_type, 
                                 data_extension,
@@ -206,6 +208,7 @@ def CatGCN_pre_processing(data_extension):
         target = user_work_path
 
     # Add model training after data processing
+    print('Starting CatGCN training')
     train_CatGCN(user_edge_path, user_field_path, target, user_labels_path, args.seed, args.label, args)
     
     return print('Training CatGCN is done.')
@@ -216,6 +219,7 @@ def RHGN_pre_processing(data_extension):
     
     model_type = args.model_type[args.model_type.index('RHGN')]
 
+    print('Loading dataset for RHGN...')
     if data_extension in networkx_format_list:
         df = load_networkx_file(model_type,
                                 data_extension,
@@ -247,6 +251,7 @@ def RHGN_pre_processing(data_extension):
         G, cid1_feature, cid2_feature, cid3_feature = pokec_z_RHGN_pre_process(df, args.dataset_user_id_name)
 
     # Add model training after data processing
+    print('Starting RHGN training')
     if args.dataset_name == 'tecent':
         tecent_training_main(G,
                             cid1_feature,
@@ -288,29 +293,35 @@ def RHGN_pre_processing(data_extension):
 
     return print('Training RHGN is done.')
 
+# not needed, model can work with only given the names of model
+#if args.type == 0:
+#    fair_pre_processing = FairGNN_pre_processing(data_extension)
+#    cat_pre_processing = CatGCN_pre_processing(data_extension)
+#    rhgn_pre_processing = RHGN_pre_processing(data_extension)
 
-if args.type == 0:
+#if args.type == 1:
+#    if 'FairGNN' in args.model_type:
+#        fair_pre_processing = FairGNN_pre_processing(data_extension)
+#    if 'CatGCN' in args.model_type:
+#        cat_pre_processing = CatGCN_pre_processing(data_extension)
+#    if 'RHGN' in args.model_type:
+#        rhgn_pre_processing = RHGN_pre_processing(data_extension)
+
+if 'FairGNN' in args.model_type:
     fair_pre_processing = FairGNN_pre_processing(data_extension)
     cat_pre_processing = CatGCN_pre_processing(data_extension)
     rhgn_pre_processing = RHGN_pre_processing(data_extension)
 
-if args.type == 1:
-    if 'FairGNN' in args.model_type:
-        fair_pre_processing = FairGNN_pre_processing(data_extension)
-    if 'CatGCN' in args.model_type:
-        cat_pre_processing = CatGCN_pre_processing(data_extension)
-    if 'RHGN' in args.model_type:
-        rhgn_pre_processing = RHGN_pre_processing(data_extension)
+# not needed, model can work with only given the names of model
+#elif args.type == 2:
+#    if args.model_type == 'FairGNN' and args.model_type == 'CatGCN':
+#        fair_pre_processing = FairGNN_pre_processing(data_extension)
+#        cat_pre_processing = CatGCN_pre_processing(data_extension)
 
-elif args.type == 2:
-    if args.model_type == 'FairGNN' and args.model_type == 'CatGCN':
-        fair_pre_processing = FairGNN_pre_processing(data_extension)
-        cat_pre_processing = CatGCN_pre_processing(data_extension)
+#    if args.model_type == 'FairGNN' and args.model_type == 'RHGN':
+#        fair_pre_processing = FairGNN_pre_processing(data_extension)
+#        rhgn_pre_processing = RHGN_pre_processing(data_extension)
 
-    if args.model_type == 'FairGNN' and args.model_type == 'RHGN':
-        fair_pre_processing = FairGNN_pre_processing(data_extension)
-        rhgn_pre_processing = RHGN_pre_processing(data_extension)
-
-    if 'CatGCN' in args.model_type and 'RHGN' in args.model_type:
-        cat_pre_processing = CatGCN_pre_processing(data_extension)
-        rhgn_pre_processing = RHGN_pre_processing(data_extension)
+#    if 'CatGCN' in args.model_type and 'RHGN' in args.model_type:
+#        cat_pre_processing = CatGCN_pre_processing(data_extension)
+#        rhgn_pre_processing = RHGN_pre_processing(data_extension)

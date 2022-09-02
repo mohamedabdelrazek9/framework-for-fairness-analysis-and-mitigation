@@ -10,11 +10,11 @@ from alibaba_processing.ali_CatGCN_pre_processing import get_count, filter_tripl
 def load_networkx_file(model_type, data_extension, dataset_name, dataset_path, dataset_user_id_name, onehot_bin_columns, onehot_cat_columns):
 
     # load data from graphml to csv
-    print('Loading dataset for FairGNN...')
+    #print('Loading dataset for FairGNN...')
 
-    print(data_extension)
+    #print(data_extension)
+    print('Extracting networkx data format...')
     if data_extension == '.graphml':
-        print('we will extract .graphml format')
         data = nx.read_graphml(dataset_path)
     elif data_extension == '.gexf':
         data = nx.read_gexf(dataset_path)
@@ -26,8 +26,8 @@ def load_networkx_file(model_type, data_extension, dataset_name, dataset_path, d
         data = nx.read_pajek(dataset_path)
         
     # load graph nodes
-    print('Data extension', data_extension)
-    print('Data', data)
+    #print('Data extension', data_extension)
+    #print('Data', data)
     df_nodes = pd.DataFrame.from_dict(dict(data.nodes(data=True)), orient='index')
     
     # check if user_id column is not assigned as the index
@@ -79,8 +79,8 @@ def load_networkx_file(model_type, data_extension, dataset_name, dataset_path, d
 
 def load_neo4j_file(model_type, dataset_path, dataset_name, uneeded_columns, onehot_bin_columns, onehot_cat_columns):
     # todo pre-process node and edge data
-    print('Loading dataset for FairGNN...')
-    
+    #print('Loading dataset for FairGNN...')
+    print('Extracting neo4j data format...')
     df = pd.read_json(dataset_path, lines=True) # may cause error
 
     # todo extract node csv
