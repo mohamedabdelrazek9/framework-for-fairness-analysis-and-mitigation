@@ -142,8 +142,10 @@ def FairGNN_pre_processing(data_extension):
                                                args.onehot_cat_columns)                 
     
     G = dgl.DGLGraph()
+    # test cuda
+    #G.to('cuda:0')
     #G.from_scipy_sparse_matrix(adj)
-    G = dgl.from_scipy(adj, device='cuda:0')
+    G = dgl.from_scipy(adj)
     
     if args.dataset_name == 'nba':
         features = feature_norm(features)
