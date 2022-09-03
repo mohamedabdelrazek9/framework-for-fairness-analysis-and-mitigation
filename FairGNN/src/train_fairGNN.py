@@ -19,6 +19,7 @@ def train_FairGNN(G, features, labels, idx_train, idx_val, idx_test, sens, idx_s
     # comment for now
     #model.estimator.load_state_dict(torch.load("./checkpoint/GCN_sens_{}_ns_{}".format(dataset_name,sens_number), map_location=torch.device('cpu')))
     if args.cuda:
+        print('model parameters to cuda')
         model.cuda()
         features = features.cuda()
         labels = labels.cuda()
