@@ -148,9 +148,10 @@ def FairGNN_pre_processing(data_extension):
     if args.dataset_name == 'nba':
         features = feature_norm(features)
 
-    labels[labels>1]=1
-    if args.sens_attr:
-        sens[sens>0]=1
+    if args.dataset_name == 'nba' or args.dataset_name == 'pokec_z' or args.dataset_name == 'pokec_n':
+        labels[labels>1]=1
+        if args.sens_attr:
+            sens[sens>0]=1
 
     print('Starting FairGNN training')
     # define Model and optimizer and train
