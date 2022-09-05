@@ -255,7 +255,7 @@ def create_edges(df_nodes, dataset_name):
 
         df_item.rename(columns={'adgroup_id':'pid','cate_id':'cid'}, inplace=True)
 
-        df_click.rename(columns={'user':'uid','adgroup_id':'pid'}, inplace=True)
+        df_click.rename(columns={'userid':'uid','adgroup_id':'pid'}, inplace=True)
         df_click = df_click[df_click['clk']>0]
         df_click.drop('clk', axis=1, inplace=True)
         df_click = df_click[df_click['uid'].isin(df_user['uid'])]
