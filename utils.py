@@ -247,7 +247,7 @@ def create_edges(df_nodes, dataset_name):
     if dataset_name == 'alibaba':
         # divide data
         df_user = df_nodes[['userid', 'final_gender_code', 'age_level', 'pvalue_level', 'occupation', 'new_user_class_level']].copy()
-        df_item = df_nodes[['adgroup_id', 'cate_id', 'cate_id', 'campaign_id', 'brand']].copy()
+        df_item = df_nodes[['adgroup_id', 'cate_id']].copy()
         df_click = df_nodes[['userid', 'adgroup_id', 'clk']].copy()
 
         df_user.dropna(inplace=True)
@@ -263,14 +263,14 @@ def create_edges(df_nodes, dataset_name):
 
         df_click.drop_duplicates(inplace=True)
 
-        uid_pid, uid_activity, pid_popularity = filter_triplets(df_click, 'uid', 'pid', min_uc=0, min_sc=0) # min_sc>=2
+        uid_pid, uid_activity, pid_popularity = filter_triplets(df_click, 'uid', 'pid', min_uc=0, min_sc=2) # min_sc>=2
         sparsity = 1. * uid_pid.shape[0] / (uid_activity.shape[0] * pid_popularity.shape[0])
 
         uid_pid_cid = pd.merge(uid_pid, df_item, how='inner', on='pid')
         raw_uid_cid = uid_pid_cid.drop('pid', axis=1, inplace=False)
         raw_uid_cid.drop_duplicates(inplace=True)
 
-        uid_cid, uid_activity, cid_popularity = filter_triplets(raw_uid_cid, 'uid', 'cid', min_uc=0, min_sc=0) # min_sc>=2
+        uid_cid, uid_activity, cid_popularity = filter_triplets(raw_uid_cid, 'uid', 'cid', min_uc=0, min_sc=2) # min_sc>=2
         sparsity = 1. * uid_cid.shape[0] / (uid_activity.shape[0] * cid_popularity.shape[0])
 
         uid_pid = uid_pid[uid_pid['uid'].isin(uid_cid['uid'])]
