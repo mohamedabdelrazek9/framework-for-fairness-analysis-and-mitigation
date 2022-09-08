@@ -222,7 +222,10 @@ def fair_metric(output,idx, labels, sens):
     idx_s1 = sens.cpu().numpy()[idx.cpu().numpy()]==1
 
     # parameters for "overall accuracy equality"
-    true_y = np.asarray(output)
+    #true_y = np.asarray(output)
+    true_y = output.detach().numpy()
+    true_y = np.asarray(true_y)
+    #  Use tensor.detach().numpy()
     y0_s0 = np.bitwise_and(true_y == 0, idx_s0)
     y0_s1 = np.bitwise_and(true_y == 0, idx_s1)
     y1_s0 = np.bitwise_and(true_y == 1, idx_s0)
