@@ -231,17 +231,19 @@ def fair_metric(output,idx, labels, sens):
     y1_s0 = np.bitwise_and(true_y == 1, idx_s0)
     y1_s1 = np.bitwise_and(true_y == 1, idx_s1)
 
-    # "overall accuracy equality"
-    oae_s0 = np.count_nonzero(pred_y[y0_s0] == 0) / sum(y0_s0) + sum(pred_y[y1_s0]) / sum(y1_s0)
-    oae_s1 = np.count_nonzero(pred_y[y0_s1] == 0) / sum(y0_s1) + sum(pred_y[y1_s1]) / sum(y1_s1)
-    oae_diff = oae_s0 - oae_s1 
-
+    
     idx_s0_y1 = np.bitwise_and(idx_s0,val_y==1)
     idx_s1_y1 = np.bitwise_and(idx_s1,val_y==1)
 
     pred_y = (output[idx].squeeze()>0).type_as(labels).cpu().numpy()
     parity = abs(sum(pred_y[idx_s0])/sum(idx_s0)-sum(pred_y[idx_s1])/sum(idx_s1))
     equality = abs(sum(pred_y[idx_s0_y1])/sum(idx_s0_y1)-sum(pred_y[idx_s1_y1])/sum(idx_s1_y1))
+
+
+    # "overall accuracy equality"
+    oae_s0 = np.count_nonzero(pred_y[y0_s0] == 0) / sum(y0_s0) + sum(pred_y[y1_s0]) / sum(y1_s0)
+    oae_s1 = np.count_nonzero(pred_y[y0_s1] == 0) / sum(y0_s1) + sum(pred_y[y1_s1]) / sum(y1_s1)
+    oae_diff = oae_s0 - oae_s1 
 
     return parity, equality, oae_diff 
 
