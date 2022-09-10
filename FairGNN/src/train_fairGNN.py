@@ -52,15 +52,15 @@ def train_FairGNN(G, features, labels, idx_train, idx_val, idx_test, sens, idx_s
 
         acc_sens = accuracy(s[idx_test], sens[idx_test])
         
-        parity_val, equality_val, oae_diff_vall, te_diff_val = fair_metric(output,idx_val, labels, sens)
+        parity_val, equality_val, oae_diff_val = fair_metric(output,idx_val, labels, sens)
 
         acc_test = accuracy(output[idx_test], labels[idx_test])
         roc_test = roc_auc_score(labels[idx_test].cpu().numpy(),output[idx_test].detach().cpu().numpy())
-        parity,equality, oae_diff, te_diff = fair_metric(output,idx_test, labels, sens)
+        parity,equality, oae_diff = fair_metric(output,idx_test, labels, sens)
         if acc_val > args.acc and roc_val > args.roc:
         
-            if best_fair > parity_val + equality_val + oae_diff_vall:
-                best_fair = parity_val + equality_val + oae_diff_vall
+            if best_fair > parity_val + equality_val + oae_diff_val:
+                best_fair = parity_val + equality_val + oae_diff_val
 
                 best_result['acc'] = acc_test.item()
                 best_result['roc'] = roc_test
@@ -79,7 +79,7 @@ def train_FairGNN(G, features, labels, idx_train, idx_val, idx_test, sens, idx_s
                 "roc_val: {:.4f}".format(roc_val),
                 "parity_val: {:.4f}".format(parity_val),
                 "equality: {:.4f}".format(equality_val),
-                "accuracy equality: {:.4f}".format(oae_diff_vall))
+                "accuracy equality: {:.4f}".format(oae_diff_val))
                 #"treatment equality: {:.4f}".format(te_diff_val))
             print("Test:",
                     "accuracy: {:.4f}".format(acc_test.item()),
