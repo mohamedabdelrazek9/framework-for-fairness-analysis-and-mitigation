@@ -224,31 +224,33 @@ def fair_metric(output,idx, labels, sens):
     
     # parameters for "overall accuracy equality"
     #true_y = np.asarray(output)
-    true_y = output.detach().numpy()
-    true_y = np.asarray(true_y)
+    #true_y = output.detach().numpy()
+    #true_y = np.asarray(true_y)
     #  Use tensor.detach().numpy()
     
-    y0_s0 = np.bitwise_and(true_y == 0, idx_s0)
-    y0_s1 = np.bitwise_and(true_y == 0, idx_s1)
-    y1_s0 = np.bitwise_and(true_y == 1, idx_s0)
-    y1_s1 = np.bitwise_and(true_y == 1, idx_s1)
+    #y0_s0 = np.bitwise_and(true_y == 0, idx_s0)
+    #y0_s1 = np.bitwise_and(true_y == 0, idx_s1)
+    #y1_s0 = np.bitwise_and(true_y == 1, idx_s0)
+    #y1_s1 = np.bitwise_and(true_y == 1, idx_s1)
     
 
     idx_s0_y1 = np.bitwise_and(idx_s0,val_y==1)
     idx_s1_y1 = np.bitwise_and(idx_s1,val_y==1)
+    idx_s0_y0 = np.bitwise_and(idx_s0,val_y==0)
+    idx_s1_y0 = np.bitwise_and(idx_s1,val_y==0)
 
     pred_y = (output[idx].squeeze()>0).type_as(labels).cpu().numpy()
     parity = abs(sum(pred_y[idx_s0])/sum(idx_s0)-sum(pred_y[idx_s1])/sum(idx_s1))
     equality = abs(sum(pred_y[idx_s0_y1])/sum(idx_s0_y1)-sum(pred_y[idx_s1_y1])/sum(idx_s1_y1))
 
     # treatment equality
-    te1_s0 = (sum(pred_y[y0_s0]) / sum(y0_s0)) / (np.count_nonzero(pred_y[y1_s0] == 0) / sum(y1_s0))
-    te1_s1 = (sum(pred_y[y0_s1]) / sum(y0_s1)) / (np.count_nonzero(pred_y[y1_s1] == 0) / sum(y1_s1))
+    te1_s0 = (sum(pred_y[idx_s0_y0]) / sum(idx_s0_y0)) / (np.count_nonzero(pred_y[idx_s0_y1] == 0) / sum(idx_s0_y1))
+    te1_s1 = (sum(pred_y[idx_s1_y0]) / sum(idx_s1_y0)) / (np.count_nonzero(pred_y[idx_s1_y1] == 0) / sum(idx_s1_y1))
     te_diff_1 = te1_s0 - te1_s1
     abs_ted_1 = abs(te_diff_1)
 
-    te0_s0 = (np.count_nonzero(pred_y[y1_s0] == 0) / sum(y1_s0)) / (sum(pred_y[y0_s0]) / sum(y0_s0))
-    te0_s1 = (np.count_nonzero(pred_y[y1_s1] == 0) / sum(y1_s1)) / (sum(pred_y[y0_s1]) / sum(y0_s1))
+    te0_s0 = (np.count_nonzero(pred_y[idx_s0_y1] == 0) / sum(idx_s0_y1)) / (sum(pred_y[idx_s0_y0]) / sum(idx_s0_y0))
+    te0_s1 = (np.count_nonzero(pred_y[idx_s1_y1] == 0) / sum(idx_s1_y1)) / (sum(pred_y[idx_s1_y0]) / sum(idx_s1_y0))
     te_diff_0 = te0_s0 -te0_s1
     abs_ted_0 = abs(te_diff_0)
 
