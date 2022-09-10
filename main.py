@@ -121,6 +121,30 @@ def FairGNN_pre_processing(data_extension):
                                                   args.dataset_user_id_name, 
                                                   args.onehot_bin_columns, 
                                                   args.onehot_cat_columns)
+        # this here needs to be moved after the else condition
+        adj, features, labels, idx_train, idx_val, idx_test,sens,idx_sens_train = load_pokec(df_nodes,
+                                                                                            edges_path,
+                                                                                            args.dataset_user_id_name, 
+                                                                                            args.sens_attr, 
+                                                                                            args.predict_attr, 
+                                                                                            args.label_number, 
+                                                                                            args.sens_number,
+                                                                                            args.seed,
+                                                                                            test_idx=True)
+    elif data_extension == '.json':
+        #print('data is neo4j format')
+        # todo pre-process if data is in format neo4j  
+        df_nodes, edges_path = load_neo4j_file(model_type,
+                                               args.dataset_path, 
+                                               args.dataset_name,
+                                               args.uneeded_columns, 
+                                               args.onehot_bin_columns, 
+                                               args.onehot_cat_columns)   
+
+    else: # simple test for pokec
+        df_nodes = pd.read_csv(args.dataset_path)    
+        edges_path = pd.read_csv('../region_job_relationship.txt', delimiter="\t", header=None)
+        edges_path.rename(columns={0: "source", 1: "target"}, inplace=True)  
 
         adj, features, labels, idx_train, idx_val, idx_test,sens,idx_sens_train = load_pokec(df_nodes,
                                                                                             edges_path,
@@ -131,15 +155,6 @@ def FairGNN_pre_processing(data_extension):
                                                                                             args.sens_number,
                                                                                             args.seed,
                                                                                             test_idx=True)
-    else:
-        #print('data is neo4j format')
-        # todo pre-process if data is in format neo4j  
-        df_nodes, edges_path = load_neo4j_file(model_type,
-                                               args.dataset_path, 
-                                               args.dataset_name,
-                                               args.uneeded_columns, 
-                                               args.onehot_bin_columns, 
-                                               args.onehot_cat_columns)                 
     
     G = dgl.DGLGraph()
     #G.from_scipy_sparse_matrix(adj) # not supported
