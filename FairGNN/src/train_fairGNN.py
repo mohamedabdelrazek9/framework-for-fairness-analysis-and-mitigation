@@ -59,8 +59,8 @@ def train_FairGNN(G, features, labels, idx_train, idx_val, idx_test, sens, idx_s
         parity,equality, te_diff = fair_metric(output,idx_test, labels, sens)
         if acc_val > args.acc and roc_val > args.roc:
         
-            if best_fair > parity_val + equality_val :
-                best_fair = parity_val + equality_val
+            if best_fair > parity_val + equality_val + te_diff_val:
+                best_fair = parity_val + equality_val + te_diff_val
 
                 best_result['acc'] = acc_test.item()
                 best_result['roc'] = roc_test
