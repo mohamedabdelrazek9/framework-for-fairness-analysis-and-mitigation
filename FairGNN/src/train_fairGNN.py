@@ -100,7 +100,8 @@ def train_FairGNN(G, features, labels, idx_train, idx_val, idx_test, sens, idx_s
                 "roc: {:.4f}".format(best_result['roc']),
                 "acc_sens: {:.4f}".format(acc_sens),
                 "parity: {:.4f}".format(best_result['parity']),
-                "equality: {:.4f}".format(best_result['equality']))
+                "equality: {:.4f}".format(best_result['equality']),
+                "accuracy equality: {:.4f}".format(best_result['accuracy equality']))
                 #"treatment equality {:.4f}".format(best_result['treatment equality']))
     else:
         print("Please set smaller acc/roc thresholds")
