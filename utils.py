@@ -243,6 +243,7 @@ def fair_metric(output,idx, labels, sens):
     parity = abs(sum(pred_y[idx_s0])/sum(idx_s0)-sum(pred_y[idx_s1])/sum(idx_s1))
     equality = abs(sum(pred_y[idx_s0_y1])/sum(idx_s0_y1)-sum(pred_y[idx_s1_y1])/sum(idx_s1_y1))
 
+    '''
     # treatment equality
     te1_s0 = (sum(pred_y[idx_s0_y0]) / sum(idx_s0_y0)) / (np.count_nonzero(pred_y[idx_s0_y1] == 0) / sum(idx_s0_y1))
     te1_s1 = (sum(pred_y[idx_s1_y0]) / sum(idx_s1_y0)) / (np.count_nonzero(pred_y[idx_s1_y1] == 0) / sum(idx_s1_y1))
@@ -262,13 +263,13 @@ def fair_metric(output,idx, labels, sens):
         te_s0 = te1_s0
         te_s1 = te1_s1
         te_diff = te_diff_1
-
+    '''
     # "overall accuracy equality"
-    #oae_s0 = np.count_nonzero(pred_y[y0_s0] == 0) / sum(y0_s0) + sum(pred_y[y1_s0]) / sum(y1_s0)
-    #oae_s1 = np.count_nonzero(pred_y[y0_s1] == 0) / sum(y0_s1) + sum(pred_y[y1_s1]) / sum(y1_s1)
-    #oae_diff = oae_s0 - oae_s1 
+    oae_s0 = np.count_nonzero(pred_y[idx_s0_y0] == 0) / sum(idx_s0_y0) + sum(pred_y[idx_s0_y1]) / sum(idx_s0_y1)
+    oae_s1 = np.count_nonzero(pred_y[idx_s1_y0] == 0) / sum(idx_s1_y0) + sum(pred_y[idx_s1_y1]) / sum(idx_s1_y1)
+    oae_diff = oae_s0 - oae_s1 
 
-    return parity, equality, te_diff
+    return parity, equality, oae_diff
 
 
 def apply_bin_columns(df, onehot_bin_columns):
