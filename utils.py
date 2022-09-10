@@ -268,7 +268,7 @@ def fair_metric(output,idx, labels, sens):
     #oae_s1 = np.count_nonzero(pred_y[y0_s1] == 0) / sum(y0_s1) + sum(pred_y[y1_s1]) / sum(y1_s1)
     #oae_diff = oae_s0 - oae_s1 
 
-    return parity, equality, te_diff
+    return parity, equality
 
 
 def apply_bin_columns(df, onehot_bin_columns):
