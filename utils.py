@@ -221,17 +221,19 @@ def fair_metric(output,idx, labels, sens):
     idx_s0 = sens.cpu().numpy()[idx.cpu().numpy()]==0
     idx_s1 = sens.cpu().numpy()[idx.cpu().numpy()]==1
 
+    
     # parameters for "overall accuracy equality"
     #true_y = np.asarray(output)
     true_y = output.detach().numpy()
     true_y = np.asarray(true_y)
     #  Use tensor.detach().numpy()
+    
     y0_s0 = np.bitwise_and(true_y == 0, idx_s0)
     y0_s1 = np.bitwise_and(true_y == 0, idx_s1)
     y1_s0 = np.bitwise_and(true_y == 1, idx_s0)
     y1_s1 = np.bitwise_and(true_y == 1, idx_s1)
-
     
+
     idx_s0_y1 = np.bitwise_and(idx_s0,val_y==1)
     idx_s1_y1 = np.bitwise_and(idx_s1,val_y==1)
 
@@ -239,13 +241,32 @@ def fair_metric(output,idx, labels, sens):
     parity = abs(sum(pred_y[idx_s0])/sum(idx_s0)-sum(pred_y[idx_s1])/sum(idx_s1))
     equality = abs(sum(pred_y[idx_s0_y1])/sum(idx_s0_y1)-sum(pred_y[idx_s1_y1])/sum(idx_s1_y1))
 
+    # treatment equality
+    te1_s0 = (sum(pred_y[y0_s0]) / sum(y0_s0)) / (np.count_nonzero(pred_y[y1_s0] == 0) / sum(y1_s0))
+    te1_s1 = (sum(pred_y[y0_s1]) / sum(y0_s1)) / (np.count_nonzero(pred_y[y1_s1] == 0) / sum(y1_s1))
+    te_diff_1 = te1_s0 - te1_s1
+    abs_ted_1 = abs(te_diff_1)
+
+    te0_s0 = (np.count_nonzero(pred_y[y1_s0] == 0) / sum(y1_s0)) / (sum(pred_y[y0_s0]) / sum(y0_s0))
+    te0_s1 = (np.count_nonzero(pred_y[y1_s1] == 0) / sum(y1_s1)) / (sum(pred_y[y0_s1]) / sum(y0_s1))
+    te_diff_0 = te0_s0 -te0_s1
+    abs_ted_0 = abs(te_diff_0)
+
+    if abs_ted_0 < abs_ted_1:
+        te_s0 = te0_s0
+        te_s1 = te0_s1
+        te_diff = te_diff_0
+    else:
+        te_s0 = te1_s0
+        te_s1 = te1_s1
+        te_diff = te_diff_1
 
     # "overall accuracy equality"
-    oae_s0 = np.count_nonzero(pred_y[y0_s0] == 0) / sum(y0_s0) + sum(pred_y[y1_s0]) / sum(y1_s0)
-    oae_s1 = np.count_nonzero(pred_y[y0_s1] == 0) / sum(y0_s1) + sum(pred_y[y1_s1]) / sum(y1_s1)
-    oae_diff = oae_s0 - oae_s1 
+    #oae_s0 = np.count_nonzero(pred_y[y0_s0] == 0) / sum(y0_s0) + sum(pred_y[y1_s0]) / sum(y1_s0)
+    #oae_s1 = np.count_nonzero(pred_y[y0_s1] == 0) / sum(y0_s1) + sum(pred_y[y1_s1]) / sum(y1_s1)
+    #oae_diff = oae_s0 - oae_s1 
 
-    return parity, equality, oae_diff 
+    return parity, equality, te_diff
 
 
 def apply_bin_columns(df, onehot_bin_columns):
