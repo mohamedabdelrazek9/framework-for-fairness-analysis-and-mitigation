@@ -143,8 +143,9 @@ def FairGNN_pre_processing(data_extension):
 
     else: # simple test for pokec
         df_nodes = pd.read_csv(args.dataset_path)    
-        edges_path = pd.read_csv('../region_job_relationship.txt', delimiter="\t", header=None)
-        edges_path.rename(columns={0: "source", 1: "target"}, inplace=True)  
+        #edges_path = pd.read_csv('../region_job_relationship.txt', delimiter="\t", header=None)
+        #edges_path.rename(columns={0: "source", 1: "target"}, inplace=True)  
+        edges_path = '../region_job_relationship'
 
         adj, features, labels, idx_train, idx_val, idx_test,sens,idx_sens_train = load_pokec(df_nodes,
                                                                                             edges_path,
