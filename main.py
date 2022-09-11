@@ -248,11 +248,13 @@ def RHGN_pre_processing(data_extension):
                                 onehot_bin_columns=None,
                                 onehot_cat_columns=None) #argument may change
         # todo later on: add condition for other datasets
-    else:
+    elif data_extension == '.json':
         df = load_neo4j_file(model_type, 
                              args.dataset_path, 
                              args.dataset_name)
 
+    else: # simple test for pokec
+        df = pd.read_csv(args.dataset_path)
     
     if args.dataset_name == 'alibaba':
         #G, cid1_feature, cid2_feature, cid3_feature = ali_RHGN_pre_process(df)
