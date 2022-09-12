@@ -56,6 +56,9 @@ def load_networkx_file(model_type, data_extension, dataset_name, dataset_path, d
 
     else: # FairGNN
         if dataset_name == 'alibaba' or dataset_name == 'tecent':
+            if dataset_name == 'tecent':
+                df_nodes = bin_age_range(df_nodes)
+                df_nodes = df_nodes.drop(columns=["cid1_name", "cid2_name", "cid3_name", "item_name", "seg_name"])
             edges_path = create_edges(df_nodes, dataset_name)
             df_edge_list = edges_path
         # todo add one-hot encoding
@@ -408,6 +411,13 @@ def create_edges(df_nodes, dataset_name):
 
         return user_edge
 
+
+def bin_age_range(df_nodes):
+    age_dic = {'11~15':0, '16~20':0, '21~25':0, '26~30':1, '31~35':1, '36~40':2, '41~45':2, '46~50':3, '51~55':3, '56~60':4, '61~65':4, '66~70':4, '71~':4}
+    df_nodes[["age_range"]] = df_nodes[["age_range"]].applymap(lambda x:age_dic[x])
+    df_nodes.rename(columns={"user_id":"uid", "age_range":"age"}, inplace=True)
+
+    return df_nodes
 
 
 
