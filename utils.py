@@ -417,6 +417,13 @@ def bin_age_range(df_nodes):
     df_nodes[["age_range"]] = df_nodes[["age_range"]].applymap(lambda x:age_dic[x])
     df_nodes.rename(columns={"user_id":"uid", "age_range":"age"}, inplace=True)
 
+    df_nodes["bin_age"] = df_nodes["age"]
+    df_nodes["bin_age"] = df_nodes["bin_age"].replace(1,0)
+    df_nodes["bin_age"] = df_nodes["bin_age"].replace(2,1)
+    df_nodes["bin_age"] = df_nodes["bin_age"].replace(3,1)
+    df_nodes["bin_age"] = df_nodes["bin_age"].replace(4,1)
+
+
     return df_nodes
 
 
