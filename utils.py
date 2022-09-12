@@ -415,7 +415,7 @@ def create_edges(df_nodes, dataset_name):
 def bin_age_range(df_nodes):
     age_dic = {'11~15':0, '16~20':0, '21~25':0, '26~30':1, '31~35':1, '36~40':2, '41~45':2, '46~50':3, '51~55':3, '56~60':4, '61~65':4, '66~70':4, '71~':4}
     df_nodes[["age_range"]] = df_nodes[["age_range"]].applymap(lambda x:age_dic[x])
-    df_nodes.rename(columns={"user_id":"uid", "age_range":"age"}, inplace=True)
+    #df_nodes.rename(columns={"user_id":"uid", "age_range":"age"}, inplace=True)
 
     df_nodes["bin_age"] = df_nodes["age"]
     df_nodes["bin_age"] = df_nodes["bin_age"].replace(1,0)
