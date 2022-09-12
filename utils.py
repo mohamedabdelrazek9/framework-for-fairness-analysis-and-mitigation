@@ -429,12 +429,12 @@ def bin_age_range_tecent(df_nodes):
     return df_nodes
 
 def bin_alibaba(df_nodes):
-    df_nodes["age"] = df_nodes["age"].replace(1,0)
-    df_nodes["age"] = df_nodes["age"].replace(2,0)
-    df_nodes["age"] = df_nodes["age"].replace(3,0)
-    df_nodes["age"] = df_nodes["age"].replace(4,1)
-    df_nodes["age"] = df_nodes["age"].replace(5,1)
-    df_nodes["age"] = df_nodes["age"].replace(6,1)
+    df_nodes["age_level"] = df_nodes["age_level"].replace(1,0)
+    df_nodes["age_level"] = df_nodes["age_level"].replace(2,0)
+    df_nodes["age_level"] = df_nodes["age_level"].replace(3,0)
+    df_nodes["age_level"] = df_nodes["age_level"].replace(4,1)
+    df_nodes["age_level"] = df_nodes["age_level"].replace(5,1)
+    df_nodes["age_level"] = df_nodes["age_level"].replace(6,1)
 
 
     df_nodes['pvalue_level'] = df_nodes['pvalue_level'].replace(3.0, 2.0)
