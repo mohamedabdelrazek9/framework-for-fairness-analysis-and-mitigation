@@ -101,6 +101,10 @@ def load_pokec(df_nodes, edges_path, dataset_user_id_name, sens_attr, predict_at
     label_idx = np.where(labels>=0)[0]
     random.shuffle(label_idx)
 
+    # test
+    print('label idx: ', label_idx)
+    print('label_number: ', label_number)
+
     idx_train = label_idx[:min(int(0.5 * len(label_idx)),label_number)]
     idx_val = label_idx[int(0.5 * len(label_idx)):int(0.75 * len(label_idx))]
     if test_idx:
