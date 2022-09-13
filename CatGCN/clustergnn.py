@@ -23,13 +23,13 @@ class ClusterGNNTrainer(object):
         self.create_model()
 
         # mew part -- input?
-        self.sens_model = GCN(95, 128, 0.5) # number of feat, number of hidden, dropout percentage
-        self.adv_model = nn.Linear(128, 1)
+        #self.sens_model = GCN(95, 128, 0.5) # number of feat, number of hidden, dropout percentage
+        #self.adv_model = nn.Linear(128, 1)
 
         # adversary optimizer
-        self.optimizer_A = torch.optim.Adam(self.adv_model.parameters(), lr = args.lr, weight_decay = args.weight_decay) ## can add weight decay
-        self.criterion = nn.BCEWithLogitsLoss()
-        self.A_loss = 0
+        #self.optimizer_A = torch.optim.Adam(self.adv_model.parameters(), lr = args.lr, weight_decay = args.weight_decay) ## can add weight decay
+        #self.criterion = nn.BCEWithLogitsLoss()
+        #self.A_loss = 0
 
     def create_model(self):
         """
