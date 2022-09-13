@@ -44,6 +44,7 @@ class FairGNN(nn.Module):
         return y,s
     
     def optimize(self,g,x,labels,idx_train,sens,idx_sens_train):
+        # x ==  features
         self.train()
 
         ### update E, G
@@ -62,12 +63,14 @@ class FairGNN(nn.Module):
         # s_score = (s_score > 0.5).float()
         s_score[idx_sens_train]=sens[idx_sens_train].unsqueeze(1).float()
         y_score = torch.sigmoid(y)
+        # Lr
         self.cov =  torch.abs(torch.mean((s_score - torch.mean(s_score)) * (y_score - torch.mean(y_score))))
 
 
         self.cls_loss = self.criterion(y[idx_train],labels[idx_train].unsqueeze(1).float())
         self.adv_loss = self.criterion(s_g,s_score)                
         
+        # calculate G loss
         self.G_loss = self.cls_loss  + self.args.alpha * self.cov - self.args.beta * self.adv_loss
         self.G_loss.backward()
         self.optimizer_G.step()
@@ -76,6 +79,8 @@ class FairGNN(nn.Module):
         self.adv.requires_grad_(True)
         self.optimizer_A.zero_grad()
         s_g = self.adv(h.detach())
+
+        # the Adversary loss --> the goal is to maxmize the loss of the Adversary -- to let it make false prediction
         self.A_loss = self.criterion(s_g,s_score)
         self.A_loss.backward()
         self.optimizer_A.step()

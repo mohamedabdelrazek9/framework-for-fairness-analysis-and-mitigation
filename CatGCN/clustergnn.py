@@ -6,8 +6,10 @@ import time
 import numpy as np
 from sklearn import metrics
 from tqdm import trange, tqdm
+import torch.nn as nn
 
 from CatGCN.layers import StackedGNN
+from FairGNN.src.models.GCN import GCN
 class ClusterGNNTrainer(object):
     """
     Training a huge graph cluster partition strategy.
@@ -19,6 +21,15 @@ class ClusterGNNTrainer(object):
         self.device = torch.device("cuda:{}".format(args.gpu) if torch.cuda.is_available() else "cpu")
         self.class_weight = clustering_machine.class_weight.to(self.device)
         self.create_model()
+
+        # mew part -- input?
+        self.sens_model = GCN(95, 128, 0.5) # number of feat, number of hidden, dropout percentage
+        self.adv_model = nn.Linear(128, 1)
+
+        # adversary optimizer
+        self.optimizer_A = torch.optim.Adam(self.adv_model.parameters(), lr = args.lr, weight_decay = args.weight_decay) ## can add weight decay
+        self.criterion = nn.BCEWithLogitsLoss()
+        self.A_loss = 0
 
     def create_model(self):
         """
@@ -48,7 +59,12 @@ class ClusterGNNTrainer(object):
         field_index = self.clustering_machine.sg_field_index[cluster].to(self.device)
         field_adjs = self.generate_field_adjs(field_index.shape[0]).to(self.device)
         target = self.clustering_machine.sg_targets[cluster].to(self.device).squeeze()
+
         prediction = self.model(edges, field_index, field_adjs)
+
+        # todo add forward pass for estimator and adversary
+
+
         average_loss = F.nll_loss(prediction[train_nodes], target[train_nodes], self.class_weight)
         node_count = train_nodes.shape[0]
         return average_loss, node_count
@@ -116,6 +132,8 @@ class ClusterGNNTrainer(object):
         best_loss = np.inf
         best_epoch = 0
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.args.lr, weight_decay=self.args.weight_decay)
+        # test for epochs
+        print(self.args.epochs)
         for epoch in range(1, self.args.epochs+1):
             epoch_start_time = time.time()
             np.random.shuffle(self.clustering_machine.clusters)
