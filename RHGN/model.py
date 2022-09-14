@@ -5,6 +5,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import dgl.function as fn
 from dgl.nn.functional import edge_softmax
+from FairGNN.src.models.GCN import GCN
 from RHGN.layers import *
 from RHGN.layers import RHGNLayer
 
@@ -50,6 +51,14 @@ class ali_RHGN(nn.Module):
         self.value = nn.Linear(200, n_inp)
         self.skip = nn.Parameter(torch.ones(1))
 
+        self.adv_model = nn.Linear(128, 1)
+        self.sens_model = GCN(95, 128, 0.5)
+
+        self.optimizer_A = torch.optim.Adam(self.adv_model.parameters(), lr=0.1, weight_decay=1e-5)
+        self.criterion = nn.BCEWithLogitsLoss()
+
+        self.A_loss = 0
+
     def forward(self, input_nodes, output_nodes,blocks, out_key,label_key, is_train=True,print_flag=False):
 
         item_cid1=blocks[0].srcnodes['item'].data['cid1'].unsqueeze(1)        #(N,1)
@@ -82,7 +91,7 @@ class ali_RHGN(nn.Module):
         alpha = torch.sigmoid(self.skip)    #(1,)
         temp = v * att_score        #(N,4,n_inp)
         item_feature = alpha*(torch.mean(temp, dim=-2).squeeze(-2))  + (1-alpha)*item_feature   # #(N,200)
-
+        print('item_feature:', item_feature)
         h = {}
         h['item']=F.gelu(self.adapt_ws[self.node_dict['item']](item_feature))
         h['user']=F.gelu(self.adapt_ws[self.node_dict['user']](user_feature))
@@ -92,6 +101,7 @@ class ali_RHGN(nn.Module):
             h = self.gcs[i](blocks[i], h, is_train=is_train,print_flag=print_flag)
 
         h = h[out_key]
+        print('h:', h)
         h=self.out(h)
         labels=blocks[-1].dstnodes[out_key].data[label_key]
 
