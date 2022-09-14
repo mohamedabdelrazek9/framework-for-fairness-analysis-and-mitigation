@@ -52,7 +52,7 @@ class ali_RHGN(nn.Module):
         self.skip = nn.Parameter(torch.ones(1))
 
         self.adv_model = nn.Linear(128, 1)
-        self.sens_model = GCN(95, 128, 0.5)
+        #self.sens_model = GCN(95, 128, 0.5)
 
         self.optimizer_A = torch.optim.Adam(self.adv_model.parameters(), lr=0.1, weight_decay=1e-5)
         self.criterion = nn.BCEWithLogitsLoss()
