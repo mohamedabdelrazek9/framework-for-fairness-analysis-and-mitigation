@@ -111,7 +111,7 @@ class ali_RHGN(nn.Module):
         #print('h:', h)
         self.adv_model.requires_grad_(False)
         #add sens model input
-        s = self.sens_model(inputs)
+        s = self.sens_model(inputs, 200)
         #add adv model input
         s_g = self.adv_model(h)
 
@@ -170,7 +170,7 @@ class ali_RHGN(nn.Module):
         h = h[out_key]
         labels=blocks[-1].dstnodes[out_key].data[label_key]
 
-        s = self.sens_model(inputs)
+        s = self.sens_model(inputs, 200)
         s_g = self.adv_model(h)
         y = self.out(h)
 
