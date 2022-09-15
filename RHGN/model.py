@@ -51,13 +51,20 @@ class ali_RHGN(nn.Module):
         self.value = nn.Linear(200, n_inp)
         self.skip = nn.Parameter(torch.ones(1))
 
+        #self.query_sens = nn.Linear(200, n_inp)
+        #self.key_sens = nn.Linear(200, n_inp)
+        #self.value_sens = nn.Linear(200, n_inp)
+
         self.adv_model = nn.Linear(128, 1)
-        #self.sens_model = GCN(95, 128, 0.5)
+        self.sens_model = GCN(95, 128, 1, 0.5)
 
         self.optimizer_A = torch.optim.Adam(self.adv_model.parameters(), lr=0.1, weight_decay=1e-5)
         self.criterion = nn.BCEWithLogitsLoss()
 
+        self.optimizer_G = torch.optim.Adam(self.parameters())
+
         self.A_loss = 0
+        self.G_loss = 0
 
     def forward(self, input_nodes, output_nodes,blocks, out_key,label_key, is_train=True,print_flag=False):
 
@@ -91,7 +98,7 @@ class ali_RHGN(nn.Module):
         alpha = torch.sigmoid(self.skip)    #(1,)
         temp = v * att_score        #(N,4,n_inp)
         item_feature = alpha*(torch.mean(temp, dim=-2).squeeze(-2))  + (1-alpha)*item_feature   # #(N,200)
-        print('item_feature:', item_feature)
+        #print('item_feature:', item_feature)
         h = {}
         h['item']=F.gelu(self.adapt_ws[self.node_dict['item']](item_feature))
         h['user']=F.gelu(self.adapt_ws[self.node_dict['user']](user_feature))
@@ -101,13 +108,94 @@ class ali_RHGN(nn.Module):
             h = self.gcs[i](blocks[i], h, is_train=is_train,print_flag=print_flag)
 
         h = h[out_key]
-        print('h:', h)
+        #print('h:', h)
+        self.adv_model.requires_grad_(False)
+        #add sens model input
+        s = self.sens_model(inputs)
+        #add adv model input
+        s_g = self.adv_model(h)
+
         h=self.out(h)
         labels=blocks[-1].dstnodes[out_key].data[label_key]
 
         # h=F.log_softmax(h, dim=1)
+        # return will be h, labels, and estimator output
+        return h, labels, s
 
-        return h,labels
+    def optimize(self, input_nodes, output_nodes, blocks, idx_train, sens, idx_sens_train, out_key, label_key, is_train=True, print_flag=False):
+        self.train()
+
+        self.adv_model.requires_grad_(False)
+        self.optimizer_G.zero_grad()
+
+        item_cid1=blocks[0].srcnodes['item'].data['cid1'].unsqueeze(1)        #(N,1)
+        cid1_feature = self.cid1_feature(item_cid1)     #       #(N,1,200)
+	
+
+        item_cid2=blocks[0].srcnodes['item'].data['cid2'].unsqueeze(1)        #(N,1)
+        cid2_feature = self.cid2_feature(item_cid2)     #       #(N,1,200)
+
+        item_cid3=blocks[0].srcnodes['item'].data['cid3'].unsqueeze(1)        #(N,1)
+        cid3_feature = self.cid3_feature(item_cid3)     #       #(N,1,200)
+ 
+        
+        cid2_feature=cid1_feature
+        cid3_feature=cid1_feature
+         
+        item_feature = blocks[0].srcnodes['item'].data['inp']
+        user_feature = blocks[0].srcnodes['user'].data['inp']
+        # brand_feature = blocks[0].srcnodes['brand'].data['inp']
+
+        inputs=torch.cat((cid1_feature,cid2_feature,cid3_feature),1)        #(N,4,200)
+        k = self.key(inputs) #(N,4,n_inp)
+        v = self.value(inputs) #(N,4,n_inp)
+        q = self.query(item_feature.unsqueeze(-2)) #(N,1,n_inp)
+
+        att_score = torch.einsum("bij,bjk->bik", k, q.transpose(1,2)) / math.sqrt(200) #(N,4,1)
+        att_score = torch.softmax(att_score, axis=1) # (N,4,1)
+
+        
+        alpha = torch.sigmoid(self.skip)    #(1,)
+        temp = v * att_score        #(N,4,n_inp)
+        item_feature = alpha*(torch.mean(temp, dim=-2).squeeze(-2))  + (1-alpha)*item_feature   # #(N,200)
+        #print('item_feature:', item_feature)
+        h = {}
+        h['item']=F.gelu(self.adapt_ws[self.node_dict['item']](item_feature))
+        h['user']=F.gelu(self.adapt_ws[self.node_dict['user']](user_feature))
+        # h['brand']=F.gelu(self.adapt_ws[self.node_dict['brand']](brand_feature))
+
+        for i in range(self.n_layers):
+            h = self.gcs[i](blocks[i], h, is_train=is_train,print_flag=print_flag)
+
+        h = h[out_key]
+        labels=blocks[-1].dstnodes[out_key].data[label_key]
+
+        s = self.sens_model(inputs)
+        s_g = self.adv_model(h)
+        y = self.out(h)
+
+        s_score = torch.sigmoid(s.detach())
+        s_score[idx_sens_train] = sens[idx_sens_train].unsqueeze(1).float()
+        y_score = torch.sigmoid(y)
+
+        self.cov = torch.abs(torch.mean((s_score - torch.mean(s_score)) * (y_score - torch.mean(y_score))))
+
+        self.cls_loss = self.criterion(h[idx_train], labels[idx_train].unsqueeze(1).float())
+        self.adv_loss = self.criterion(s_g, s_score)
+
+        self.G_loss = self.cls_loss + 100 * self.cov - 1 * self.adv_loss
+        self.G_loss.backward()
+        self.optimizer_G.step()
+
+        self.adv_model.requires_grad_(True)
+        self.optimizer_A.zero_grad()
+        s_g = self.adv_model(h.detach())
+
+        self.A_loss = self.criterion(s_g, s_score)
+        self.A_loss.backward()
+        self.optimizer_A.step()
+
+        
 
 
 class jd_RHGN(nn.Module):

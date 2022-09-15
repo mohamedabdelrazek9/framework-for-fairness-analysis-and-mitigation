@@ -66,7 +66,7 @@ def get_n_params(model):
     return pp
 
 
-def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, test_dataloader, epochs, label, clip):
+def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, test_dataloader, epochs, label, clip, idx_sens_train, idx_train, sens):
     tic = time.perf_counter() # start counting time
 
     best_val_acc = 0
@@ -75,13 +75,41 @@ def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, t
     Minloss_val = 10000.0
     for epoch in np.arange(epochs) + 1:
         model.train()
+        # here model.optimize?
         '''---------------------------train------------------------'''
         total_loss = 0
         total_acc = 0
         count = 0
         for input_nodes, output_nodes, blocks in train_dataloader:
-            Batch_logits,Batch_labels = model(input_nodes,output_nodes,blocks, out_key='user',label_key=label, is_train=True)
+            model.optimize(input_nodes, output_nodes, blocks, idx_train, sens, idx_sens_train, out_key='user', label_key=label, is_train=True)
+            cov = model.cov
+            cls_loss = model.cls_loss
+            adv_loss = model.adv_loss
+            #model.eval()
+            Batch_logits,Batch_labels, s = model(input_nodes,output_nodes,blocks, out_key='user',label_key=label, is_train=True)
 
+            #new
+            #s_score = torch.sigmoid(s.detach())
+            #s_score[idx_sens_train] = sens[idx_sens_train].unsqueeze(1).float()
+            #y_score = torch.sigmoid(Batch_logits)
+            #cov = torch.abs(torch.mean((s_score - torch.mean(s_score)) * (y_score - torch.mean(y_score))))
+            #criterion = nn.BCEWithLogitsLoss()
+            #cls_loss = criterion(Batch_logits[idx_train], Batch_labels[idx_train].unsqueeze(1).float())
+            #adv_loss = criterion(s_g, s_score)
+
+            #G_loss = cls_loss + 100 * cov - 1 * adv_loss
+            #G_loss.backward()
+            #optimizer.step()
+
+            #adv_model.requires_grad(True)
+            #optimizer_A.zero_grad()
+            #s_g = adv_model(h.detach())
+
+            #A_loss = 0
+            #A_loss = criterion(s_g, s_score)
+            #optimizer_A.step()
+
+            '''
             # The loss is computed only for labeled nodes.
             loss = F.cross_entropy(Batch_logits, Batch_labels)
             optimizer.zero_grad()
@@ -90,14 +118,21 @@ def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, t
             optimizer.step()
             train_step += 1
             scheduler.step(train_step)
-
+            '''
             acc = torch.sum(Batch_logits.argmax(1) == Batch_labels).item()
-            total_loss += loss.item() * len(output_nodes['user'].cpu())
+            #total_loss += loss.item() * len(output_nodes['user'].cpu())
             total_acc += acc
             count += len(output_nodes['user'].cpu())
 
-        train_loss, train_acc = total_loss / count, total_acc / count
-
+        #train_loss, train_acc = total_loss / count, total_acc / count
+        train_acc = total_acc / count # for us the cls and adv loss is important
+        # print all losses for train here??
+        print("Epoch: {:04d}".format(epoch),
+            "train acc: {:.4f}".format(train_acc),
+            "cov: {:.4f}".format(cov.item()),
+            "cls: {:.4f}".format(cls_loss.item()),
+            "adv: {:.4f}".format(adv_loss.item())
+        )
         if epoch % 1 == 0:
             model.eval()
             '''-------------------------val-----------------------'''
@@ -108,17 +143,29 @@ def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, t
                 preds=[]
                 labels=[]
                 for input_nodes, output_nodes, blocks in val_dataloader:
-                    Batch_logits,Batch_labels = model(input_nodes, output_nodes,blocks, out_key='user',label_key=label, is_train=False)
-                    loss = F.cross_entropy(Batch_logits, Batch_labels)
+                    #model.optimize(input_nodes, output_nodes, blocks, idx_train, sens, idx_sens_train, out_key='user', label_key=label, is_train=False)
+                    cov = model.cov
+                    cls_loss = model.cls_loss
+                    adv_loss = model.adv_loss
+                    model.eval()
+                    Batch_logits,Batch_labels, s = model(input_nodes, output_nodes,blocks, out_key='user',label_key=label, is_train=False)
+                    #loss = F.cross_entropy(Batch_logits, Batch_labels)
                     acc   = torch.sum(Batch_logits.argmax(1)==Batch_labels).item()
                     preds.extend(Batch_logits.argmax(1).tolist())
                     labels.extend(Batch_labels.tolist())
-                    total_loss += loss.item() * len(output_nodes['user'].cpu())
+                    #total_loss += loss.item() * len(output_nodes['user'].cpu())
                     total_acc +=acc
                     count += len(output_nodes['user'].cpu())
 
                 val_f1 = metrics.f1_score(preds, labels, average='macro')
-                val_loss,val_acc   = total_loss / count, total_acc / count
+                #val_loss,val_acc   = total_loss / count, total_acc / count
+                val_acc = total_acc / count
+                print("Epoch; {:04d}".format(epoch),
+                    "val acc: {:.4f}".format(val_acc),
+                    "cov: {:.4f}".format(cov.item()),
+                    "cls: {:.4f}".format(cls_loss.item()),
+                    "adv: {:.4f}".format(adv_loss.item())
+                )
                 '''------------------------test----------------------'''
                 total_loss = 0
                 total_acc = 0
@@ -127,31 +174,43 @@ def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, t
                 labels = []
 
                 for input_nodes, output_nodes, blocks in test_dataloader:
-                    Batch_logits, Batch_labels = model(input_nodes, output_nodes, blocks, out_key='user', label_key=label, is_train=False)
-                    loss = F.cross_entropy(Batch_logits, Batch_labels)
+                    Batch_logits, Batch_labels, s = model(input_nodes, output_nodes, blocks, out_key='user', label_key=label, is_train=False)
+                    cov = model.cov
+                    cls_loss = model.cls_loss
+                    adv_loss = model.adv_loss
+                    #loss = F.cross_entropy(Batch_logits, Batch_labels)
                     acc   = torch.sum(Batch_logits.argmax(1)==Batch_labels).item()
                     preds.extend(Batch_logits.argmax(1).tolist())
                     labels.extend(Batch_labels.tolist())
-                    total_loss += loss.item() * len(output_nodes['user'].cpu())
+                    #total_loss += loss.item() * len(output_nodes['user'].cpu())
                     total_acc +=acc
                     count += len(output_nodes['user'].cpu())
                    
 
                 test_f1 = metrics.f1_score(preds,labels, average='macro')
-                test_loss,test_acc   = total_loss / count, total_acc / count
+                #test_loss,test_acc   = total_loss / count, total_acc / count
+                test_acc = total_acc / count
                 if  val_acc   > best_val_acc:
                     Minloss_val = val_loss
                     best_val_acc = val_acc
                     best_test_acc = test_acc
-                print('Epoch: %d LR: %.5f Loss %.4f, val loss %.4f, Val Acc %.4f (Best %.4f), Test Acc %.4f (Best %.4f)' % (
-                    epoch,
+                #print('Epoch: %d LR: %.5f Loss %.4f, val loss %.4f, Val Acc %.4f (Best %.4f), Test Acc %.4f (Best %.4f)' % (
+                #    epoch,
+                #    optimizer.param_groups[0]['lr'],
+                #    train_loss,
+                #    val_loss,
+                #    val_acc,
+                #    best_val_acc,
+                #    test_acc,
+                #    best_test_acc,
+                #))
+                print('Epoch: %d LR: %.5f, val acc %.4f (Best: %.4f), Test acc: %.4f (Best %.4f)' % (
+                    epoch, 
                     optimizer.param_groups[0]['lr'],
-                    train_loss,
-                    val_loss,
                     val_acc,
                     best_val_acc,
                     test_acc,
-                    best_test_acc,
+                    best_test_acc
                 ))
                 print('\t\tval_f1 %.4f test_f1 \033[1;33m %.4f \033[0m' % (val_f1, test_f1))
             torch.cuda.empty_cache()
@@ -183,7 +242,7 @@ def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, t
 
 
 ######################################################################
-def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, model_type, seed, gpu, label, n_inp, batch_size, num_hidden, epochs, lr, sens_attr, multiclass_pred, multiclass_sens, clip):
+def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, model_type, seed, gpu, label, n_inp, batch_size, num_hidden, epochs, lr, sens_attr, multiclass_pred, multiclass_sens, clip, idx_sens_train, idx_train, sens):
 
     '''Fixed random seeds'''
     np.random.seed(seed)
@@ -289,7 +348,7 @@ def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, model_type, s
         scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, epochs=epochs,
                                                         steps_per_epoch=int(train_idx.shape[0]/batch_size)+1,max_lr = lr)
         print('Training RHGN with #param: %d' % (get_n_params(model)))
-        targets, predictions = Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, test_dataloader, epochs, label, clip)
+        targets, predictions = Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, test_dataloader, epochs, label, clip, idx_sens_train, idx_train, sens)
 
         # Compute fairness
         fair_obj = Fairness(G, test_idx, targets, predictions, sens_attr, multiclass_pred, multiclass_sens)  # removed neptune for now
