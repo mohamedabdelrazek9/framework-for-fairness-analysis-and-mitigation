@@ -128,7 +128,7 @@ class ali_RHGN(nn.Module):
         # return will be h, labels, and estimator output
         return h, labels, s
 
-    def optimize(self, input_nodes, output_nodes, blocks, idx_train, sens, idx_sens_train, out_key, label_key, is_train=True, print_flag=False):
+    def optimize(self, input_nodes, output_nodes, blocks, idx_train, sens, idx_sens_train, train_idx, out_key, label_key, is_train=True, print_flag=False):
         self.train()
 
         self.adv_model.requires_grad_(False)
@@ -193,7 +193,7 @@ class ali_RHGN(nn.Module):
 
         self.cov = torch.abs(torch.mean((s_score - torch.mean(s_score)) * (y_score - torch.mean(y_score))))
 
-        self.cls_loss = self.criterion(h[idx_train], labels[idx_train].unsqueeze(1).float())
+        self.cls_loss = self.criterion(h[train_idx], labels[train_idx].unsqueeze(1).float())
         self.adv_loss = self.criterion(s_g, s_score)
 
         self.G_loss = self.cls_loss + 100 * self.cov - 1 * self.adv_loss

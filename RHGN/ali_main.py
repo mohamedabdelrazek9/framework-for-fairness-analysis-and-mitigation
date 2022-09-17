@@ -66,7 +66,7 @@ def get_n_params(model):
     return pp
 
 
-def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, test_dataloader, epochs, label, clip, idx_sens_train, idx_train, sens):
+def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, test_dataloader, epochs, label, clip, idx_sens_train, idx_train, sens, train_idx):
     tic = time.perf_counter() # start counting time
 
     best_val_acc = 0
@@ -81,7 +81,7 @@ def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, t
         total_acc = 0
         count = 0
         for input_nodes, output_nodes, blocks in train_dataloader:
-            model.optimize(input_nodes, output_nodes, blocks, idx_train, sens, idx_sens_train, out_key='user', label_key=label, is_train=True)
+            model.optimize(input_nodes, output_nodes, blocks, idx_train, sens, idx_sens_train, train_idx, out_key='user', label_key=label, is_train=True)
             cov = model.cov
             cls_loss = model.cls_loss
             adv_loss = model.adv_loss
@@ -351,7 +351,7 @@ def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, model_type, s
         scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, epochs=epochs,
                                                         steps_per_epoch=int(train_idx.shape[0]/batch_size)+1,max_lr = lr)
         print('Training RHGN with #param: %d' % (get_n_params(model)))
-        targets, predictions = Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, test_dataloader, epochs, label, clip, idx_sens_train, idx_train, sens)
+        targets, predictions = Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, test_dataloader, epochs, label, clip, idx_sens_train, idx_train, sens, train_idx)
 
         # Compute fairness
         fair_obj = Fairness(G, test_idx, targets, predictions, sens_attr, multiclass_pred, multiclass_sens)  # removed neptune for now
