@@ -344,6 +344,7 @@ def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, model_type, s
                 
                     use_norm = True).to(device)
         optimizer = torch.optim.AdamW(model.parameters())
+        print('n_out:', labels.max().item()+1)
 
         scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, epochs=epochs,
                                                         steps_per_epoch=int(train_idx.shape[0]/batch_size)+1,max_lr = lr)
