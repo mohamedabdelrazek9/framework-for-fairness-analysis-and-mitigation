@@ -85,7 +85,11 @@ def Batch_train(model, model_adv, G, optimizer, optimizer_A, scheduler, train_da
             s, s_g = model_adv(h, inputs, G, blocks, out_key="user", label_key=label, is_train=True)
 
             s_score = torch.sigmoid(s.detach())
+            print('s_Score:', s_score.shape)
+            print('idx_sens_train:', idx_sens_train.shape)
+            print('sens:', sens.shape)
             s_score[idx_sens_train] = sens[idx_sens_train].unsqueeze(1).float()
+            
             # The loss is computed only for labeled nodes.
             loss = F.cross_entropy(Batch_logits, Batch_labels)
             optimizer.zero_grad()
