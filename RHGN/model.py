@@ -58,7 +58,7 @@ class ali_RHGN(nn.Module):
         #self.adv_model = nn.Linear(128, 1)
         self.adv_model = nn.Linear(n_hid, n_out)
         #self.sens_model = GCN(95, 128, 1, 0.5)
-        self.sens_model = nn.Linear(200, n_out)
+        self.sens_model = nn.Linear(200, n_inp)
         self.sens_model2 = nn.Linear(n_inp, n_hid)
         self.sens_model3 = nn.Linear(n_hid, n_out)
 
@@ -182,7 +182,8 @@ class ali_RHGN(nn.Module):
         
         s_g = self.adv_model(h)
         y = self.out(h)
-
+        print('h:', h)
+        print('y;', y)
         s_score = torch.sigmoid(s.detach())
         print('s_score:', s_score.shape)
         print('idx_sens_tran:', idx_sens_train.shape)
