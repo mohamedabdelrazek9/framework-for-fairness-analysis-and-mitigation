@@ -96,10 +96,14 @@ def Batch_train(model, model_adv, optimizer, optimizer_A, scheduler, train_datal
             # loss for adversary
             criterion = nn.BCEWithLogitsLoss()
             adv_loss = criterion(adv_logits, Batch_logits)
+            model_adv.requires_grad(True)
             optimizer_A.zero_grad()
+            s_g = model_adv(h.detach())
+
+            adv_loss = criterion(s_g, Batch_logits)
             adv_loss.backward()
             optimizer_A.step()
-            scheduler.setp(train_step)
+            #scheduler.setp(train_step)
             
 
             acc = torch.sum(Batch_logits.argmax(1) == Batch_labels).item()
