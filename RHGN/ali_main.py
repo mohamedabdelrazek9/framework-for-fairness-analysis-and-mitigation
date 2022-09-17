@@ -111,7 +111,7 @@ def Batch_train(model, model_adv, G, optimizer, optimizer_A, scheduler, train_da
                 preds=[]
                 labels=[]
                 for input_nodes, output_nodes, blocks in val_dataloader:
-                    Batch_logits,Batch_labels = model(input_nodes, output_nodes,blocks, out_key='user',label_key=label, is_train=False)
+                    Batch_logits,Batch_labels, h, inputs = model(input_nodes, output_nodes,blocks, out_key='user',label_key=label, is_train=False)
                     loss = F.cross_entropy(Batch_logits, Batch_labels)
                     acc   = torch.sum(Batch_logits.argmax(1)==Batch_labels).item()
                     preds.extend(Batch_logits.argmax(1).tolist())
@@ -130,7 +130,7 @@ def Batch_train(model, model_adv, G, optimizer, optimizer_A, scheduler, train_da
                 labels = []
 
                 for input_nodes, output_nodes, blocks in test_dataloader:
-                    Batch_logits, Batch_labels = model(input_nodes, output_nodes, blocks, out_key='user', label_key=label, is_train=False)
+                    Batch_logits, Batch_labels, h, inputs = model(input_nodes, output_nodes, blocks, out_key='user', label_key=label, is_train=False)
                     loss = F.cross_entropy(Batch_logits, Batch_labels)
                     acc   = torch.sum(Batch_logits.argmax(1)==Batch_labels).item()
                     preds.extend(Batch_logits.argmax(1).tolist())

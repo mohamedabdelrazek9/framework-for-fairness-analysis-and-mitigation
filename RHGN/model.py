@@ -35,8 +35,8 @@ class RHGN_adv(nn.Module):
         # h from orignal model
         s = self.sens_model(h)
         s_g = self.adv_model(h)
-        print('s:', s)
-        print('s_g:', s_g)
+        print('s:', s.shape)
+        print('s_g:', s_g.shape)
         return s, s_g
 
 class ali_RHGN(nn.Module):
