@@ -325,7 +325,9 @@ def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, model_type, s
         drop_last=False,
         device=device)
 
-
+    idx_sens_train.to(device)
+    idx_train.to(device)
+    sens.to(device)
     if model_type=='RHGN':
         #cid1_feature = torch.load('{}/cid1_feature.npy'.format(args.data_dir))
         #cid2_feature = torch.load('{}/cid2_feature.npy'.format(args.data_dir))
