@@ -66,7 +66,12 @@ class FairGNN(nn.Module):
         print('s_score:', s_score.shape)
         print('idx_sens_tran:', idx_sens_train.shape)
         print('sens:', sens.shape)
+        print('sens[idx_sens_train]:', sens[idx_sens_train])
+        print('shape:', sens[idx_sens_train].shape)
+        print('')
         s_score[idx_sens_train]=sens[idx_sens_train].unsqueeze(1).float()
+        print('s_score[idx_sens_train]:', s_score[idx_sens_train])
+        print('shape:', s_score[idx_sens_train].shape)
         y_score = torch.sigmoid(y)
         # Lr
         self.cov =  torch.abs(torch.mean((s_score - torch.mean(s_score)) * (y_score - torch.mean(y_score))))
