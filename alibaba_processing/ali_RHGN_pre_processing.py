@@ -103,7 +103,7 @@ def ali_RHGN_pre_process(df):
     idx_test = label_idx[label_number:]
     idx_val = idx_test
 
-    sens = user_label[sens_attr].values
+    sens = user_label[sens_attr][0:512].values
     sens_idx = set(np.where(sens >= 0)[0])
     idx_test = np.asarray(list(sens_idx & set(idx_test)))
 
