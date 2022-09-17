@@ -12,6 +12,7 @@ import time
 #import neptune.new as neptune
 
 from RHGN.fairness import Fairness
+from alibaba_processing.ali_CatGCN_pre_processing import label_map
 '''
 parser = argparse.ArgumentParser(description='for Alibaba Dataset')
 
@@ -66,7 +67,7 @@ def get_n_params(model):
     return pp
 
 
-def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, test_dataloader, epochs, label, clip, idx_sens_train, idx_train, sens, train_idx):
+def Batch_train(model, model_adv, optimizer, optimizer_A, scheduler, train_dataloader, val_dataloader, test_dataloader, epochs, label, clip, idx_sens_train, idx_train, sens, train_idx):
     tic = time.perf_counter() # start counting time
 
     best_val_acc = 0
@@ -80,7 +81,8 @@ def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, t
         total_acc = 0
         count = 0
         for input_nodes, output_nodes, blocks in train_dataloader:
-            Batch_logits,Batch_labels = model(input_nodes,output_nodes,blocks, out_key='user',label_key=label, is_train=True)
+            Batch_logits,Batch_labels, h = model(input_nodes,output_nodes,blocks, out_key='user',label_key=label, is_train=True)
+            adv_logits = model_adv(h, blocks, out_key="user", label_key=label, is_train=True)
 
             # The loss is computed only for labeled nodes.
             loss = F.cross_entropy(Batch_logits, Batch_labels)
@@ -90,6 +92,11 @@ def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, t
             optimizer.step()
             train_step += 1
             scheduler.step(train_step)
+
+            # loss for adversary
+            criterion = nn.BCEWithLogitsLoss()
+            adv_loss = criterion(adv_logits, Batch_logits)
+            
 
             acc = torch.sum(Batch_logits.argmax(1) == Batch_labels).item()
             total_loss += loss.item() * len(output_nodes['user'].cpu())
@@ -289,12 +296,24 @@ def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, model_type, s
                     lr=lr,
                     use_norm = True).to(device)
         optimizer = torch.optim.AdamW(model.parameters())
+        model_adv = RHGN_adv(G,
+                    node_dict, edge_dict,
+                    n_inp=n_inp,
+                    n_hid=num_hidden,
+                    n_out=labels.max().item()+1,
+                    n_layers=2,
+                    n_heads=4,
+                    cid1_feature=cid1_feature,
+                    cid2_feature=cid2_feature,
+                    cid3_feature=cid3_feature)
+        optimizer_A = torch.optim.Adam(model_adv.parameters(), lr=0.1, weight_decay=1e-5)
+
         print('n_out:', labels.max().item()+1)
 
         scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, epochs=epochs,
                                                         steps_per_epoch=int(train_idx.shape[0]/batch_size)+1,max_lr = lr)
         print('Training RHGN with #param: %d' % (get_n_params(model)))
-        targets, predictions = Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, test_dataloader, epochs, label, clip, idx_sens_train, idx_train, sens, train_idx)
+        targets, predictions = Batch_train(model, model_adv, optimizer, optimizer_A, scheduler, train_dataloader, val_dataloader, test_dataloader, epochs, label, clip, idx_sens_train, idx_train, sens, train_idx)
 
         # Compute fairness
         fair_obj = Fairness(G, test_idx, targets, predictions, sens_attr, multiclass_pred, multiclass_sens)  # removed neptune for now

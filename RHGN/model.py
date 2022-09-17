@@ -1,3 +1,4 @@
+from turtle import forward
 import dgl
 import math
 import torch
@@ -9,6 +10,18 @@ from FairGNN.src.models.GCN import GCN
 from RHGN.layers import *
 from RHGN.layers import RHGNLayer
 
+class RHGN_adv(nn.Module):
+    def __init__(self, G, node_dict, edge_dict, n_inp, n_hid, n_out, n_layers, n_heads, cid1_feature, cid2_feature, cid3_feature):
+        super(RHGN_adv, self).__init__()
+        self.adv_model = nn.Linear(n_hid, n_out)
+        #self.optimizer_A = torch.optim.Adam(self.adv_model.parameters(), lr=0.1, weight_decay=1e-5)
+        #self.A_loss = 0
+
+
+    def forward(self, h, blocks, out_key, label_key, is_train=True, print_flag=False):
+        # h from orignal model
+        s_g = self.adv_model(h)
+        return s_g
 
 class ali_RHGN(nn.Module):
     def __init__(self, G, node_dict, edge_dict, n_inp, n_hid, n_out, n_layers, n_heads,cid1_feature,cid2_feature,cid3_feature, epochs, train_idx, batch_size, lr, use_norm = True,):
@@ -124,12 +137,12 @@ class ali_RHGN(nn.Module):
         #add adv model input
         #s_g = self.adv_model(h)
 
-        h=self.out(h)
+        h_new=self.out(h)
         labels=blocks[-1].dstnodes[out_key].data[label_key]
 
         # h=F.log_softmax(h, dim=1)
         # return will be h, labels, and estimator output
-        return h, labels
+        return h_new, labels, h
 
         
 
