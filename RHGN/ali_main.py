@@ -96,6 +96,10 @@ def Batch_train(model, model_adv, optimizer, optimizer_A, scheduler, train_datal
             # loss for adversary
             criterion = nn.BCEWithLogitsLoss()
             adv_loss = criterion(adv_logits, Batch_logits)
+            optimizer_A.zero_grad()
+            adv_loss.backward()
+            optimizer_A.step()
+            scheduler.setp(train_step)
             
 
             acc = torch.sum(Batch_logits.argmax(1) == Batch_labels).item()
@@ -305,7 +309,7 @@ def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, model_type, s
                     n_heads=4,
                     cid1_feature=cid1_feature,
                     cid2_feature=cid2_feature,
-                    cid3_feature=cid3_feature)
+                    cid3_feature=cid3_feature).to(device)
         optimizer_A = torch.optim.Adam(model_adv.parameters(), lr=0.1, weight_decay=1e-5)
 
         print('n_out:', labels.max().item()+1)
