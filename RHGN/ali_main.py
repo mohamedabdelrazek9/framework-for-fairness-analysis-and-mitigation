@@ -82,7 +82,7 @@ def Batch_train(model, model_adv, G, optimizer, optimizer_A, scheduler, train_da
         count = 0
         for input_nodes, output_nodes, blocks in train_dataloader:
             Batch_logits,Batch_labels, h, inputs = model(input_nodes,output_nodes,blocks, out_key='user',label_key=label, is_train=True)
-            adv_logits = model_adv(h, inputs, G, blocks, out_key="user", label_key=label, is_train=True)
+            s, s_g = model_adv(h, inputs, G, blocks, out_key="user", label_key=label, is_train=True)
 
             # The loss is computed only for labeled nodes.
             loss = F.cross_entropy(Batch_logits, Batch_labels)
