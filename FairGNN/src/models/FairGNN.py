@@ -51,6 +51,8 @@ class FairGNN(nn.Module):
         self.adv.requires_grad_(False)
         self.optimizer_G.zero_grad()
 
+        print('g:', g.shape)
+        print('x:', x.shape)
         s = self.estimator(g,x)
         h = self.GNN(g,x)
         y = self.classifier(h)
