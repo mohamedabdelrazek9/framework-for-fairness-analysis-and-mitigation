@@ -26,14 +26,14 @@ class RHGN_adv(nn.Module):
         self.cid3_feature.weight.requires_grad = False
 
         self.adv_model = nn.Linear(n_hid, n_out)
-        self.sens_model = GCN(200, n_hid, 1, 0.5) #nfeat, hidden_units, 1, dropout
+        #self.sens_model = GCN(200, n_hid, 1, 0.5) #nfeat, hidden_units, 1, dropout
         #self.optimizer_A = torch.optim.Adam(self.adv_model.parameters(), lr=0.1, weight_decay=1e-5)
         #self.A_loss = 0
 
 
     def forward(self, h, inputs, G, blocks, out_key, label_key, is_train=True, print_flag=False):
         # h from orignal model
-        s = self.sens_model(G, inputs)
+        #s = self.sens_model(G, inputs)
         s_g = self.adv_model(h)
         return s, s_g
 
@@ -77,7 +77,7 @@ class ali_RHGN(nn.Module):
         self.key = nn.Linear(200, n_inp)
         self.value = nn.Linear(200, n_inp)
         self.skip = nn.Parameter(torch.ones(1))
-        #print('G:', G.shape)
+        print('n_out:', self.n_out)
 
         #self.query_sens = nn.Linear(200, n_inp)
         #self.key_sens = nn.Linear(200, n_inp)
@@ -144,7 +144,7 @@ class ali_RHGN(nn.Module):
             h = self.gcs[i](blocks[i], h, is_train=is_train,print_flag=print_flag)
 
         h = h[out_key]
-        #print('h:', h)
+        print('h:', h)
         #self.adv_model.requires_grad_(False)
         #add sens model input
         #s = self.sens_model(inputs)
@@ -154,6 +154,7 @@ class ali_RHGN(nn.Module):
         #s_g = self.adv_model(h)
 
         h_new=self.out(h)
+        print('h_new:', h_new.shape)
         labels=blocks[-1].dstnodes[out_key].data[label_key]
 
         # h=F.log_softmax(h, dim=1)
