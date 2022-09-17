@@ -26,15 +26,16 @@ class RHGN_adv(nn.Module):
         self.cid3_feature.weight.requires_grad = False
 
         self.adv_model = nn.Linear(n_hid, n_out)
-        #self.sens_model = GCN(,n_hidd, 1, 0.5) #nfeat, hidden_units, 1, dropout
+        self.sens_model = GCN(200, n_hid, 1, 0.5) #nfeat, hidden_units, 1, dropout
         #self.optimizer_A = torch.optim.Adam(self.adv_model.parameters(), lr=0.1, weight_decay=1e-5)
         #self.A_loss = 0
 
 
-    def forward(self, h, inputs, blocks, out_key, label_key, is_train=True, print_flag=False):
+    def forward(self, h, inputs, G, blocks, out_key, label_key, is_train=True, print_flag=False):
         # h from orignal model
+        s = self.sens_model(G, inputs)
         s_g = self.adv_model(h)
-        return s_g
+        return s, s_g
 
 class ali_RHGN(nn.Module):
     def __init__(self, G, node_dict, edge_dict, n_inp, n_hid, n_out, n_layers, n_heads,cid1_feature,cid2_feature,cid3_feature, epochs, train_idx, batch_size, lr, use_norm = True,):
@@ -76,7 +77,7 @@ class ali_RHGN(nn.Module):
         self.key = nn.Linear(200, n_inp)
         self.value = nn.Linear(200, n_inp)
         self.skip = nn.Parameter(torch.ones(1))
-        print('G:', G.shape)
+        #print('G:', G.shape)
 
         #self.query_sens = nn.Linear(200, n_inp)
         #self.key_sens = nn.Linear(200, n_inp)
