@@ -177,6 +177,9 @@ class ali_RHGN(nn.Module):
         y = self.out(h)
 
         s_score = torch.sigmoid(s.detach())
+        print('s_score:', s_score.shape)
+        print('idx_sens_tran:', idx_sens_train.shape)
+        print('sens:', sens.shape)
         s_score[idx_sens_train] = sens[idx_sens_train].unsqueeze(1).float()
         y_score = torch.sigmoid(y)
 
