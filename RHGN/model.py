@@ -58,7 +58,7 @@ class ali_RHGN(nn.Module):
         #self.adv_model = nn.Linear(128, 1)
         self.adv_model = nn.Linear(n_hid, n_out)
         #self.sens_model = GCN(95, 128, 1, 0.5)
-        self.sens_model = nn.Linear(200, n_inp)
+        self.sens_model = nn.Linear(200, n_out)
 
         self.optimizer_A = torch.optim.Adam(self.adv_model.parameters(), lr=0.1, weight_decay=1e-5)
         self.criterion = nn.BCEWithLogitsLoss()
