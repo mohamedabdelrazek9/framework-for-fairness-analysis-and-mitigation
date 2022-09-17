@@ -56,22 +56,22 @@ class ali_RHGN(nn.Module):
         #self.value_sens = nn.Linear(200, n_inp)
 
         #self.adv_model = nn.Linear(128, 1)
-        self.adv_model = nn.Linear(n_hid, n_out)
+        #self.adv_model = nn.Linear(n_hid, n_out)
         #self.sens_model = GCN(95, 128, 1, 0.5)
-        self.sens_model = nn.Linear(n_hid, n_out)
+        #self.sens_model = nn.Linear(n_hid, n_out)
         #self.sens_model2 = nn.Linear(n_inp, n_hid)
         #self.sens_model3 = nn.Linear(n_hid, n_out)
 
-        self.optimizer_A = torch.optim.Adam(self.adv_model.parameters(), lr=0.1, weight_decay=1e-5)
-        self.criterion = nn.BCEWithLogitsLoss()
+        #self.optimizer_A = torch.optim.Adam(self.adv_model.parameters(), lr=0.1, weight_decay=1e-5)
+        #self.criterion = nn.BCEWithLogitsLoss()
 
-        self.optimizer_G = torch.optim.Adam(self.parameters())
+        #self.optimizer_G = torch.optim.Adam(self.parameters())
 
-        self.A_loss = 0
-        self.G_loss = 0
+        #self.A_loss = 0
+        #self.G_loss = 0
 
-        self.scheduler = torch.optim.lr_scheduler.OneCycleLR(self.optimizer_G, epochs=epochs,
-                                                        steps_per_epoch=int(train_idx.shape[0]/batch_size)+1,max_lr = lr)
+        #self.scheduler = torch.optim.lr_scheduler.OneCycleLR(self.optimizer_G, epochs=epochs,
+        #                                                steps_per_epoch=int(train_idx.shape[0]/batch_size)+1,max_lr = lr)
 
     def forward(self, input_nodes, output_nodes,blocks, out_key,label_key, is_train=True,print_flag=False):
 
@@ -116,11 +116,11 @@ class ali_RHGN(nn.Module):
 
         h = h[out_key]
         #print('h:', h)
-        self.adv_model.requires_grad_(False)
+        #self.adv_model.requires_grad_(False)
         #add sens model input
-        s = self.sens_model(inputs)
-        s = self.sens_model2(s)
-        s = self.sens_model3(s)
+        #s = self.sens_model(inputs)
+        #s = self.sens_model2(s)
+        #s = self.sens_model3(s)
         #add adv model input
         #s_g = self.adv_model(h)
 
