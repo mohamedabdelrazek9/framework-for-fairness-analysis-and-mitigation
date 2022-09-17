@@ -182,8 +182,8 @@ class ali_RHGN(nn.Module):
         
         s_g = self.adv_model(h)
         y = self.out(h)
-        print('h:', h)
-        print('y;', y)
+        print('h:', h.shape)
+        print('y;', y.shape)
         s_score = torch.sigmoid(s.detach())
         print('s_score:', s_score.shape)
         print('idx_sens_tran:', idx_sens_train.shape)
