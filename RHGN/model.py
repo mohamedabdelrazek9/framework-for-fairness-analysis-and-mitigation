@@ -11,7 +11,7 @@ from RHGN.layers import RHGNLayer
 
 
 class ali_RHGN(nn.Module):
-    def __init__(self, G, node_dict, edge_dict, n_inp, n_hid, n_out, n_layers, n_heads,cid1_feature,cid2_feature,cid3_feature,use_norm = True,):
+    def __init__(self, G, node_dict, edge_dict, n_inp, n_hid, n_out, n_layers, n_heads,cid1_feature,cid2_feature,cid3_feature, epochs, train_idx, batch_size, lr, use_norm = True,):
         super(ali_RHGN, self).__init__()
         self.node_dict = node_dict
         self.edge_dict = edge_dict
@@ -69,6 +69,9 @@ class ali_RHGN(nn.Module):
 
         self.A_loss = 0
         self.G_loss = 0
+
+        self.scheduler = torch.optim.lr_scheduler.OneCycleLR(self.optimizer_G, epochs=epochs,
+                                                        steps_per_epoch=int(train_idx.shape[0]/batch_size)+1,max_lr = lr)
 
     def forward(self, input_nodes, output_nodes,blocks, out_key,label_key, is_train=True,print_flag=False):
 
@@ -198,8 +201,16 @@ class ali_RHGN(nn.Module):
 
         #self.G_loss = self.cls_loss + 100 * self.cov - 1 * self.adv_loss
         self.G_loss = F.cross_entropy(h, labels)
+        self.optimizer_G.zero_grad()
         self.G_loss.backward()
+        #torch.nn.utils.clip_grad_norm_(model.parameters(), clip)
         self.optimizer_G.step()
+        train_step += 1
+        self.scheduler.step(train_step)
+
+
+        #self.G_loss.backward()
+        #self.optimizer_G.step()
 
         self.adv_model.requires_grad_(True)
         self.optimizer_A.zero_grad()

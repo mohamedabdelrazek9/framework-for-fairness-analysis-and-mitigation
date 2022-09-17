@@ -343,7 +343,10 @@ def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, model_type, s
                     cid1_feature=cid1_feature,
                     cid2_feature=cid2_feature,
                     cid3_feature=cid3_feature,
-                
+                    epochs=epochs,
+                    train_idx=train_idx,
+                    batch_size=batch_size,
+                    lr=lr,
                     use_norm = True).to(device)
         optimizer = torch.optim.AdamW(model.parameters())
         print('n_out:', labels.max().item()+1)
