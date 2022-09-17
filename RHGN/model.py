@@ -193,10 +193,11 @@ class ali_RHGN(nn.Module):
 
         self.cov = torch.abs(torch.mean((s_score - torch.mean(s_score)) * (y_score - torch.mean(y_score))))
 
-        self.cls_loss = self.criterion(h[train_idx], labels[train_idx].unsqueeze(1).float())
+        #self.cls_loss = self.criterion(h[train_idx], labels[train_idx].unsqueeze(1).float())
         self.adv_loss = self.criterion(s_g, s_score)
 
-        self.G_loss = self.cls_loss + 100 * self.cov - 1 * self.adv_loss
+        #self.G_loss = self.cls_loss + 100 * self.cov - 1 * self.adv_loss
+        self.G_loss = F.cross_entropy(h, labels)
         self.G_loss.backward()
         self.optimizer_G.step()
 
