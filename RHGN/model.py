@@ -13,12 +13,25 @@ from RHGN.layers import RHGNLayer
 class RHGN_adv(nn.Module):
     def __init__(self, G, node_dict, edge_dict, n_inp, n_hid, n_out, n_layers, n_heads, cid1_feature, cid2_feature, cid3_feature):
         super(RHGN_adv, self).__init__()
+        self.cid1_feature = nn.Embedding(cid1_feature.size(0), cid1_feature.size(1))
+        self.cid1_feature.weight = nn.Parameter(cid1_feature)
+        self.cid1_feature.weight.requires_grad = False
+
+        self.cid2_feature = nn.Embedding(cid2_feature.size(0), cid2_feature.size(1))
+        self.cid2_feature.weight = nn.Parameter(cid2_feature)
+        self.cid2_feature.weight.requires_grad = False
+
+        self.cid3_feature= nn.Embedding(cid3_feature.size(0), cid3_feature.size(1))
+        self.cid3_feature.weight = nn.Parameter(cid3_feature)
+        self.cid3_feature.weight.requires_grad = False
+
         self.adv_model = nn.Linear(n_hid, n_out)
+        self.sens_model = GCN() #nfeat, hidden_units, 1, dropout
         #self.optimizer_A = torch.optim.Adam(self.adv_model.parameters(), lr=0.1, weight_decay=1e-5)
         #self.A_loss = 0
 
 
-    def forward(self, h, blocks, out_key, label_key, is_train=True, print_flag=False):
+    def forward(self, h, inputs, blocks, out_key, label_key, is_train=True, print_flag=False):
         # h from orignal model
         s_g = self.adv_model(h)
         return s_g
@@ -107,6 +120,7 @@ class ali_RHGN(nn.Module):
         # brand_feature = blocks[0].srcnodes['brand'].data['inp']
 
         inputs=torch.cat((cid1_feature,cid2_feature,cid3_feature),1)        #(N,4,200)
+        print(inputs.shape)
         k = self.key(inputs) #(N,4,n_inp)
         v = self.value(inputs) #(N,4,n_inp)
         q = self.query(item_feature.unsqueeze(-2)) #(N,1,n_inp)
@@ -142,7 +156,7 @@ class ali_RHGN(nn.Module):
 
         # h=F.log_softmax(h, dim=1)
         # return will be h, labels, and estimator output
-        return h_new, labels, h
+        return h_new, labels, h, inputs
 
         
 

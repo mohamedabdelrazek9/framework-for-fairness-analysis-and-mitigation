@@ -81,8 +81,8 @@ def Batch_train(model, model_adv, optimizer, optimizer_A, scheduler, train_datal
         total_acc = 0
         count = 0
         for input_nodes, output_nodes, blocks in train_dataloader:
-            Batch_logits,Batch_labels, h = model(input_nodes,output_nodes,blocks, out_key='user',label_key=label, is_train=True)
-            adv_logits = model_adv(h, blocks, out_key="user", label_key=label, is_train=True)
+            Batch_logits,Batch_labels, h, inputs = model(input_nodes,output_nodes,blocks, out_key='user',label_key=label, is_train=True)
+            adv_logits = model_adv(h, inputs, blocks, out_key="user", label_key=label, is_train=True)
 
             # The loss is computed only for labeled nodes.
             loss = F.cross_entropy(Batch_logits, Batch_labels)
@@ -92,18 +92,6 @@ def Batch_train(model, model_adv, optimizer, optimizer_A, scheduler, train_datal
             optimizer.step()
             train_step += 1
             scheduler.step(train_step)
-
-            # loss for adversary
-            criterion = nn.BCEWithLogitsLoss()
-            adv_loss = criterion(adv_logits, Batch_logits)
-            model_adv.requires_grad(True)
-            optimizer_A.zero_grad()
-            s_g = model_adv(h.detach())
-
-            adv_loss = criterion(s_g, Batch_logits)
-            adv_loss.backward()
-            optimizer_A.step()
-            #scheduler.setp(train_step)
             
 
             acc = torch.sum(Batch_logits.argmax(1) == Batch_labels).item()
