@@ -171,7 +171,7 @@ class ali_RHGN(nn.Module):
 
         h = h[out_key]
         labels=blocks[-1].dstnodes[out_key].data[label_key]
-
+        print('inputs:', inputs.shape)
         s = self.sens_model(inputs)
         s_g = self.adv_model(h)
         y = self.out(h)
