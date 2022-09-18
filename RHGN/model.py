@@ -26,16 +26,17 @@ class RHGN_adv(nn.Module):
         self.cid3_feature.weight.requires_grad = False
 
         self.adv_model = nn.Linear(n_hid, 1) # was n_out
-        self.sens_model = nn.Linear(64, 2)
-        #self.sens_model = GCN()
+        #self.sens_model = nn.Linear(64, 2)
+        self.sens_model = GCN(200, 128, 1, 0.5)
         #self.optimizer_A = torch.optim.Adam(self.adv_model.parameters(), lr=0.1, weight_decay=1e-5)
         #self.A_loss = 0
 
 
     def forward(self, h, inputs, G, blocks, out_key, label_key, is_train=True, print_flag=False):
         # h from orignal model
-        s = self.sens_model(h)
-        #s = self.sens_model(G, inputs)
+        #s = self.sens_model(h)
+        inputs_new = inputs[0]
+        s = self.sens_model(G, inputs_new)
         print('inputs:', inputs.shape)
         s_g = self.adv_model(h)
         print('s:', s.shape)
