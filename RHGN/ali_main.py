@@ -97,6 +97,9 @@ def Batch_train(model, model_adv, G, optimizer, optimizer_A, scheduler, train_da
             #print('shape:', s_score[idx_sens_train].shape)
             #first without the fairGNN loss
             criterion = nn.BCEWithLogitsLoss()
+            print('')
+            print('s_g shape:', s_g.shape)
+            print('s_score shape:', s_score.shape)
             adv_loss = criterion(s_g, s_score)
 
             # The loss is computed only for labeled nodes.
