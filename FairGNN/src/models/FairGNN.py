@@ -78,6 +78,9 @@ class FairGNN(nn.Module):
 
 
         self.cls_loss = self.criterion(y[idx_train],labels[idx_train].unsqueeze(1).float())
+        print('')
+        print('s_g shape:', s_g.shape)
+        print('s_score shape:', s_score.shape)
         self.adv_loss = self.criterion(s_g,s_score)                
         
         # calculate G loss
