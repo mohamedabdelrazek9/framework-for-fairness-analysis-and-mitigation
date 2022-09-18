@@ -91,9 +91,9 @@ def Batch_train(model, model_adv, G, optimizer, optimizer_A, scheduler, train_da
             print('sens[idx_sens_train]:', sens[idx_sens_train])
             print('shape:', sens[idx_sens_train].shape)
             print('')
-            s_score = sens[idx_sens_train].unsqueeze(1).float()
-            print('s_score[idx_sens_train]:', s_score[idx_sens_train])
-            print('shape:', s_score[idx_sens_train].shape)
+            s_score = sens[idx_sens_train].unsqueeze(1).float() # problem occurs here
+            #print('s_score[idx_sens_train]:', s_score[idx_sens_train])
+            #print('shape:', s_score[idx_sens_train].shape)
 
             # The loss is computed only for labeled nodes.
             loss = F.cross_entropy(Batch_logits, Batch_labels)
