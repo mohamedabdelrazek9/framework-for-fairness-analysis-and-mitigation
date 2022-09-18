@@ -22,6 +22,8 @@ class FairGNN(nn.Module):
 
         nhid = args.num_hidden
         dropout = args.dropout
+        print('nfeat:', nfeat)
+        print('hidden:', args.hidden)
         self.estimator = GCN(nfeat,args.hidden,1,dropout)
         self.GNN = get_model(nfeat,args)
         self.classifier = nn.Linear(nhid,1)
