@@ -89,7 +89,7 @@ def ali_RHGN_pre_process(df):
     predict_attr = 'gender'
     label_number = 100
     seed = 42
-    sens_number = 50
+    sens_number = 512
 
     labels = user_label[predict_attr].values
 
