@@ -25,7 +25,7 @@ class RHGN_adv(nn.Module):
         self.cid3_feature.weight = nn.Parameter(cid3_feature)
         self.cid3_feature.weight.requires_grad = False
 
-        self.adv_model = nn.Linear(n_hid, n_out)
+        self.adv_model = nn.Linear(n_hid, 1) # was n_out
         self.sens_model = nn.Linear(64, 2)
         #self.optimizer_A = torch.optim.Adam(self.adv_model.parameters(), lr=0.1, weight_decay=1e-5)
         #self.A_loss = 0
