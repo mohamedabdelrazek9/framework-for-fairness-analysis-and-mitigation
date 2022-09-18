@@ -91,9 +91,13 @@ def Batch_train(model, model_adv, G, optimizer, optimizer_A, scheduler, train_da
             print('sens[idx_sens_train]:', sens[idx_sens_train])
             print('shape:', sens[idx_sens_train].shape)
             print('')
-            s_score = sens[idx_sens_train].unsqueeze(1).float() # problem occurs here
-            #print('s_score[idx_sens_train]:', s_score[idx_sens_train])
+            s_score = sens[idx_sens_train].unsqueeze(1).float() 
+            
+            #print('s_score[idx_sens_train]:', s_score[idx_sens_train]) # problem occurs here
             #print('shape:', s_score[idx_sens_train].shape)
+            #first without the fairGNN loss
+            criterion = nn.BCEWithLogitsLoss()
+            adv_loss = criterion(s_g, s_score)
 
             # The loss is computed only for labeled nodes.
             loss = F.cross_entropy(Batch_logits, Batch_labels)
@@ -103,6 +107,14 @@ def Batch_train(model, model_adv, G, optimizer, optimizer_A, scheduler, train_da
             optimizer.step()
             train_step += 1
             scheduler.step(train_step)
+
+            # update adv
+            optimizer_A.zero_grad()
+            s_g = model_adv.adv_model(h.detach())
+
+            adv_loss = criterion(s_g, s_score)
+            adv_loss.backward()
+            optimizer_A.step()
             
 
             acc = torch.sum(Batch_logits.argmax(1) == Batch_labels).item()
