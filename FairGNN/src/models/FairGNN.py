@@ -55,7 +55,7 @@ class FairGNN(nn.Module):
 
         #print('g:', g.shape)
         print('x:', x.shape)
-        print('G:', g.data())
+        print('G:', g)
         s = self.estimator(g,x)
         h = self.GNN(g,x)
         y = self.classifier(h)

@@ -36,7 +36,7 @@ class RHGN_adv(nn.Module):
         # h from orignal model
         #s = self.sens_model(h)
         inputs_new = inputs[0]
-        print('graph:', G.data())
+        print('graph:', G)
         s = self.sens_model(G, inputs_new)
         print('inputs:', inputs.shape)
         s_g = self.adv_model(h)
