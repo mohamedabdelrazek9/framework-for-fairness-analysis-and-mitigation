@@ -450,7 +450,7 @@ def calculate_dataset_fairness(df, sens_attr, label):
     number_of_positive_sens0 = len(df.loc[(df[sens_attr] == 0) & (df[label] == 1)])
     number_of_positive_sens1 = len(df.loc[(df[sens_attr] == 1) & (df[label] == 1)])
 
-    fairness = np.absolute(number_of_positive_sens0) / np.absolute(total_number_of_0) - np.absolute(number_of_positive_female) / np.absolute(total_number_of_1)
+    fairness = np.absolute(number_of_positive_sens0) / np.absolute(total_number_of_sens0) - np.absolute(number_of_positive_sens1) / np.absolute(total_number_of_sens1)
 
     return fairness * 100
 
