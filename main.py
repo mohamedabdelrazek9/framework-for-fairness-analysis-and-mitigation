@@ -4,7 +4,7 @@
 import argparse
 import os
 from turtle import st
-from utils import load_networkx_file, load_neo4j_file
+from utils import load_networkx_file, load_neo4j_file, calculate_dataset_fairness
 from FairGNN.src.utils import load_pokec, feature_norm
 from FairGNN.src.train_fairGNN import train_FairGNN
 from alibaba_processing.ali_RHGN_pre_processing import ali_RHGN_pre_process
@@ -157,7 +157,9 @@ def FairGNN_pre_processing(data_extension):
                                                                                             args.sens_number,
                                                                                             args.seed,
                                                                                             test_idx=True)
-    
+    # Calculate dataset Fairness (if activated)
+    dataset_fairness = calculate_dataset_fairness(df_nodes, args.sens_attr, args.predict_attr)
+    print('Dataset fairness before training:', dataset_fairness)
     G = dgl.DGLGraph()
     #G.from_scipy_sparse_matrix(adj) # not supported
     G = dgl.from_scipy(adj)
