@@ -75,16 +75,12 @@ def fairness_calculation(df, dataset_name, sens_attr, label):
 
     disparate_impact = unpriv_ratio/priv_ratio
 
-    dataset = StandardDataset(df, 
-                          label_name=label, 
-                          favorable_classes=[1], 
-                          protected_attribute_names=[sens_attr], 
-                          privileged_classes=[[1]])
+    
 
-    binaryLabelDataset =BinaryLabelDataset(favorable_label=1, unfavorable_label=0, df=dataset, label_names=[label], protected_attribute_names=[sens_attr])
+    binaryLabelDataset =BinaryLabelDataset(favorable_label=1, unfavorable_label=0, df=df, label_names=[label], protected_attribute_names=[sens_attr], unprivileged_protected_attributes=['0'])
 
-    print(dataset)
-    print(binaryLabelDataset)
+    #print(dataset)
+    #print(binaryLabelDataset)
                                                     
 
 
