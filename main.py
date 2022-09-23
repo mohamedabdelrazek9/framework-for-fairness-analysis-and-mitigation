@@ -4,7 +4,7 @@
 import argparse
 import os
 from turtle import st
-from utils import load_networkx_file, load_neo4j_file, calculate_dataset_fairness
+from utils import load_networkx_file, load_neo4j_file
 from FairGNN.src.utils import load_pokec, feature_norm
 from FairGNN.src.train_fairGNN import train_FairGNN
 from alibaba_processing.ali_RHGN_pre_processing import ali_RHGN_pre_process
@@ -18,6 +18,7 @@ from pokec_processing.pokec_CatGCN_pre_processing import pokec_z_CatGCN_pre_proc
 from RHGN.ali_main import ali_training_main
 from RHGN.jd_main import tecent_training_main
 from CatGCN.train_main import train_CatGCN
+from fainress_component import fairness_calculation
 import dgl
 import torch
 import pandas as pd
@@ -158,8 +159,11 @@ def FairGNN_pre_processing(data_extension):
                                                                                             args.seed,
                                                                                             test_idx=True)
     # Calculate dataset Fairness (if activated)
-    dataset_fairness = calculate_dataset_fairness(df_nodes, args.sens_attr, args.predict_attr)
+    # todo add activation proceudre when debaising approaches are implmented
+    dataset_fairness = fairness_calculation(df_nodes, args.dataset_name, args.sens_attr, args.predict_attr)
     print('Dataset fairness before training:', dataset_fairness)
+
+
     G = dgl.DGLGraph()
     #G.from_scipy_sparse_matrix(adj) # not supported
     G = dgl.from_scipy(adj)
@@ -229,6 +233,10 @@ def CatGCN_pre_processing(data_extension):
         user_edge_path, user_field_path, user_work_path, user_labels_path = pokec_z_CatGCN_pre_process(df, df_edge_list)
         target = user_work_path
 
+    # calculate dataset fairness 
+    dataset_fairness = fairness_calculation(df, args.dataset_name, args.sens_attr, args.predict_attr)
+    print('Dataset fairness before training:', dataset_fairness)
+    
     # Add model training after data processing
     print('Starting CatGCN training')
     train_CatGCN(user_edge_path, user_field_path, target, user_labels_path, args.seed, args.label, idx_sens_train, sens, args)
@@ -273,6 +281,12 @@ def RHGN_pre_processing(data_extension):
     # Todo implment RHGN processing for Pokec dataset
     elif args.dataset_name == 'pokec_z':
         G, cid1_feature, cid2_feature, cid3_feature = pokec_z_RHGN_pre_process(df, args.dataset_user_id_name)
+
+
+    # calculate dataset fairness
+    dataset_fairness = fairness_calculation(df, args.dataset_name, args.sens_attr, args.predict_attr)
+    print('Dataset fairness before training:', dataset_fairness)
+
 
     # Add model training after data processing
     print('Starting RHGN training')

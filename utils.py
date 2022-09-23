@@ -443,7 +443,22 @@ def bin_alibaba(df_nodes):
     return df_nodes
 
 
-def calculate_dataset_fairness(df, sens_attr, label):
+def calculate_dataset_fairness(df, dataset_name, sens_attr, label):
+    if dataset_name == 'pokec_z':
+        df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(-1, 0)
+        df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(0, 0)
+        df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(1, 0)
+        df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(2, 1)
+        df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(3, 1)
+        df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(4, 1)
+
+    elif dataset_name == 'pokec_n':
+        df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(-1, 0)
+        df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(0, 1)
+        df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(1, 1)
+        df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(2, 1)
+        df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(3, 1)
+
     total_number_of_sens0 = len(df.loc[df[sens_attr] == 0])
     total_number_of_sens1 = len(df.loc[df[sens_attr] == 1])
 
