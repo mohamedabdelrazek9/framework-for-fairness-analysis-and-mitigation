@@ -92,11 +92,11 @@ class StructuredDataset(Dataset):
                             "the data (features, labels, protected attributes)")
         #if df.isna().any().any():
         #    raise ValueError("Input DataFrames cannot contain NA values.")
-        try:
-            df = df.astype(np.float64)
-        except ValueError as e:
-            print("ValueError: {}".format(e))
-            raise ValueError("DataFrame values must be numerical.")
+        #try:
+         #   df = df.astype(np.float64)
+        #except ValueError as e:
+        #    print("ValueError: {}".format(e))
+        #    raise ValueError("DataFrame values must be numerical.")
 
         # Convert all column names to strings
         df.columns = df.columns.astype(str).tolist()
