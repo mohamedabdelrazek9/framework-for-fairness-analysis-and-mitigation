@@ -30,7 +30,7 @@ def fairness_calculation(df, dataset_name, sens_attr, label):
         df['final_gender_code'] = df['final_gender_code'].replace(1, 0)
         df['final_gender_code'] = df['final_gender_code'].replace(2, 1)
 
-        #df.rename(columns={'age_level':'age', 'final_gender_code':'gender'}, inplace=True)
+        df.rename(columns={'age_level':'age', 'final_gender_code':'gender'}, inplace=True)
 
     elif dataset_name == 'tecent':
         age_dic = {'11~15':0, '16~20':0, '21~25':0, '26~30':1, '31~35':1, '36~40':2, '41~45':2, '46~50':3, '51~55':3, '56~60':4, '61~65':4, '66~70':4, '71~':4}
@@ -69,11 +69,14 @@ def fairness_calculation(df, dataset_name, sens_attr, label):
 
     unpriv_outcomes = zero_df[zero_df[label]==1].shape[0]
     unpriv_ratio = unpriv_outcomes/num_of_unpriv
+    
 
     priv_outcomes = one_df[one_df[label]==1].shape[0]
     priv_ratio = priv_outcomes/num_of_priv
+    
 
     disparate_impact = unpriv_ratio/priv_ratio
+    return disparate_impact
 
     
 
@@ -84,4 +87,4 @@ def fairness_calculation(df, dataset_name, sens_attr, label):
                                                     
 
 
-    return disparate_impact
+    
