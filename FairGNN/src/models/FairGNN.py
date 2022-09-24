@@ -22,8 +22,8 @@ class FairGNN(nn.Module):
 
         nhid = args.num_hidden
         dropout = args.dropout
-        print('nfeat:', nfeat)
-        print('hidden:', args.hidden)
+        #print('nfeat:', nfeat)
+        #print('hidden:', args.hidden)
         self.estimator = GCN(nfeat,args.hidden,1,dropout)
         self.GNN = get_model(nfeat,args)
         self.classifier = nn.Linear(nhid,1)
@@ -54,8 +54,8 @@ class FairGNN(nn.Module):
         self.optimizer_G.zero_grad()
 
         #print('g:', g.shape)
-        print('x:', x.shape)
-        print('G:', g)
+        #print('x:', x.shape)
+        #print('G:', g)
         s = self.estimator(g,x)
         h = self.GNN(g,x)
         y = self.classifier(h)
@@ -66,24 +66,24 @@ class FairGNN(nn.Module):
 
         s_score = torch.sigmoid(s.detach())
         # s_score = (s_score > 0.5).float()
-        print('s_score:', s_score.shape)
-        print('idx_sens_tran:', idx_sens_train.shape)
-        print('sens:', sens.shape)
-        print('sens[idx_sens_train]:', sens[idx_sens_train])
-        print('shape:', sens[idx_sens_train].shape)
-        print('')
+        #print('s_score:', s_score.shape)
+        #print('idx_sens_tran:', idx_sens_train.shape)
+        #print('sens:', sens.shape)
+        #print('sens[idx_sens_train]:', sens[idx_sens_train])
+        #print('shape:', sens[idx_sens_train].shape)
+        #print('')
         s_score[idx_sens_train]=sens[idx_sens_train].unsqueeze(1).float()
-        print('s_score[idx_sens_train]:', s_score[idx_sens_train])
-        print('shape:', s_score[idx_sens_train].shape)
+        #print('s_score[idx_sens_train]:', s_score[idx_sens_train])
+        #print('shape:', s_score[idx_sens_train].shape)
         y_score = torch.sigmoid(y)
         # Lr
         self.cov =  torch.abs(torch.mean((s_score - torch.mean(s_score)) * (y_score - torch.mean(y_score))))
 
 
         self.cls_loss = self.criterion(y[idx_train],labels[idx_train].unsqueeze(1).float())
-        print('')
-        print('s_g shape:', s_g.shape)
-        print('s_score shape:', s_score.shape)
+        #print('')
+        #print('s_g shape:', s_g.shape)
+        #print('s_score shape:', s_score.shape)
         self.adv_loss = self.criterion(s_g,s_score)                
         
         # calculate G loss
