@@ -268,3 +268,17 @@ class Fairness(object):
             #self.neptune_run["fairness/TE_s1"] = te_s1
             #self.neptune_run["fairness/TED"] = te_diff
             print(" Treatment Equality Difference (TED): {:.4f}".format(te_diff))
+
+
+    def disparate_impact(self):
+        #num_of_priv = sum(self.s0)
+        #num_of_unpriv = sum(self.s1)
+
+        #unpriv_ratio = sum(self.pred_y[self.]/num_of_unpriv 
+
+        #stat_parity_s0 = sum(self.pred_y[self.s0]) / sum(self.s0)
+        #stat_parity_s1 = sum(self.pred_y[self.s1]) / sum(self.s1)
+        #stat_parity_diff = stat_parity_s0 - stat_parity_s1
+
+        print('true_y:', self.true_y)
+        print('pred_y:', self.pred_y)

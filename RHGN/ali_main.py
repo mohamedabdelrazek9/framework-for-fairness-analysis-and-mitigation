@@ -343,5 +343,6 @@ def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, model_type, s
         fair_obj.equal_opportunity()
         fair_obj.overall_accuracy_equality()
         fair_obj.treatment_equality()
+        fair_obj.disparate_impact()
 
         #neptune_run.stop()
