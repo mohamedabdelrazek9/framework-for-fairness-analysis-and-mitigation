@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 from aif360.datasets import StructuredDataset, StandardDataset, BinaryLabelDataset
+from aif360.algorithms.preprocessing import DisparateImpactRemover, Reweighing
+
 
 
 def fairness_calculation(df, dataset_name, sens_attr, label):
@@ -49,7 +51,7 @@ def fairness_calculation(df, dataset_name, sens_attr, label):
         #df['SALARY'] = df['SALARY'].replace(1,1)
 
     # old calculation
-    '''
+    
     total_number_of_sens0 = len(df.loc[df[sens_attr] == 0])
     total_number_of_sens1 = len(df.loc[df[sens_attr] == 1])
 
@@ -57,8 +59,9 @@ def fairness_calculation(df, dataset_name, sens_attr, label):
     number_of_positive_sens1 = len(df.loc[(df[sens_attr] == 1) & (df[label] == 1)])
 
     fairness = np.absolute(number_of_positive_sens0) / np.absolute(total_number_of_sens0) - np.absolute(number_of_positive_sens1) / np.absolute(total_number_of_sens1)
-    return fainress * 100
-    '''
+    dataset_fainress = fairness * 100
+    
+    print('dataset fairness:', dataset_fainress)
 
     '''
     # new calculation
@@ -85,19 +88,27 @@ def fairness_calculation(df, dataset_name, sens_attr, label):
 
 
     pr_unpriv = calc_prop(df, sens_attr, 1, label, 1)
-    print('pr_unpriv: ', pr_unpriv)
+    #print('pr_unpriv: ', pr_unpriv)
 
     pr_priv = calc_prop(df, sens_attr, 0, label, 1)
-    print('pr_priv:', pr_priv)
-
-    return pr_unpriv / pr_priv
+    #print('pr_priv:', pr_priv)
+    disp = pr_unpriv / pr_priv
+    #return pr_unpriv / pr_priv
+    print('Dsparate impact:', disp)
 
     
 
-    #binaryLabelDataset =BinaryLabelDataset(favorable_label=1, unfavorable_label=0, df=df, label_names=[label], protected_attribute_names=[sens_attr], unprivileged_protected_attributes=['0'])
+    binaryLabelDataset =BinaryLabelDataset(favorable_label=1, unfavorable_label=0, df=df, label_names=[label], protected_attribute_names=[sens_attr], unprivileged_protected_attributes=['1'])
+    di = DisparateImpactRemover(repair_level=1.0)
+    rp_train = di.fit_transform(binaryLabelDataset)
+
+    df_new = rp_train.convert_to_dataframe()[0]
+
+
 
     #print(dataset)
     #print(binaryLabelDataset)
+    return df_new
 
 def calc_prop(data, group_col, group, output_col, output_val):
     new = data[data[group_col] == group]

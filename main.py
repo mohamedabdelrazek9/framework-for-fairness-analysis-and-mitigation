@@ -53,7 +53,7 @@ parser.add_argument('--acc', type=float, default=0.688, help='the selected FairG
 parser.add_argument('--uneeded_columns', nargs="+", help="(OPTIONAL) choose which columns that will not be needed in the dataset and the fairness experiment (e.g. description)")
 parser.add_argument('--onehot_bin_columns', nargs="+", help='(OPTIONAL) Decide which of the columns of your dataset are binary (e.g. False/True) to be later on processed')
 parser.add_argument('--onehot_cat_columns', nargs="+", help='(OPTIONAL) choose which columns in the dataset will be transofrmed as one-hot encoded')
-
+parser.add_argument('--calc_fairness', type=bool, default=False)
 #################
 # for RHGN
 #n_epoch --> epochs
@@ -149,6 +149,11 @@ def FairGNN_pre_processing(data_extension):
         #edges_path = '../user_edges.csv'
         edges_path = '../region_job_relationship'
 
+        # Calculate dataset Fairness (if activated)
+        # todo add activation proceudre when debaising approaches are implmented
+        if(args.calc_fairness):
+            df_nodes =  fairness_calculation(df_nodes, args.dataset_name, args.sens_attr, args.predict_attr)
+
         adj, features, labels, idx_train, idx_val, idx_test,sens,idx_sens_train = load_pokec(df_nodes,
                                                                                             edges_path,
                                                                                             args.dataset_user_id_name, 
@@ -158,10 +163,8 @@ def FairGNN_pre_processing(data_extension):
                                                                                             args.sens_number,
                                                                                             args.seed,
                                                                                             test_idx=True)
-    # Calculate dataset Fairness (if activated)
-    # todo add activation proceudre when debaising approaches are implmented
-    dataset_fairness = fairness_calculation(df_nodes, args.dataset_name, args.sens_attr, args.predict_attr)
-    print('Dataset fairness before training:', dataset_fairness)
+
+    #print('Dataset fairness before training:', dataset_fairness)
 
 
     G = dgl.DGLGraph()
@@ -234,8 +237,9 @@ def CatGCN_pre_processing(data_extension):
         target = user_work_path
 
     # calculate dataset fairness 
-    dataset_fairness = fairness_calculation(df, args.dataset_name, args.sens_attr, args.predict_attr)
-    print('Dataset fairness before training:', dataset_fairness)
+    if(args.calc_fairness):
+        fairness_calculation(df, args.dataset_name, args.sens_attr, args.predict_attr)
+    #print('Dataset fairness before training:', dataset_fairness)
     
     # Add model training after data processing
     print('Starting CatGCN training')
@@ -268,9 +272,10 @@ def RHGN_pre_processing(data_extension):
         df = pd.read_csv(args.dataset_path)
     
     # calculate dataset fairness
-    dataset_fairness = fairness_calculation(df, args.dataset_name, args.sens_attr, args.predict_attr)
-    print('Dataset fairness before training:', dataset_fairness)
-    
+    if(args.calc_fairness):
+        fairness_calculation(df, args.dataset_name, args.sens_attr, args.predict_attr)
+    #print('Dataset fairness before training:', dataset_fairness)
+
     if args.dataset_name == 'alibaba':
         #G, cid1_feature, cid2_feature, cid3_feature = ali_RHGN_pre_process(df)
         G, cid1_feature, cid2_feature, cid3_feature, idx_sens_train, idx_train, sens = ali_RHGN_pre_process(df)
