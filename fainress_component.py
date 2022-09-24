@@ -60,6 +60,7 @@ def fairness_calculation(df, dataset_name, sens_attr, label):
     return fainress * 100
     '''
 
+    '''
     # new calculation
     one_df = df[df[sens_attr] == 0]
     num_of_priv = one_df.shape[0]
@@ -77,6 +78,19 @@ def fairness_calculation(df, dataset_name, sens_attr, label):
 
     disparate_impact = unpriv_ratio/priv_ratio
     return disparate_impact
+    '''
+
+
+    
+
+
+    pr_unpriv = calc_prop(df, sens_attr, 1, label, 1)
+    print('pr_unpriv: ', pr_unpriv)
+
+    pr_priv = calc_prop(df, sens_attr, 0, label, 1)
+    print('pr_priv:', pr_priv)
+
+    return pr_unpriv / pr_priv
 
     
 
@@ -84,6 +98,10 @@ def fairness_calculation(df, dataset_name, sens_attr, label):
 
     #print(dataset)
     #print(binaryLabelDataset)
+
+def calc_prop(data, group_col, group, output_col, output_val):
+    new = data[data[group_col] == group]
+    return len(new[new[output_col] == output_val])/len(new)
                                                     
 
 
