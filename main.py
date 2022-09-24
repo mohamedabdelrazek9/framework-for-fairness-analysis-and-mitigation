@@ -267,6 +267,10 @@ def RHGN_pre_processing(data_extension):
     else: # simple test for pokec
         df = pd.read_csv(args.dataset_path)
     
+    # calculate dataset fairness
+    dataset_fairness = fairness_calculation(df, args.dataset_name, args.sens_attr, args.predict_attr)
+    print('Dataset fairness before training:', dataset_fairness)
+    
     if args.dataset_name == 'alibaba':
         #G, cid1_feature, cid2_feature, cid3_feature = ali_RHGN_pre_process(df)
         G, cid1_feature, cid2_feature, cid3_feature, idx_sens_train, idx_train, sens = ali_RHGN_pre_process(df)
@@ -283,9 +287,7 @@ def RHGN_pre_processing(data_extension):
         G, cid1_feature, cid2_feature, cid3_feature = pokec_z_RHGN_pre_process(df, args.dataset_user_id_name)
 
 
-    # calculate dataset fairness
-    dataset_fairness = fairness_calculation(df, args.dataset_name, args.sens_attr, args.predict_attr)
-    print('Dataset fairness before training:', dataset_fairness)
+    
 
 
     # Add model training after data processing
