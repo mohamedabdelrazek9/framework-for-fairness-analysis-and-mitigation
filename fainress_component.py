@@ -20,9 +20,9 @@ def fairness_calculation_nba(dataset_path, sens_attr, predict_attr):
 
     df['SALARY'] = df['SALARY'].replace(-1, 0)
 
-    dataset_fairness(df, sens_attr, label)
+    dataset_fairness(df, sens_attr, predict_attr)
 
-    disparate_impact(df, sens_attr, label)
+    disparate_impact(df, sens_attr, predict_attr)
 
 def dataset_fairness(df, sens_attr, label):
     total_number_of_sens0 = len(df.loc[df[sens_attr] == 0])
