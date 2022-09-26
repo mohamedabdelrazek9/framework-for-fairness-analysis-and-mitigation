@@ -5,9 +5,10 @@ import numpy as np
 import networkx as nx
 import scipy.sparse as sp
 import re
+from fainress_component import fairness_calculation
 from alibaba_processing.ali_CatGCN_pre_processing import get_count, filter_triplets, col_map, label_map
 
-def load_networkx_file(model_type, data_extension, dataset_name, dataset_path, dataset_user_id_name, onehot_bin_columns, onehot_cat_columns):
+def load_networkx_file(model_type, data_extension, dataset_name, dataset_path, dataset_user_id_name, onehot_bin_columns, onehot_cat_columns, calc_fairness, sens_attr, label):
 
     # load data from graphml to csv
     #print('Loading dataset for FairGNN...')
@@ -42,6 +43,8 @@ def load_networkx_file(model_type, data_extension, dataset_name, dataset_path, d
         df_nodes[dataset_user_id_name] = pd.to_numeric(df_nodes[dataset_user_id_name])
         df_nodes = df_nodes.astype({dataset_user_id_name: int})
 
+    if calc_fairness:
+        df_nodes = calc_fairness(df_nodes, dataset_name, model_type, sens_attr, label)
     # todo if dataset will be used for RHGN or CatGCN then return, else we assume for FairGNN then complete the onehot encoding process
     if model_type == 'RHGN':
         return df_nodes
@@ -273,6 +276,9 @@ def fair_metric(output,idx, labels, sens):
     oae_s0 = np.count_nonzero(pred_y[idx_s0_y0] == 0) / sum(idx_s0_y0) + sum(pred_y[idx_s0_y1]) / sum(idx_s0_y1)
     oae_s1 = np.count_nonzero(pred_y[idx_s1_y0] == 0) / sum(idx_s1_y0) + sum(pred_y[idx_s1_y1]) / sum(idx_s1_y1)
     oae_diff = oae_s0 - oae_s1 
+
+    # disparate_impact
+
 
     return parity, equality, oae_diff, te_diff
 
