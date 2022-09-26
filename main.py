@@ -116,7 +116,7 @@ def FairGNN_pre_processing(data_extension):
     print('Loading dataset for FairGNN...')
     
     # calculate fairness before doing anything in the dataset
-    fairness_calculation_nba(args.dataset_path, args.dataset_name, args.sens_attr, args.predict_attr)
+    fairness_calculation_nba(args.dataset_path, args.sens_attr, args.predict_attr)
 
     if data_extension in networkx_format_list:
        # print('data extension is networkx format', data_extension)
