@@ -1,11 +1,27 @@
 import numpy as np
 import pandas as pd
+import networkx as nx
 from aif360.datasets import StructuredDataset, StandardDataset, BinaryLabelDataset
 from aif360.algorithms.preprocessing import DisparateImpactRemover, Reweighing
 
 
 
-def fairness_calculation(df, dataset_name, model_type, sens_attr, label):
+def fairness_calculation(dataset_path, dataset_name, model_type, sens_attr, label):
+
+    data = nx.read_graphml(dataset_path)
+    df = pd.DataFrame.from_dict(dict(data.nodes(data=True)), orient='index')
+
+    if df_nodes.columns[0] != 'userid':    
+        # if so, then we make it as the first column
+        df_nodes = df_nodes.reset_index(level=0)
+        df_nodes = df_nodes.rename(columns={"index": 'userid'})
+
+    # check if user_id column is not string
+    if type(df_nodes['userid'][0]) != np.int64:
+        # if so, we convert it to int
+        df_nodes['userid'] = pd.to_numeric(df_nodes['userid'])
+        df_nodes = df_nodes.astype({'userid': int})
+
     if dataset_name == 'pokec_z':
         df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(-1, 0)
         df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(0, 0)
@@ -22,13 +38,12 @@ def fairness_calculation(df, dataset_name, model_type, sens_attr, label):
         df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(3, 1)
 
     elif dataset_name == 'alibaba':
-        if model_type != 'FairGNN':
-            df['age_level'] = df['age_level'].replace(1, 0)
-            df['age_level'] = df['age_level'].replace(2, 0)
-            df['age_level'] = df['age_level'].replace(3, 0)
-            df['age_level'] = df['age_level'].replace(4, 1)
-            df['age_level'] = df['age_level'].replace(5, 1)
-            df['age_level'] = df['age_level'].replace(6, 1)
+        df['age_level'] = df['age_level'].replace(1, 0)
+        df['age_level'] = df['age_level'].replace(2, 0)
+        df['age_level'] = df['age_level'].replace(3, 0)
+        df['age_level'] = df['age_level'].replace(4, 1)
+        df['age_level'] = df['age_level'].replace(5, 1)
+        df['age_level'] = df['age_level'].replace(6, 1)
 
         df['final_gender_code'] = df['final_gender_code'].replace(1, 0)
         df['final_gender_code'] = df['final_gender_code'].replace(2, 1)
