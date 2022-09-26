@@ -116,7 +116,7 @@ def FairGNN_pre_processing(data_extension):
     print('Loading dataset for FairGNN...')
     
     # calculate fairness before doing anything in the dataset
-    fairness_calculation(args.dataset_path, args.dataset_name, args.sens_attr, args.predict_attr)
+    fairness_calculation(args.dataset_path, args.dataset_name, args.sens_attr, args.predict_attr, label=None)
 
     if data_extension in networkx_format_list:
        # print('data extension is networkx format', data_extension)
@@ -198,7 +198,7 @@ def CatGCN_pre_processing(data_extension):
     # todo do suitable pre-processing for the choosen dataset
     print('Loading dataset for CatGCN...')
 
-    fairness_calculation(args.dataset_path, args.dataset_name, args.sens_attr, args.label)
+    fairness_calculation(args.dataset_path, args.dataset_name, args.sens_attr, args.label, predict_attr=None)
 
 
     if data_extension in networkx_format_list:
@@ -245,9 +245,6 @@ def CatGCN_pre_processing(data_extension):
         user_edge_path, user_field_path, user_work_path, user_labels_path = pokec_z_CatGCN_pre_process(df, df_edge_list)
         target = user_work_path
 
-    # calculate dataset fairness 
-    if(args.calc_fairness):
-        fairness_calculation(df, args.dataset_name, args.model_type, args.sens_attr, args.predict_attr)
     #print('Dataset fairness before training:', dataset_fairness)
     
     # Add model training after data processing
@@ -264,7 +261,7 @@ def RHGN_pre_processing(data_extension):
 
     print('Loading dataset for RHGN...')
 
-    fairness_calculation(args.dataset_path, args.dataset_name, args.sens_attr, args.label)
+    fairness_calculation(args.dataset_path, args.dataset_name, args.sens_attr, args.label, predict_attr=None)
 
     if data_extension in networkx_format_list:
         df = load_networkx_file(model_type,
@@ -283,9 +280,6 @@ def RHGN_pre_processing(data_extension):
     else: # simple test for pokec
         df = pd.read_csv(args.dataset_path)
     
-    # calculate dataset fairness
-    if(args.calc_fairness):
-        fairness_calculation(df, args.dataset_name, args.model_type, args.sens_attr, args.predict_attr)
     #print('Dataset fairness before training:', dataset_fairness)
 
     if args.dataset_name == 'alibaba':

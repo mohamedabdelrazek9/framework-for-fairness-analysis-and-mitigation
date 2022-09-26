@@ -6,7 +6,7 @@ from aif360.algorithms.preprocessing import DisparateImpactRemover, Reweighing
 
 
 
-def fairness_calculation(dataset_path, dataset_name, model_type, sens_attr, label):
+def fairness_calculation(dataset_path, dataset_name, sens_attr, predict_attr, label):
 
     data = nx.read_graphml(dataset_path)
     df = pd.DataFrame.from_dict(dict(data.nodes(data=True)), orient='index')
@@ -21,6 +21,9 @@ def fairness_calculation(dataset_path, dataset_name, model_type, sens_attr, labe
         # if so, we convert it to int
         df_nodes['userid'] = pd.to_numeric(df_nodes['userid'])
         df_nodes = df_nodes.astype({'userid': int})
+
+    if predict_attr != None:
+        label == predict_attr
 
     if dataset_name == 'pokec_z':
         df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(-1, 0)
