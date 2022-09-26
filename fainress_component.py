@@ -5,7 +5,7 @@ from aif360.algorithms.preprocessing import DisparateImpactRemover, Reweighing
 
 
 
-def fairness_calculation(df, dataset_name, sens_attr, label):
+def fairness_calculation(df, dataset_name, model_type, sens_attr, label):
     if dataset_name == 'pokec_z':
         df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(-1, 0)
         df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(0, 0)
@@ -22,12 +22,13 @@ def fairness_calculation(df, dataset_name, sens_attr, label):
         df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(3, 1)
 
     elif dataset_name == 'alibaba':
-        df['age_level'] = df['age_level'].replace(1, 0)
-        df['age_level'] = df['age_level'].replace(2, 0)
-        df['age_level'] = df['age_level'].replace(3, 0)
-        df['age_level'] = df['age_level'].replace(4, 1)
-        df['age_level'] = df['age_level'].replace(5, 1)
-        df['age_level'] = df['age_level'].replace(6, 1)
+        if model_type != 'FairGNN':
+            df['age_level'] = df['age_level'].replace(1, 0)
+            df['age_level'] = df['age_level'].replace(2, 0)
+            df['age_level'] = df['age_level'].replace(3, 0)
+            df['age_level'] = df['age_level'].replace(4, 1)
+            df['age_level'] = df['age_level'].replace(5, 1)
+            df['age_level'] = df['age_level'].replace(6, 1)
 
         df['final_gender_code'] = df['final_gender_code'].replace(1, 0)
         df['final_gender_code'] = df['final_gender_code'].replace(2, 1)

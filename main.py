@@ -152,7 +152,7 @@ def FairGNN_pre_processing(data_extension):
         # Calculate dataset Fairness (if activated)
         # todo add activation proceudre when debaising approaches are implmented
     if(args.calc_fairness):
-        df_nodes =  fairness_calculation(df_nodes, args.dataset_name, args.sens_attr, args.predict_attr)
+        df_nodes =  fairness_calculation(df_nodes, args.dataset_name, args.model_type, args.sens_attr, args.predict_attr)
 
         adj, features, labels, idx_train, idx_val, idx_test,sens,idx_sens_train = load_pokec(df_nodes,
                                                                                             edges_path,
@@ -238,7 +238,7 @@ def CatGCN_pre_processing(data_extension):
 
     # calculate dataset fairness 
     if(args.calc_fairness):
-        fairness_calculation(df, args.dataset_name, args.sens_attr, args.predict_attr)
+        fairness_calculation(df, args.dataset_name, args.model_type, args.sens_attr, args.predict_attr)
     #print('Dataset fairness before training:', dataset_fairness)
     
     # Add model training after data processing
@@ -273,7 +273,7 @@ def RHGN_pre_processing(data_extension):
     
     # calculate dataset fairness
     if(args.calc_fairness):
-        fairness_calculation(df, args.dataset_name, args.sens_attr, args.predict_attr)
+        fairness_calculation(df, args.dataset_name, args.model_type, args.sens_attr, args.predict_attr)
     #print('Dataset fairness before training:', dataset_fairness)
 
     if args.dataset_name == 'alibaba':
