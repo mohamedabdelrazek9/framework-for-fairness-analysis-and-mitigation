@@ -144,8 +144,8 @@ def FairGNN_pre_processing(data_extension):
     total_number_of_sens0 = len(df.loc[df[args.sens_attr] == 0])
     total_number_of_sens1 = len(df.loc[df[args.sens_attr] == 1])
 
-    number_of_positive_sens0 = len(df.loc[(df[args.sens_attr] == 0) & (df[args.label] == 1)])
-    number_of_positive_sens1 = len(df.loc[(df[args.sens_attr] == 1) & (df[args.label] == 1)])
+    number_of_positive_sens0 = len(df.loc[(df[args.sens_attr] == 0) & (df[args.predict_attr] == 1)])
+    number_of_positive_sens1 = len(df.loc[(df[args.sens_attr] == 1) & (df[args.predict_attr] == 1)])
 
     fairness = np.absolute(number_of_positive_sens0) / np.absolute(total_number_of_sens0) - np.absolute(number_of_positive_sens1) / np.absolute(total_number_of_sens1)
     dataset_fainress = fairness * 100
@@ -156,7 +156,7 @@ def FairGNN_pre_processing(data_extension):
         new = data[data[group_col] == group]
         return len(new[new[output_col] == output_val])/len(new)
 
-    pr_unpriv = calc_prop(df, args.sens_attr, 1, args.label, 1)
+    pr_unpriv = calc_prop(df, args.sens_attr, 1, args.predict_attr, 1)
     #print('pr_unpriv: ', pr_unpriv)
 
     pr_priv = calc_prop(df, args.sens_attr, 0, args.label, 1)
