@@ -99,17 +99,17 @@ def fairness_calculation(df, dataset_name, model_type, sens_attr, label):
 
     
 
-    binaryLabelDataset =BinaryLabelDataset(favorable_label=1, unfavorable_label=0, df=df, label_names=[label], protected_attribute_names=[sens_attr], unprivileged_protected_attributes=['1'])
-    di = DisparateImpactRemover(repair_level=1.0)
-    rp_train = di.fit_transform(binaryLabelDataset)
+    #binaryLabelDataset =BinaryLabelDataset(favorable_label=1, unfavorable_label=0, df=df, label_names=[label], protected_attribute_names=[sens_attr], unprivileged_protected_attributes=['1'])
+    #di = DisparateImpactRemover(repair_level=1.0)
+    #rp_train = di.fit_transform(binaryLabelDataset)
 
-    df_new = rp_train.convert_to_dataframe()[0]
+    #df_new = rp_train.convert_to_dataframe()[0]
 
 
 
     #print(dataset)
     #print(binaryLabelDataset)
-    return df_new
+    #return df_new
 
 def calc_prop(data, group_col, group, output_col, output_val):
     new = data[data[group_col] == group]

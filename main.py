@@ -99,7 +99,8 @@ parser.add_argument("--gat-units", type=str, default="64", help="Hidden units fo
 
 
 
-
+import networkx as nx
+import numpy as np
 
 args = parser.parse_known_args()[0]
 args.cuda = not args.no_cuda and torch.cuda.is_available()
@@ -114,6 +115,55 @@ def FairGNN_pre_processing(data_extension):
     model_type = args.model_type[args.model_type.index('FairGNN')]
     print('Loading dataset for FairGNN...')
     
+    data = nx.read_graphml('./alibaba.graphml')
+    df_nodes = pd.DataFrame.from_dict(dict(data.nodes(data=True)), orient='index')
+
+    if df_nodes.columns[0] != 'userid':    
+        # if so, then we make it as the first column
+        df_nodes = df_nodes.reset_index(level=0)
+        df_nodes = df_nodes.rename(columns={"index": 'userid'})
+
+    # check if user_id column is not string
+    if type(df_nodes['userid'][0]) != np.int64:
+        # if so, we convert it to int
+        df_nodes['userid'] = pd.to_numeric(df_nodes['userid'])
+        df_nodes = df_nodes.astype({'userid': int})
+
+    df = df_nodes
+
+    df["age_level"] = df["age_level"].replace(1,0)
+    df["age_level"] = df["age_level"].replace(2,0)
+    df["age_level"] = df["age_level"].replace(3,0)
+    df["age_level"] = df["age_level"].replace(4,1)
+    df["age_level"] = df["age_level"].replace(5,1)
+    df["age_level"] = df["age_level"].replace(6,1)
+
+    df['final_gender_code'] = df['final_gender_code'].replace(1, 0)
+    df['final_gender_code'] = df['final_gender_code'].replace(2, 1)
+
+    total_number_of_sens0 = len(df.loc[df[args.sens_attr] == 0])
+    total_number_of_sens1 = len(df.loc[df[args.sens_attr] == 1])
+
+    number_of_positive_sens0 = len(df.loc[(df[args.sens_attr] == 0) & (df[args.label] == 1)])
+    number_of_positive_sens1 = len(df.loc[(df[args.sens_attr] == 1) & (df[args.label] == 1)])
+
+    fairness = np.absolute(number_of_positive_sens0) / np.absolute(total_number_of_sens0) - np.absolute(number_of_positive_sens1) / np.absolute(total_number_of_sens1)
+    dataset_fainress = fairness * 100
+
+    print('dataset fairness #1:', dataset_fainress)
+
+    def calc_prop(data, group_col, group, output_col, output_val):
+        new = data[data[group_col] == group]
+        return len(new[new[output_col] == output_val])/len(new)
+
+    pr_unpriv = calc_prop(df, args.sens_attr, 1, args.label, 1)
+    #print('pr_unpriv: ', pr_unpriv)
+
+    pr_priv = calc_prop(df, args.sens_attr, 0, args.label, 1)
+    #print('pr_priv:', pr_priv)
+    disp = pr_unpriv / pr_priv
+
+    print('disp:', disp)
     if data_extension in networkx_format_list:
        # print('data extension is networkx format', data_extension)
         df_nodes, edges_path = load_networkx_file(model_type,
