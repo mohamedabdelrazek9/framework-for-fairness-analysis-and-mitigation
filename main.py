@@ -18,7 +18,7 @@ from pokec_processing.pokec_CatGCN_pre_processing import pokec_z_CatGCN_pre_proc
 from RHGN.ali_main import ali_training_main
 from RHGN.jd_main import tecent_training_main
 from CatGCN.train_main import train_CatGCN
-from fainress_component import fairness_calculation
+from fainress_component import fairness_calculation_nba
 import dgl
 import torch
 import pandas as pd
@@ -116,7 +116,7 @@ def FairGNN_pre_processing(data_extension):
     print('Loading dataset for FairGNN...')
     
     # calculate fairness before doing anything in the dataset
-    fairness_calculation(args.dataset_path, args.dataset_name, args.sens_attr, args.predict_attr, label=None)
+    fairness_calculation_nba(args.dataset_path, args.dataset_name, args.sens_attr, args.predict_attr, label=None)
 
     if data_extension in networkx_format_list:
        # print('data extension is networkx format', data_extension)

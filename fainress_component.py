@@ -1,3 +1,4 @@
+from cProfile import label
 import numpy as np
 import pandas as pd
 import networkx as nx
@@ -5,7 +6,54 @@ from aif360.datasets import StructuredDataset, StandardDataset, BinaryLabelDatas
 from aif360.algorithms.preprocessing import DisparateImpactRemover, Reweighing
 
 
+def fairness_calculation_nba(dataset_path, sens_attr, predict_attr):
+    data = nx.read_graphml(dataset_path)
+    df = pd.DataFrame.from_dict(dict(data.nodes(data=True)), orient='index')
 
+    if df.columns[0] != 'user_id':
+        df = df.reset_index(level=0)
+        df = df.rename(columns={"index": "user_id"})
+
+    if type(df['user_id'][0]) != np.int64:
+        df['user_id'] = pd.to_numeric(df['user_id'])
+        df = df.astype({'user_id': int})
+
+    df['SALARY'] = df['SALARY'].replace(-1, 0)
+
+    dataset_fairness(df, sens_attr, label)
+
+    disparate_impact(df, sens_attr, label)
+
+def dataset_fairness(df, sens_attr, label):
+    total_number_of_sens0 = len(df.loc[df[sens_attr] == 0])
+    total_number_of_sens1 = len(df.loc[df[sens_attr] == 1])
+
+    number_of_positive_sens0 = len(df.loc[(df[sens_attr] == 0) & (df[label] == 1)])
+    number_of_positive_sens1 = len(df.loc[(df[sens_attr] == 1) & (df[label] == 1)])
+
+    fairness = np.absolute(number_of_positive_sens0) / np.absolute(total_number_of_sens0) - np.absolute(number_of_positive_sens1) / np.absolute(total_number_of_sens1)
+    dataset_fainress = fairness * 100
+
+    print('Dataset fairness:', dataset_fainress)
+
+
+def disparate_impact(df, sens_attr, label):
+
+    pr_unpriv = calc_prop(df, sens_attr, 1, label, 1)
+    #print('pr_unpriv: ', pr_unpriv)
+
+    pr_priv = calc_prop(df, sens_attr, 0, label, 1)
+    #print('pr_priv:', pr_priv)
+    disp = pr_unpriv / pr_priv
+
+    print('disparate calculation:', disp)
+
+
+def calc_prop(data, group_col, group, output_col, output_val):
+    new = data[data[group_col] == group]
+    return len(new[new[output_col] == output_val])/len(new)
+
+'''
 def fairness_calculation(dataset_path, dataset_name, sens_attr, predict_attr, label):
 
     data = nx.read_graphml(dataset_path)
@@ -82,25 +130,25 @@ def fairness_calculation(dataset_path, dataset_name, sens_attr, predict_attr, la
     
     print('dataset fairness:', dataset_fainress)
 
-    '''
+    
     # new calculation
-    one_df = df[df[sens_attr] == 0]
-    num_of_priv = one_df.shape[0]
+    #one_df = df[df[sens_attr] == 0]
+    #num_of_priv = one_df.shape[0]
 
-    zero_df = df[df[sens_attr] == 1]
-    num_of_unpriv = zero_df.shape[0]
+    #zero_df = df[df[sens_attr] == 1]
+    #num_of_unpriv = zero_df.shape[0]
 
-    unpriv_outcomes = zero_df[zero_df[label]==1].shape[0]
-    unpriv_ratio = unpriv_outcomes/num_of_unpriv
+    #unpriv_outcomes = zero_df[zero_df[label]==1].shape[0]
+    #unpriv_ratio = unpriv_outcomes/num_of_unpriv
     
 
-    priv_outcomes = one_df[one_df[label]==1].shape[0]
-    priv_ratio = priv_outcomes/num_of_priv
+    #priv_outcomes = one_df[one_df[label]==1].shape[0]
+    #priv_ratio = priv_outcomes/num_of_priv
     
 
-    disparate_impact = unpriv_ratio/priv_ratio
-    return disparate_impact
-    '''
+    #disparate_impact = unpriv_ratio/priv_ratio
+    #return disparate_impact
+    
 
 
     
@@ -128,10 +176,8 @@ def fairness_calculation(dataset_path, dataset_name, sens_attr, predict_attr, la
     #print(dataset)
     #print(binaryLabelDataset)
     #return df_new
+'''
 
-def calc_prop(data, group_col, group, output_col, output_val):
-    new = data[data[group_col] == group]
-    return len(new[new[output_col] == output_val])/len(new)
                                                     
 
 
