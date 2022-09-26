@@ -115,7 +115,7 @@ def FairGNN_pre_processing(data_extension):
     model_type = args.model_type[args.model_type.index('FairGNN')]
     print('Loading dataset for FairGNN...')
     
-    data = nx.read_graphml('./alibaba.graphml')
+    data = nx.read_graphml(args.dataset_path)
     df_nodes = pd.DataFrame.from_dict(dict(data.nodes(data=True)), orient='index')
 
     if df_nodes.columns[0] != 'userid':    
