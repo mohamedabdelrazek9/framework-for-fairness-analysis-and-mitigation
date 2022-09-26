@@ -44,6 +44,9 @@ def fairness_calculation_alibaba(dataset_path, sens_attr, label):
         df['userid'] = pd.to_numeric(df['userid'])
         df = df.astype({'userid': int})
 
+    if sens_attr == 'age':
+        df.rename(columns={'age_level':'age', 'final_gender_code':'gender'}, inplace=True)
+
     df[sens_attr] = df[sens_attr].replace(1, 0)
     df[sens_attr] = df[sens_attr].replace(2, 0)
     df[sens_attr] = df[sens_attr].replace(3, 0)
