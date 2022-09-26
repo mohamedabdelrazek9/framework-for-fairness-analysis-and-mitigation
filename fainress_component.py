@@ -11,16 +11,16 @@ def fairness_calculation(dataset_path, dataset_name, sens_attr, predict_attr, la
     data = nx.read_graphml(dataset_path)
     df = pd.DataFrame.from_dict(dict(data.nodes(data=True)), orient='index')
 
-    if df_nodes.columns[0] != 'userid':    
+    if df.columns[0] != 'userid':    
         # if so, then we make it as the first column
-        df_nodes = df_nodes.reset_index(level=0)
-        df_nodes = df_nodes.rename(columns={"index": 'userid'})
+        df = df.reset_index(level=0)
+        df = df.rename(columns={"index": 'userid'})
 
     # check if user_id column is not string
-    if type(df_nodes['userid'][0]) != np.int64:
+    if type(df['userid'][0]) != np.int64:
         # if so, we convert it to int
-        df_nodes['userid'] = pd.to_numeric(df_nodes['userid'])
-        df_nodes = df_nodes.astype({'userid': int})
+        df['userid'] = pd.to_numeric(df['userid'])
+        df = df.astype({'userid': int})
 
     if predict_attr != None:
         label == predict_attr
