@@ -130,16 +130,18 @@ def FairGNN_pre_processing(data_extension):
         df_nodes = df_nodes.astype({'userid': int})
 
     df = df_nodes
+    #sens
+    #df["age_level"] = df["age_level"].replace(1,0)
+    #df["age_level"] = df["age_level"].replace(2,0)
+    #df["age_level"] = df["age_level"].replace(3,0)
+    #df["age_level"] = df["age_level"].replace(4,1)
+    #df["age_level"] = df["age_level"].replace(5,1)
+    #df["age_level"] = df["age_level"].replace(6,1)
 
-    df["age_level"] = df["age_level"].replace(1,0)
-    df["age_level"] = df["age_level"].replace(2,0)
-    df["age_level"] = df["age_level"].replace(3,0)
-    df["age_level"] = df["age_level"].replace(4,1)
-    df["age_level"] = df["age_level"].replace(5,1)
-    df["age_level"] = df["age_level"].replace(6,1)
+    #df['final_gender_code'] = df['final_gender_code'].replace(1, 0)
+    #df['final_gender_code'] = df['final_gender_code'].replace(2, 1)
 
-    df['final_gender_code'] = df['final_gender_code'].replace(1, 0)
-    df['final_gender_code'] = df['final_gender_code'].replace(2, 1)
+    df['SALARY'] = df['SALARY'].replace(-1, 0)
 
     total_number_of_sens0 = len(df.loc[df[args.sens_attr] == 0])
     total_number_of_sens1 = len(df.loc[df[args.sens_attr] == 1])
