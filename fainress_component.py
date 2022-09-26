@@ -5,6 +5,20 @@ import networkx as nx
 from aif360.datasets import StructuredDataset, StandardDataset, BinaryLabelDataset
 from aif360.algorithms.preprocessing import DisparateImpactRemover, Reweighing
 
+def fairness_calculation(df, dataset_name, dataset_path, sens_attr, predict_attr, label):
+
+    if label:
+        target = label
+    if predict_attr:
+        target = predict_attr
+
+
+    if dataset_name == 'nba':
+        fairness_calculation_nba(dataset_path, sens_attr, target)
+    
+    elif dataset_name == 'alibaba':
+        fairness_calculation_alibaba(dataset_path, sens_attr, target)
+
 
 def fairness_calculation_nba(dataset_path, sens_attr, predict_attr):
     data = nx.read_graphml(dataset_path)
@@ -18,7 +32,7 @@ def fairness_calculation_nba(dataset_path, sens_attr, predict_attr):
         df['user_id'] = pd.to_numeric(df['user_id'])
         df = df.astype({'user_id': int})
 
-    df['SALARY'] = df['SALARY'].replace(-1, 0)
+    df[predict_attr] = df[predict_attr].replace(-1, 0)
 
     dataset_fairness(df, sens_attr, predict_attr)
 
@@ -35,6 +49,16 @@ def fairness_calculation_alibaba(dataset_path, sens_attr, label):
     if type(df['userid'][0]) != np.int64:
         df['userid'] = pd.to_numeric(df['userid'])
         df = df.astype({'userid': int})
+
+    df[sens_attr] = df[sens_attr].replace(1, 0)
+    df[sens_attr] = df[sens_attr].replace(2, 0)
+    df[sens_attr] = df[sens_attr].replace(3, 0)
+    df[sens_attr] = df[sens_attr].replace(4, 1)
+    df[sens_attr] = df[sens_attr].replace(5, 1)
+    df[sens_attr] = df[sens_attr].replace(6, 1)
+
+    df[label] = df[label].replace(1, 0)
+    df[label] = df[label].replace(2, 1)
 
     dataset_fairness(df, sens_attr, label)
 
