@@ -5,7 +5,6 @@ import numpy as np
 import networkx as nx
 import scipy.sparse as sp
 import re
-from fainress_component import fairness_calculation
 from alibaba_processing.ali_CatGCN_pre_processing import get_count, filter_triplets, col_map, label_map
 
 def load_networkx_file(model_type, data_extension, dataset_name, dataset_path, dataset_user_id_name, onehot_bin_columns, onehot_cat_columns):
