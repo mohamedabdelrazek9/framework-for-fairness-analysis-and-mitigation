@@ -24,6 +24,22 @@ def fairness_calculation_nba(dataset_path, sens_attr, predict_attr):
 
     disparate_impact(df, sens_attr, predict_attr)
 
+def fairness_calculation_alibaba(dataset_path, sens_attr, label):
+    data = nx.read_graphml(dataset_path)
+    df = pd.DataFrame.from_dict(dict(data.nodes(data=True)), orient='index')
+
+    if df.columns[0] != 'userid':
+        df = df.reset_index(level=0)
+        df = df.rename(columns={"index": "userid"})
+
+    if type(df['userid'][0]) != np.int64:
+        df['userid'] = pd.to_numeric(df['userid'])
+        df = df.astype({'userid': int})
+
+    dataset_fairness(df, sens_attr, label)
+
+    disparate_impact(df, sens_attr, label)
+
 def dataset_fairness(df, sens_attr, label):
     total_number_of_sens0 = len(df.loc[df[sens_attr] == 0])
     total_number_of_sens1 = len(df.loc[df[sens_attr] == 1])
