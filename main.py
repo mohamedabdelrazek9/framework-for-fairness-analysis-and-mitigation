@@ -159,7 +159,7 @@ def FairGNN_pre_processing(data_extension):
     pr_unpriv = calc_prop(df, args.sens_attr, 1, args.predict_attr, 1)
     #print('pr_unpriv: ', pr_unpriv)
 
-    pr_priv = calc_prop(df, args.sens_attr, 0, args.label, 1)
+    pr_priv = calc_prop(df, args.sens_attr, 0, args.predict_attr, 1)
     #print('pr_priv:', pr_priv)
     disp = pr_unpriv / pr_priv
 
