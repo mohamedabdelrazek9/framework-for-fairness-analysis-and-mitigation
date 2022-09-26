@@ -44,7 +44,7 @@ def load_networkx_file(model_type, data_extension, dataset_name, dataset_path, d
         df_nodes = df_nodes.astype({dataset_user_id_name: int})
 
     if calc_fairness:
-        df_nodes = calc_fairness(df_nodes, dataset_name, model_type, sens_attr, label)
+        df_nodes = fairness_calculation(df_nodes, dataset_name, model_type, sens_attr, label)
     # todo if dataset will be used for RHGN or CatGCN then return, else we assume for FairGNN then complete the onehot encoding process
     if model_type == 'RHGN':
         return df_nodes
