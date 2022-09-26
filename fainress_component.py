@@ -16,6 +16,9 @@ def fairness_calculation(dataset_name, dataset_path, sens_attr, predict_attr):
     elif dataset_name == 'tecent':
         fairness_calculation_tecent(dataset_path, sens_attr, predict_attr)
 
+    elif dataset_name == 'pokec_z' or dataset_name == 'pokec_n':
+        fairness_calculation_pokec(dataset_path, dataset_path, sens_attr, predict_attr)
+
 
 def fairness_calculation_nba(dataset_path, sens_attr, predict_attr):
     data = nx.read_graphml(dataset_path)
@@ -91,6 +94,36 @@ def fairness_calculation_tecent(dataset_path, sens_attr, label):
 
     disparate_impact(df, sens_attr, label)
     
+def fairness_calculation_pokec(dataset_path, dataset_name, sens_attr, label):
+    data = nx.read_graphml(dataset_path)
+    df = pd.DataFrame.from_dict(dict(data.nodes(data=True)), orient='index')
+
+    if df.columns[0] != 'user_id':
+        df = df.reset_index(level=0)
+        df = df.rename(columns={"index": "user_id"})
+
+    if type(df['user_id'][0]) != np.int64:
+        df['user_id'] = pd.to_numeric(df['user_id'])
+        df = df.astype({'user_id': int})
+
+    if dataset_name == 'pokec_z':
+        df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(-1, 0)
+        df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(0, 0)
+        df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(1, 0)
+        df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(2, 1)
+        df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(3, 1)
+        df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(4, 1)
+
+    elif dataset_name == 'pokec_n':
+        df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(-1, 0)
+        df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(0, 1)
+        df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(1, 1)
+        df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(2, 1)
+        df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(3, 1)
+
+    dataset_fairness(df, sens_attr, label)
+
+    disparate_impact(df, sens_attr, label)
 
 def dataset_fairness(df, sens_attr, label):
     total_number_of_sens0 = len(df.loc[df[sens_attr] == 0])
