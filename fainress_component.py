@@ -5,19 +5,13 @@ import networkx as nx
 from aif360.datasets import StructuredDataset, StandardDataset, BinaryLabelDataset
 from aif360.algorithms.preprocessing import DisparateImpactRemover, Reweighing
 
-def fairness_calculation(df, dataset_name, dataset_path, sens_attr, predict_attr, label):
-
-    if label:
-        target = label
-    if predict_attr:
-        target = predict_attr
-
+def fairness_calculation(dataset_name, dataset_path, sens_attr, predict_attr):
 
     if dataset_name == 'nba':
-        fairness_calculation_nba(dataset_path, sens_attr, target)
+        fairness_calculation_nba(dataset_path, sens_attr, predict_attr)
     
     elif dataset_name == 'alibaba':
-        fairness_calculation_alibaba(dataset_path, sens_attr, target)
+        fairness_calculation_alibaba(dataset_path, sens_attr, predict_attr)
 
 
 def fairness_calculation_nba(dataset_path, sens_attr, predict_attr):
