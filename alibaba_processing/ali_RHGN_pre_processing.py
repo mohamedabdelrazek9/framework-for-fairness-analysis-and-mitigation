@@ -103,6 +103,7 @@ def ali_RHGN_pre_process(df, sens_attr, label, debaising_approach=None):
     # Generate graph
     G, cid1_feature, cid2_feature, cid3_feature, user_label = generate_graph(df_user, df_item, df_click, user_dic, item_dic, cate_dic, campaign_dic, brand_dic, c1, c2, c3)
 
+    '''
     sens_attr = 'age'
     predict_attr = 'gender'
     label_number = 100
@@ -136,9 +137,9 @@ def ali_RHGN_pre_process(df, sens_attr, label, debaising_approach=None):
     idx_train = torch.LongTensor(idx_train)
     idx_val = torch.LongTensor(idx_val)
     idx_test = torch.LongTensor(idx_test)
-
-    #return G, cid1_feature, cid2_feature, cid3_feature # use this graph for the input of the model (see RHGN repo for details)
-    return G, cid1_feature, cid2_feature, cid3_feature, idx_sens_train, idx_train, sens
+    '''
+    return G, cid1_feature, cid2_feature, cid3_feature # use this graph for the input of the model (see RHGN repo for details)
+    #return G, cid1_feature, cid2_feature, cid3_feature, idx_sens_train, idx_train, sens
 
 
 def divide_data(df):
