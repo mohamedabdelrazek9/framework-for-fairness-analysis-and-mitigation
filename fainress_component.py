@@ -163,7 +163,7 @@ def disparate_impact(df, sens_attr, label):
                                              privileged_groups=privileged_groups)
 
     print('disparate calculation:', disp)
-    print("Disparate impact (from AIF360) = %f" %metric.disparate_impact()) 
+    print("Disparate impact (from AIF360) = %f" %metric_dataset.disparate_impact()) 
 
 
 def calc_prop(data, group_col, group, output_col, output_val):
