@@ -20,7 +20,7 @@ def ali_RHGN_pre_process(df, sens_attr, label, debaising_approach=None):
         elif debaising_approach == 'lfr':
             df = lfr(df, sens_attr, label)
 
-        df_user, df_item, df_click = divide_data(df)
+        df_user, df_item, df_click = divide_data_2(df)
         df_user.rename(columns={'userid':'uid', 'pvalue_level':'buy', 'occupation':'student', 'new_user_class_level':'city'}, inplace=True)
         df_user.dropna(inplace=True)
         df_user = apply_bin_buy(df_user)
@@ -144,6 +144,13 @@ def ali_RHGN_pre_process(df, sens_attr, label, debaising_approach=None):
 def divide_data(df):
     # divide data into 3 (df_user, df_item, df_click)
     df_user = df[['userid', 'final_gender_code', 'age_level', 'pvalue_level', 'occupation', 'new_user_class_level']].copy()
+    df_item = df[['adgroup_id', 'cate_id', 'campaign_id', 'brand']].copy() 
+    df_click = df[['userid', 'adgroup_id', 'clk']].copy()
+
+    return df_user, df_item, df_click
+
+def divide_data_2(df):
+    df_user = df[{'userid', 'gender', 'bin_age', 'pvalue_level', 'occupation', 'new_user_class_level'}].copy()
     df_item = df[['adgroup_id', 'cate_id', 'campaign_id', 'brand']].copy() 
     df_click = df[['userid', 'adgroup_id', 'clk']].copy()
 
