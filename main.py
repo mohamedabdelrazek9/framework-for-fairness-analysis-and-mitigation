@@ -288,6 +288,8 @@ def RHGN_pre_processing(data_extension):
 
     if args.debaising_approach:
         if args.debaising_approach == 'disparate_impact_remover':
+            print('columns:', df.columns.tolist())
+            print('')
             df = disparate_impact_remover(df, args.sens_attr, args.label)
         elif args.debaising_approach == 'reweighting':
             df = reweighting(df, args.sens_attr, args.label)
