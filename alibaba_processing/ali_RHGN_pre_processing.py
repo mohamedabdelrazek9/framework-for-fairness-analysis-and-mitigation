@@ -237,7 +237,7 @@ def generate_graph(df_user, df_item, df_click, user_dic, item_dic, cate_dic, cam
 
     df_user = col_map(df_user, 'uid', uid2id)
     user_label = label_map(df_user, df_user.columns[1:])
-
+    print('user label columns:', user_label.columns.tolist())
     # Pass the label into "label"
     label_gender = user_label.gender
     label_age = user_label.age
