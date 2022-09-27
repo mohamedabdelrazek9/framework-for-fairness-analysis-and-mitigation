@@ -265,7 +265,7 @@ def RHGN_pre_processing(data_extension):
     print('Loading dataset for RHGN...')
 
     predict_attr = args.label
-    fairness_calculation(args.dataset_name, args.dataset_path, args.sens_attr, predict_attr)
+    #fairness_calculation(args.dataset_name, args.dataset_path, args.sens_attr, predict_attr)
 
     if data_extension in networkx_format_list:
         df = load_networkx_file(model_type,
