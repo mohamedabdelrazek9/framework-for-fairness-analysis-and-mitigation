@@ -286,6 +286,7 @@ def RHGN_pre_processing(data_extension):
     
     #print('Dataset fairness before training:', dataset_fairness)
 
+    '''
     if args.debaising_approach:
         if args.debaising_approach == 'disparate_impact_remover':
             print('columns:', df.columns.tolist())
@@ -295,10 +296,10 @@ def RHGN_pre_processing(data_extension):
             df = reweighting(df, args.sens_attr, args.label)
         elif args.debaising_approach == 'lfr':
             df = lfr(df, args.sens_attr, args.label)
-
+    '''
     if args.dataset_name == 'alibaba':
         #G, cid1_feature, cid2_feature, cid3_feature = ali_RHGN_pre_process(df)
-        G, cid1_feature, cid2_feature, cid3_feature, idx_sens_train, idx_train, sens = ali_RHGN_pre_process(df)
+        G, cid1_feature, cid2_feature, cid3_feature, idx_sens_train, idx_train, sens = ali_RHGN_pre_process(df, args.sens_attr, args.label, args.debaising_approach)
     elif args.dataset_name == 'tecent':
         G, cid1_feature, cid2_feature, cid3_feature, cid4_feature = tec_RHGN_pre_process(df)
 

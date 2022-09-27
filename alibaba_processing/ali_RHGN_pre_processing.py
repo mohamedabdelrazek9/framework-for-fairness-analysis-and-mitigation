@@ -2,17 +2,35 @@ import numpy as np
 import pandas as pd
 import torch
 import dgl
+from fainress_component import disparate_impact_remover, reweighting, lfr
 import fasttext
 
-def ali_RHGN_pre_process(df):
-    # load and clean data
+def ali_RHGN_pre_process(df, sens_attr, label, debaising_approach=None):
+    # load and clean data   
+    if debaising_approach != None:
 
-    # df_user =  label
-    df_user, df_item, df_click = divide_data(df)
-    df_user.rename(columns={'userid':'uid', 'final_gender_code':'gender','age_level':'age', 'pvalue_level':'buy', 'occupation':'student', 'new_user_class_level':'city'}, inplace=True)
-    df_user.dropna(inplace=True)
-    df_user = apply_bin_age(df_user)
-    df_user = apply_bin_buy(df_user)
+        df.rename(columns={'final_gender_code': 'gender', 'age_level':'age'}, inplace=True)
+        df = apply_bin_age(df)
+        df['gender'] = df['gender'].replace(1,0)
+        df['gender'] = df['gender'].replace(2,1)
+        if debaising_approach == 'disparate_impact_remover':
+            df = disparate_impact_remover(df, sens_attr, label)
+        elif debaising_approach == 'reweighting':
+            df = reweighting(df, sens_attr, label)
+        elif debaising_approach == 'lfr':
+            df = lfr(df, sens_attr, label)
+
+        df_user, df_item, df_click = divide_data(df)
+        df_user.rename(columns={'userid':'uid', 'pvalue_level':'buy', 'occupation':'student', 'new_user_class_level':'city'}, inplace=True)
+        df_user.dropna(inplace=True)
+        df_user = apply_bin_buy(df_user)
+    else:
+        # df_user =  label
+        df_user, df_item, df_click = divide_data(df)
+        df_user.rename(columns={'userid':'uid', 'final_gender_code':'gender','age_level':'age', 'pvalue_level':'buy', 'occupation':'student', 'new_user_class_level':'city'}, inplace=True)
+        df_user.dropna(inplace=True)
+        df_user = apply_bin_age(df_user)
+        df_user = apply_bin_buy(df_user)
 
     # df_item = pid_cid
     df_item.dropna(axis=0, subset=['cate_id', 'campaign_id', 'brand'], inplace=True)
