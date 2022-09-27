@@ -240,14 +240,14 @@ def generate_graph(df_user, df_item, df_click, user_dic, item_dic, cate_dic, cam
     
     # Pass the label into "label"
     label_gender = user_label.gender
-    label_age = user_label.age
+    label_age = user_label.bin_age
     label_buy = user_label.buy
     label_student = user_label.student
     label_city = user_label.city
     label_bin_buy = user_label.bin_buy
 
     G.nodes['user'].data['gender'] = torch.tensor(label_gender[:G.number_of_nodes('user')])
-    G.nodes['user'].data['bin_age'] = torch.tensor(label_age[:G.number_of_nodes('user')])
+    G.nodes['user'].data['age'] = torch.tensor(label_age[:G.number_of_nodes('user')])
     G.nodes['user'].data['buy'] = torch.tensor(label_buy[:G.number_of_nodes('user')])
     G.nodes['user'].data['student'] = torch.tensor(label_student[:G.number_of_nodes('user')])
     G.nodes['user'].data['city'] = torch.tensor(label_city[:G.number_of_nodes('user')])
