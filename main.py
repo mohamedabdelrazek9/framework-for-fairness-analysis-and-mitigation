@@ -355,10 +355,7 @@ def RHGN_pre_processing(data_extension):
                         args.sens_attr, 
                         args.multiclass_pred, 
                         args.multiclass_sens, 
-                        args.clip,
-                        idx_sens_train,
-                        idx_train,
-                        sens)
+                        args.clip)
 
     return print('Training RHGN is done.')
 
