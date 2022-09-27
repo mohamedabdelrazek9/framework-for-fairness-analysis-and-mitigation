@@ -2,8 +2,10 @@ from cProfile import label
 import numpy as np
 import pandas as pd
 import networkx as nx
-from aif360.datasets import StructuredDataset, StandardDataset, BinaryLabelDataset
+from aif360.datasets import BinaryLabelDataset
 from aif360.algorithms.preprocessing import DisparateImpactRemover, Reweighing
+from aif360.metrics import BinaryLabelDatasetMetric, metric
+
 
 def fairness_calculation(dataset_name, dataset_path, sens_attr, predict_attr):
 
@@ -147,7 +149,21 @@ def disparate_impact(df, sens_attr, label):
     #print('pr_priv:', pr_priv)
     disp = pr_unpriv / pr_priv
 
+    bin_label_dataset = BinaryLabelDataset(favorable_label=1, 
+                                           unfavorable_label=0, 
+                                           df=df, 
+                                           label_names=[label], 
+                                           protected_attribute_names=[sens_attr], 
+                                           unprivileged_protected_attributes=[1])
+
+    privileged_groups = [{sens_attr: 0}] 
+    unprivileged_groups = [{sens_attr: 1}] 
+    metric_dataset = BinaryLabelDatasetMetric(bin_label_dataset, 
+                                             unprivileged_groups=unprivileged_groups,
+                                             privileged_groups=privileged_groups)
+
     print('disparate calculation:', disp)
+    print("Disparate impact (from AIF360) = %f" %metric.disparate_impact()) 
 
 
 def calc_prop(data, group_col, group, output_col, output_val):
