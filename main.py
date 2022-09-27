@@ -18,7 +18,7 @@ from pokec_processing.pokec_CatGCN_pre_processing import pokec_z_CatGCN_pre_proc
 from RHGN.ali_main import ali_training_main
 from RHGN.jd_main import tecent_training_main
 from CatGCN.train_main import train_CatGCN
-from fainress_component import fairness_calculation, disparate_impact, reweighting, lfr
+from fainress_component import fairness_calculation, disparate_impact_remover, reweighting, lfr
 import dgl
 import torch
 import pandas as pd
@@ -288,7 +288,7 @@ def RHGN_pre_processing(data_extension):
 
     if args.debaising_approach:
         if args.debaising_approach == 'disparate_impact_remover':
-            df = disparate_impact(df, args.sens_attr, args.label)
+            df = disparate_impact_remover(df, args.sens_attr, args.label)
         elif args.debaising_approach == 'reweighting':
             df = reweighting(df, args.sens_attr, args.label)
         elif args.debaising_approach == 'lfr':
