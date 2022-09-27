@@ -174,6 +174,12 @@ def calc_prop(data, group_col, group, output_col, output_val):
 
 def disparate_impact_remover(df, sens_attr, label):
 
+    if 'final_gender_code' in df:
+        df.rename(columns={'final_gender_code':'gender'}, inplace=True)
+
+    elif 'age_level' in df:
+        df.rename(columns={'age_level': 'age'}, inplace=True)
+
     bin_label_dataset = BinaryLabelDataset(favorable_label=1, 
                                            unfavorable_label=0, 
                                            df=df, 
