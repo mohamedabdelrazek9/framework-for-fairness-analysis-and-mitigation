@@ -18,7 +18,7 @@ from pokec_processing.pokec_CatGCN_pre_processing import pokec_z_CatGCN_pre_proc
 from RHGN.ali_main import ali_training_main
 from RHGN.jd_main import tecent_training_main
 from CatGCN.train_main import train_CatGCN
-from fainress_component import fairness_calculation
+from fainress_component import fairness_calculation, disparate_impact, reweighting, lfr
 import dgl
 import torch
 import pandas as pd
@@ -54,6 +54,7 @@ parser.add_argument('--uneeded_columns', nargs="+", help="(OPTIONAL) choose whic
 parser.add_argument('--onehot_bin_columns', nargs="+", help='(OPTIONAL) Decide which of the columns of your dataset are binary (e.g. False/True) to be later on processed')
 parser.add_argument('--onehot_cat_columns', nargs="+", help='(OPTIONAL) choose which columns in the dataset will be transofrmed as one-hot encoded')
 parser.add_argument('--calc_fairness', type=bool, default=False)
+parser.add_argument('--debaising_approach', type=str, choices=['disparate_impact_remover', 'reweighting', 'lfr'], help="choose which debaising approach to use while preprocessing the dataset")
 #################
 # for RHGN
 #n_epoch --> epochs
@@ -284,6 +285,14 @@ def RHGN_pre_processing(data_extension):
         df = pd.read_csv(args.dataset_path)
     
     #print('Dataset fairness before training:', dataset_fairness)
+
+    if args.debaising_approach:
+        if args.debaising_approach == 'disparate_impact_remover':
+            df = disparate_impact(df, args.sens_attr, args.label)
+        elif args.debaising_approach == 'reweighting':
+            df = reweighting(df, args.sens_attr, args.label)
+        elif args.debaising_approach == 'lfr':
+            df = lfr(df, args.sens_attr, args.label)
 
     if args.dataset_name == 'alibaba':
         #G, cid1_feature, cid2_feature, cid3_feature = ali_RHGN_pre_process(df)

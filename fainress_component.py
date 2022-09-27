@@ -3,8 +3,8 @@ import numpy as np
 import pandas as pd
 import networkx as nx
 from aif360.datasets import BinaryLabelDataset
-from aif360.algorithms.preprocessing import DisparateImpactRemover, Reweighing
-from aif360.metrics import BinaryLabelDatasetMetric, metric
+from aif360.algorithms.preprocessing import DisparateImpactRemover, Reweighing, LFR
+from aif360.metrics import BinaryLabelDatasetMetric
 
 
 def fairness_calculation(dataset_name, dataset_path, sens_attr, predict_attr):
@@ -162,6 +162,7 @@ def disparate_impact(df, sens_attr, label):
                                              unprivileged_groups=unprivileged_groups,
                                              privileged_groups=privileged_groups)
 
+    # just for comparison
     print('disparate calculation:', disp)
     print("Disparate impact (from AIF360) = %f" %metric_dataset.disparate_impact()) 
 
@@ -169,6 +170,109 @@ def disparate_impact(df, sens_attr, label):
 def calc_prop(data, group_col, group, output_col, output_val):
     new = data[data[group_col] == group]
     return len(new[new[output_col] == output_val])/len(new)
+
+
+def disparate_impact_remover(df, sens_attr, label):
+
+    bin_label_dataset = BinaryLabelDataset(favorable_label=1, 
+                                           unfavorable_label=0, 
+                                           df=df, 
+                                           label_names=[label], 
+                                           protected_attribute_names=[sens_attr], 
+                                           unprivileged_protected_attributes=[1])
+
+    di = DisparateImpactRemover(repair_level=1)
+    di_transformation = di.fit_transform(bin_label_dataset)
+
+    privileged_groups = [{sens_attr: 0}] 
+    unprivileged_groups = [{sens_attr: 1}] 
+
+    metric_original_dataset = BinaryLabelDatasetMetric(bin_label_dataset, 
+                                             unprivileged_groups=unprivileged_groups,
+                                             privileged_groups=privileged_groups)
+
+    metric_new_dataset = BinaryLabelDatasetMetric(di_transformation, 
+                                             unprivileged_groups=unprivileged_groups,
+                                             privileged_groups=privileged_groups)
+
+    print("Original Disparate impact (from AIF360) = %f" %metric_original_dataset.disparate_impact())
+    print("After debaising Disparate impact (from AIF360) = %f" %metric_new_dataset.disparate_impact())
+
+    new_df = di_transformation.convert_to_dataframe()[0]
+
+    return new_df
+
+
+def reweighting(df, sens_attr, label):
+
+    bin_label_dataset = BinaryLabelDataset(favorable_label=1, 
+                                           unfavorable_label=0, 
+                                           df=df, 
+                                           label_names=[label], 
+                                           protected_attribute_names=[sens_attr], 
+                                           unprivileged_protected_attributes=[1])
+
+    privileged_groups = [{sens_attr: 0}] 
+    unprivileged_groups = [{sens_attr: 1}] 
+
+    RW = Reweighing(unprivileged_groups = unprivileged_groups, privileged_groups   = privileged_groups)
+
+    RW.fit(bin_label_dataset)
+    rw_transformation = RW.transform(bin_label_dataset)
+
+    metric_original_dataset = BinaryLabelDatasetMetric(bin_label_dataset, 
+                                             unprivileged_groups=unprivileged_groups,
+                                             privileged_groups=privileged_groups)
+
+    metric_new_dataset = BinaryLabelDatasetMetric(rw_transformation, 
+                                             unprivileged_groups=unprivileged_groups,
+                                             privileged_groups=privileged_groups)
+
+    print("Original Disparate impact (from AIF360) = %f" %metric_original_dataset.disparate_impact())
+    print("After debaising Disparate impact (from AIF360) = %f" %metric_new_dataset.disparate_impact())
+
+
+    df_new = rw_transformation.convert_to_dataframe()[0]
+
+
+    return df_new
+
+def lfr(df, sens_attr, label):
+
+    bin_label_dataset = BinaryLabelDataset(favorable_label=1, 
+                                           unfavorable_label=0, 
+                                           df=df, 
+                                           label_names=[label], 
+                                           protected_attribute_names=[sens_attr], 
+                                           unprivileged_protected_attributes=[1])
+
+    privileged_groups = [{sens_attr: 0}] 
+    unprivileged_groups = [{sens_attr: 1}]
+
+    TR = LFR(unprivileged_groups = unprivileged_groups, privileged_groups = privileged_groups)
+
+    TR = TR.fit(bin_label_dataset)
+
+    dset_lfr_trn = TR.transform(bin_label_dataset, threshold = 0.3)
+    dset_lfr_trn = bin_label_dataset.align_datasets(dset_lfr_trn)
+
+    metric_original_dataset = BinaryLabelDatasetMetric(bin_label_dataset, 
+                                             unprivileged_groups=unprivileged_groups,
+                                             privileged_groups=privileged_groups)
+
+    metric_new_dataset = BinaryLabelDatasetMetric(dset_lfr_trn, 
+                                             unprivileged_groups=unprivileged_groups,
+                                             privileged_groups=privileged_groups)
+
+    print("Original Disparate impact (from AIF360) = %f" %metric_original_dataset.disparate_impact())
+    print("After debaising Disparate impact (from AIF360) = %f" %metric_new_dataset.disparate_impact())
+
+    df_new = dset_lfr_trn.convert_to_dataframe()[0]
+
+    return df_new
+
+
+
 
 '''
 def fairness_calculation(dataset_path, dataset_name, sens_attr, predict_attr, label):
