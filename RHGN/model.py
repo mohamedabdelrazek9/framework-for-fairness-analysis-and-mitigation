@@ -166,7 +166,7 @@ class ali_RHGN(nn.Module):
 
         # h=F.log_softmax(h, dim=1)
         # return will be h, labels, and estimator output
-        return h_new, labels, h, inputs
+        return h_new, labels
 
         
 
