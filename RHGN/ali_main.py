@@ -67,7 +67,7 @@ def get_n_params(model):
     return pp
 
 
-def Batch_train(model, model_adv, G, optimizer, optimizer_A, scheduler, train_dataloader, val_dataloader, test_dataloader, epochs, label, clip, idx_sens_train, idx_train, sens, train_idx):
+def Batch_train(model, G, optimizer, scheduler, train_dataloader, val_dataloader, test_dataloader, epochs, label, clip):
     tic = time.perf_counter() # start counting time
 
     best_val_acc = 0
@@ -82,16 +82,11 @@ def Batch_train(model, model_adv, G, optimizer, optimizer_A, scheduler, train_da
         count = 0
         for input_nodes, output_nodes, blocks in train_dataloader:
             Batch_logits,Batch_labels, h, inputs = model(input_nodes,output_nodes,blocks, out_key='user',label_key=label, is_train=True)
-            s, s_g = model_adv(h, inputs, G, blocks, out_key="user", label_key=label, is_train=True)
+            #s, s_g = model_adv(h, inputs, G, blocks, out_key="user", label_key=label, is_train=True)
 
             s_score = torch.sigmoid(s.detach())
-            print('s_Score:', s_score.shape)
-            print('idx_sens_train:', idx_sens_train.shape)
-            print('sens:', sens.shape)
-            print('sens[idx_sens_train]:', sens[idx_sens_train])
-            print('shape:', sens[idx_sens_train].shape)
-            print('')
-            s_score = sens[idx_sens_train].unsqueeze(1).float() 
+            
+            #s_score = sens[idx_sens_train].unsqueeze(1).float() 
             
             #print('s_score[idx_sens_train]:', s_score[idx_sens_train]) # problem occurs here
             #print('shape:', s_score[idx_sens_train].shape)
@@ -112,12 +107,12 @@ def Batch_train(model, model_adv, G, optimizer, optimizer_A, scheduler, train_da
             scheduler.step(train_step)
 
             # update adv
-            optimizer_A.zero_grad()
-            s_g = model_adv.adv_model(h.detach())
+            #optimizer_A.zero_grad()
+            #s_g = model_adv.adv_model(h.detach())#
 
-            adv_loss = criterion(s_g, s_score)
-            adv_loss.backward()
-            optimizer_A.step()
+            #adv_loss = criterion(s_g, s_score)
+            #adv_loss.backward()
+            #optimizer_A.step()
             
 
             acc = torch.sum(Batch_logits.argmax(1) == Batch_labels).item()
@@ -211,7 +206,7 @@ def Batch_train(model, model_adv, G, optimizer, optimizer_A, scheduler, train_da
 
 
 ######################################################################
-def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, model_type, seed, gpu, label, n_inp, batch_size, num_hidden, epochs, lr, sens_attr, multiclass_pred, multiclass_sens, clip, idx_sens_train, idx_train, sens):
+def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, model_type, seed, gpu, label, n_inp, batch_size, num_hidden, epochs, lr, sens_attr, multiclass_pred, multiclass_sens, clip):
 
     '''Fixed random seeds'''
     np.random.seed(seed)
@@ -267,9 +262,9 @@ def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, model_type, s
 
 
     G = G.to(device)
-    train_idx_item=torch.tensor(shuffle[0:int(G.number_of_nodes('item') * 0.75)]).long()
-    val_idx_item = torch.tensor(shuffle[int(G.number_of_nodes('item')*0.75):int(G.number_of_nodes('item')*0.875)]).long()
-    test_idx_item = torch.tensor(shuffle[int(G.number_of_nodes('item')*0.875):]).long()
+   # train_idx_item=torch.tensor(shuffle[0:int(G.number_of_nodes('item') * 0.75)]).long()
+   # val_idx_item = torch.tensor(shuffle[int(G.number_of_nodes('item')*0.75):int(G.number_of_nodes('item')*0.875)]).long()
+   # test_idx_item = torch.tensor(shuffle[int(G.number_of_nodes('item')*0.875):]).long()
     '''Sampling'''
     sampler = dgl.dataloading.MultiLayerFullNeighborSampler(2)
 
@@ -294,8 +289,8 @@ def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, model_type, s
         drop_last=False,
         device=device)
 
-    idx_sens_train = idx_sens_train.to(device)
-    idx_train = idx_train.to(device)
+    
+    #idx_train = idx_train.to(device)
     sens = sens.to(device)
     if model_type=='RHGN':
         #cid1_feature = torch.load('{}/cid1_feature.npy'.format(args.data_dir))
@@ -318,24 +313,14 @@ def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, model_type, s
                     lr=lr,
                     use_norm = True).to(device)
         optimizer = torch.optim.AdamW(model.parameters())
-        model_adv = RHGN_adv(G,
-                    node_dict, edge_dict,
-                    n_inp=n_inp,
-                    n_hid=num_hidden,
-                    n_out=labels.max().item()+1,
-                    n_layers=2,
-                    n_heads=4,
-                    cid1_feature=cid1_feature,
-                    cid2_feature=cid2_feature,
-                    cid3_feature=cid3_feature).to(device)
-        optimizer_A = torch.optim.Adam(model_adv.parameters(), lr=0.1, weight_decay=1e-5)
+        
 
         print('n_out:', labels.max().item()+1)
 
         scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, epochs=epochs,
                                                         steps_per_epoch=int(train_idx.shape[0]/batch_size)+1,max_lr = lr)
         print('Training RHGN with #param: %d' % (get_n_params(model)))
-        targets, predictions = Batch_train(model, model_adv, G, optimizer, optimizer_A, scheduler, train_dataloader, val_dataloader, test_dataloader, epochs, label, clip, idx_sens_train, idx_train, sens, train_idx)
+        targets, predictions = Batch_train(model, G, optimizer, scheduler, train_dataloader, val_dataloader, test_dataloader, epochs, label, clip)
 
         # Compute fairness
         fair_obj = Fairness(G, test_idx, targets, predictions, sens_attr, multiclass_pred, multiclass_sens)  # removed neptune for now
