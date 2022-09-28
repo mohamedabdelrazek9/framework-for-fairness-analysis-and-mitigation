@@ -190,7 +190,8 @@ def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, model_type, s
         torch.cuda.manual_seed(seed)
         torch.cuda.manual_seed_all(seed)
 
-    device = torch.device("cuda:{}".format(gpu))
+    device = torch.device("cuda:{}".format(gpu) if torch.cuda.is_available() else 'cpu')
+    print('device:', device)
 
     '''Loading charts and labels'''
     #G=torch.load('{}/{}.pkl'.format(args.data_dir,args.graph))
