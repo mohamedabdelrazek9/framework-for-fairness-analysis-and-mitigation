@@ -19,6 +19,7 @@ class ClusterGNNTrainer(object):
         self.clustering_machine = clustering_machine
         #self.neptune_run = neptune_run
         self.device = torch.device("cuda:{}".format(args.gpu) if torch.cuda.is_available() else "cpu")
+        print('device:', self.device)
         self.class_weight = clustering_machine.class_weight.to(self.device)
         self.create_model()
 
