@@ -45,7 +45,7 @@ class RHGN_adv(nn.Module):
         return s, s_g
 
 class ali_RHGN(nn.Module):
-    def __init__(self, G, node_dict, edge_dict, n_inp, n_hid, n_out, n_layers, n_heads,cid1_feature,cid2_feature,cid3_feature, epochs, train_idx, batch_size, lr, use_norm = True,):
+    def __init__(self, G, node_dict, edge_dict, n_inp, n_hid, n_out, n_layers, n_heads,cid1_feature,cid2_feature,cid3_feature, use_norm = True):
         super(ali_RHGN, self).__init__()
         self.node_dict = node_dict
         self.edge_dict = edge_dict
