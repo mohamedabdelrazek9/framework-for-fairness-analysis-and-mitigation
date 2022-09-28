@@ -232,7 +232,7 @@ def CatGCN_pre_processing(data_extension):
          
     
     if args.dataset_name == 'alibaba':
-        user_edge_path, user_field_path, user_gender_path, user_labels_path, idx_sens_train, sens = ali_CatGCN_pre_processing(df)
+        user_edge_path, user_field_path, user_gender_path, user_labels_path = ali_CatGCN_pre_processing(df)
         target = user_gender_path
     elif args.dataset_name == 'tecent':
         user_edge_path, user_field_path, user_gender_path, user_labels_path = tec_CatGCN_pre_process(df)
@@ -252,7 +252,7 @@ def CatGCN_pre_processing(data_extension):
     
     # Add model training after data processing
     print('Starting CatGCN training')
-    train_CatGCN(user_edge_path, user_field_path, target, user_labels_path, args.seed, args.label, idx_sens_train, sens, args)
+    train_CatGCN(user_edge_path, user_field_path, target, user_labels_path, args.seed, args.label, args)
     
     return print('Training CatGCN is done.')
 
