@@ -129,7 +129,7 @@ class ali_RHGN(nn.Module):
         # brand_feature = blocks[0].srcnodes['brand'].data['inp']
 
         inputs=torch.cat((cid1_feature,cid2_feature,cid3_feature),1)        #(N,4,200)
-        print('inputs:', inputs.shape) # (455, 3, 200)
+        #print('inputs:', inputs.shape) # (455, 3, 200)
         k = self.key(inputs) #(N,4,n_inp)
         v = self.value(inputs) #(N,4,n_inp)
         q = self.query(item_feature.unsqueeze(-2)) #(N,1,n_inp)
@@ -151,7 +151,7 @@ class ali_RHGN(nn.Module):
             h = self.gcs[i](blocks[i], h, is_train=is_train,print_flag=print_flag)
 
         h = h[out_key]
-        print('h:', h)
+        #print('h:', h)
         #self.adv_model.requires_grad_(False)
         #add sens model input
         #s = self.sens_model(inputs)
@@ -161,7 +161,7 @@ class ali_RHGN(nn.Module):
         #s_g = self.adv_model(h)
 
         h_new=self.out(h)
-        print('h_new:', h_new.shape)
+        #print('h_new:', h_new.shape)
         labels=blocks[-1].dstnodes[out_key].data[label_key]
 
         # h=F.log_softmax(h, dim=1)
