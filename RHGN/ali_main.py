@@ -12,10 +12,8 @@ import time
 #import neptune.new as neptune
 
 from RHGN.fairness import Fairness
-from alibaba_processing.ali_CatGCN_pre_processing import label_map
 '''
 parser = argparse.ArgumentParser(description='for Alibaba Dataset')
-
 parser.add_argument('--n_epoch', type=int, default=50)
 parser.add_argument('--batch_size', type=int, default=512)
 parser.add_argument('--seed', type=int, default=7)
@@ -35,7 +33,6 @@ parser.add_argument('--neptune-project', type=str, default='')
 parser.add_argument('--neptune-token', type=str, default='')
 parser.add_argument('--multiclass-pred', type=bool, default=False)
 parser.add_argument('--multiclass-sens', type=bool, default=False)
-
 args = parser.parse_args()
 '''
 
@@ -67,7 +64,7 @@ def get_n_params(model):
     return pp
 
 
-def Batch_train(model, G, optimizer, scheduler, train_dataloader, val_dataloader, test_dataloader, epochs, label, clip):
+def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, test_dataloader, epochs, label, clip):
     tic = time.perf_counter() # start counting time
 
     best_val_acc = 0
@@ -81,21 +78,7 @@ def Batch_train(model, G, optimizer, scheduler, train_dataloader, val_dataloader
         total_acc = 0
         count = 0
         for input_nodes, output_nodes, blocks in train_dataloader:
-            Batch_logits,Batch_labels, h, inputs = model(input_nodes,output_nodes,blocks, out_key='user',label_key=label, is_train=True)
-            #s, s_g = model_adv(h, inputs, G, blocks, out_key="user", label_key=label, is_train=True)
-
-            s_score = torch.sigmoid(s.detach())
-            
-            #s_score = sens[idx_sens_train].unsqueeze(1).float() 
-            
-            #print('s_score[idx_sens_train]:', s_score[idx_sens_train]) # problem occurs here
-            #print('shape:', s_score[idx_sens_train].shape)
-            #first without the fairGNN loss
-            criterion = nn.BCEWithLogitsLoss()
-            print('')
-            print('s_g shape:', s_g.shape)
-            print('s_score shape:', s_score.shape)
-            adv_loss = criterion(s_g, s_score)
+            Batch_logits,Batch_labels = model(input_nodes,output_nodes,blocks, out_key='user',label_key=label, is_train=True)
 
             # The loss is computed only for labeled nodes.
             loss = F.cross_entropy(Batch_logits, Batch_labels)
@@ -105,15 +88,6 @@ def Batch_train(model, G, optimizer, scheduler, train_dataloader, val_dataloader
             optimizer.step()
             train_step += 1
             scheduler.step(train_step)
-
-            # update adv
-            #optimizer_A.zero_grad()
-            #s_g = model_adv.adv_model(h.detach())#
-
-            #adv_loss = criterion(s_g, s_score)
-            #adv_loss.backward()
-            #optimizer_A.step()
-            
 
             acc = torch.sum(Batch_logits.argmax(1) == Batch_labels).item()
             total_loss += loss.item() * len(output_nodes['user'].cpu())
@@ -132,7 +106,7 @@ def Batch_train(model, G, optimizer, scheduler, train_dataloader, val_dataloader
                 preds=[]
                 labels=[]
                 for input_nodes, output_nodes, blocks in val_dataloader:
-                    Batch_logits,Batch_labels, h, inputs = model(input_nodes, output_nodes,blocks, out_key='user',label_key=label, is_train=False)
+                    Batch_logits,Batch_labels = model(input_nodes, output_nodes,blocks, out_key='user',label_key=label, is_train=False)
                     loss = F.cross_entropy(Batch_logits, Batch_labels)
                     acc   = torch.sum(Batch_logits.argmax(1)==Batch_labels).item()
                     preds.extend(Batch_logits.argmax(1).tolist())
@@ -151,7 +125,7 @@ def Batch_train(model, G, optimizer, scheduler, train_dataloader, val_dataloader
                 labels = []
 
                 for input_nodes, output_nodes, blocks in test_dataloader:
-                    Batch_logits, Batch_labels, h, inputs = model(input_nodes, output_nodes, blocks, out_key='user', label_key=label, is_train=False)
+                    Batch_logits, Batch_labels = model(input_nodes, output_nodes, blocks, out_key='user', label_key=label, is_train=False)
                     loss = F.cross_entropy(Batch_logits, Batch_labels)
                     acc   = torch.sum(Batch_logits.argmax(1)==Batch_labels).item()
                     preds.extend(Batch_logits.argmax(1).tolist())
@@ -193,15 +167,16 @@ def Batch_train(model, G, optimizer, scheduler, train_dataloader, val_dataloader
     elapsed_time = (toc-tic)/60
     print("\nElapsed time: {:.4f} minutes".format(elapsed_time))
 
+    '''
     # Log result on Neptune
-    #neptune_run["test/accuracy"] = best_test_acc
-    #neptune_run["test/f1_score"] = test_f1
+    neptune_run["test/accuracy"] = best_test_acc
+    neptune_run["test/f1_score"] = test_f1
     # neptune_run["test/auc"] = auc
     # neptune_run["test/tpr"] = tpr
     # neptune_run["test/fpr"] = fpr
-    #neptune_run["conf_matrix"] = confusion_matrix
-    #neptune_run["elaps_time"] = elapsed_time
-
+    neptune_run["conf_matrix"] = confusion_matrix
+    neptune_run["elaps_time"] = elapsed_time    
+    '''
     return labels, preds
 
 
@@ -212,14 +187,10 @@ def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, model_type, s
     np.random.seed(seed)
     torch.manual_seed(seed)
     if torch.cuda.is_available():
-        print('torch cuda is available')
         torch.cuda.manual_seed(seed)
         torch.cuda.manual_seed_all(seed)
 
     device = torch.device("cuda:{}".format(gpu))
-
-    print('gpu:', gpu)
-    print('device:', device)
 
     '''Loading charts and labels'''
     #G=torch.load('{}/{}.pkl'.format(args.data_dir,args.graph))
@@ -266,9 +237,9 @@ def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, model_type, s
 
 
     G = G.to(device)
-   # train_idx_item=torch.tensor(shuffle[0:int(G.number_of_nodes('item') * 0.75)]).long()
-   # val_idx_item = torch.tensor(shuffle[int(G.number_of_nodes('item')*0.75):int(G.number_of_nodes('item')*0.875)]).long()
-   # test_idx_item = torch.tensor(shuffle[int(G.number_of_nodes('item')*0.875):]).long()
+    train_idx_item=torch.tensor(shuffle[0:int(G.number_of_nodes('item') * 0.75)]).long()
+    val_idx_item = torch.tensor(shuffle[int(G.number_of_nodes('item')*0.75):int(G.number_of_nodes('item')*0.875)]).long()
+    test_idx_item = torch.tensor(shuffle[int(G.number_of_nodes('item')*0.875):]).long()
     '''Sampling'''
     sampler = dgl.dataloading.MultiLayerFullNeighborSampler(2)
 
@@ -293,9 +264,7 @@ def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, model_type, s
         drop_last=False,
         device=device)
 
-    
-    #idx_train = idx_train.to(device)
-    sens = sens.to(device)
+
     if model_type=='RHGN':
         #cid1_feature = torch.load('{}/cid1_feature.npy'.format(args.data_dir))
         #cid2_feature = torch.load('{}/cid2_feature.npy'.format(args.data_dir))
@@ -311,27 +280,18 @@ def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, model_type, s
                     cid1_feature=cid1_feature,
                     cid2_feature=cid2_feature,
                     cid3_feature=cid3_feature,
-                    epochs=epochs,
-                    train_idx=train_idx,
-                    batch_size=batch_size,
-                    lr=lr,
+                
                     use_norm = True).to(device)
         optimizer = torch.optim.AdamW(model.parameters())
-        
-
-        print('n_out:', labels.max().item()+1)
 
         scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, epochs=epochs,
                                                         steps_per_epoch=int(train_idx.shape[0]/batch_size)+1,max_lr = lr)
         print('Training RHGN with #param: %d' % (get_n_params(model)))
-        targets, predictions = Batch_train(model, G, optimizer, scheduler, train_dataloader, val_dataloader, test_dataloader, epochs, label, clip)
+        targets, predictions = Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, test_dataloader, epochs, label, clip)
 
         # Compute fairness
-        fair_obj = Fairness(G, test_idx, targets, predictions, sens_attr, multiclass_pred, multiclass_sens)  # removed neptune for now
+        fair_obj = Fairness(G, test_idx, targets, predictions, sens_attr, multiclass_pred, multiclass_sens)
         fair_obj.statistical_parity()
         fair_obj.equal_opportunity()
         fair_obj.overall_accuracy_equality()
         fair_obj.treatment_equality()
-        fair_obj.disparate_impact()
-
-        #neptune_run.stop()
