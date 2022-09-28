@@ -55,10 +55,10 @@ def ali_RHGN_pre_process(df, sens_attr, label, debaising_approach=None):
 
     df_click, uid_activity, pid_popularity = filter_triplets(df_click, 'uid', 'pid', min_uc=0, min_sc=2) # min_sc>=2
 
-    sparsity = 1. * df_click.shape[0] / (uid_activity.shape[0] * pid_popularity.shape[0])
+    #sparsity = 1. * df_click.shape[0] / (uid_activity.shape[0] * pid_popularity.shape[0])
 
-    print("After filtering, there are %d interacton events from %d users and %d items (sparsity: %.4f%%)" % 
-        (df_click.shape[0], uid_activity.shape[0], pid_popularity.shape[0], sparsity * 100))
+    #print("After filtering, there are %d interacton events from %d users and %d items (sparsity: %.4f%%)" % 
+    #    (df_click.shape[0], uid_activity.shape[0], pid_popularity.shape[0], sparsity * 100))
     # After filtering
     users = set(df_click.uid.tolist())
     items = set(df_click.pid.tolist())
