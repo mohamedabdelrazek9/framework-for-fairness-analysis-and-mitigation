@@ -212,10 +212,14 @@ def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, model_type, s
     np.random.seed(seed)
     torch.manual_seed(seed)
     if torch.cuda.is_available():
+        print('torch cuda is available')
         torch.cuda.manual_seed(seed)
         torch.cuda.manual_seed_all(seed)
 
     device = torch.device("cuda:{}".format(gpu))
+
+    print('gpu:', gpu)
+    print('device:', device)
 
     '''Loading charts and labels'''
     #G=torch.load('{}/{}.pkl'.format(args.data_dir,args.graph))
