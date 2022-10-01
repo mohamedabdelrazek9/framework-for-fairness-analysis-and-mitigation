@@ -54,7 +54,7 @@ parser.add_argument('--uneeded_columns', nargs="+", help="(OPTIONAL) choose whic
 parser.add_argument('--onehot_bin_columns', nargs="+", help='(OPTIONAL) Decide which of the columns of your dataset are binary (e.g. False/True) to be later on processed')
 parser.add_argument('--onehot_cat_columns', nargs="+", help='(OPTIONAL) choose which columns in the dataset will be transofrmed as one-hot encoded')
 parser.add_argument('--calc_fairness', type=bool, default=False)
-parser.add_argument('--debaising_approach', type=str, choices=['disparate_impact_remover', 'reweighting', 'lfr'], help="choose which debaising approach to use while preprocessing the dataset")
+parser.add_argument('--debaising_approach', type=str, choices=['disparate_impact_remover', 'reweighting', 'sample'], help="choose which debaising approach to use while preprocessing the dataset")
 #################
 # for RHGN
 #n_epoch --> epochs

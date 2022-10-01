@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import torch
 import dgl
-from fainress_component import disparate_impact_remover, reweighting, lfr
+from fainress_component import disparate_impact_remover, reweighting, sample
 import fasttext
 
 def ali_RHGN_pre_process(df, sens_attr, label, debaising_approach=None):
@@ -17,8 +17,8 @@ def ali_RHGN_pre_process(df, sens_attr, label, debaising_approach=None):
             df = disparate_impact_remover(df, sens_attr, label)
         elif debaising_approach == 'reweighting':
             df = reweighting(df, sens_attr, label)
-        elif debaising_approach == 'lfr':
-            df = lfr(df, sens_attr, label)
+        elif debaising_approach == 'sample':
+            df = sample(df, sens_attr, label)
 
         df_user, df_item, df_click = divide_data_2(df)
         df_user.rename(columns={'userid':'uid', 'pvalue_level':'buy', 'occupation':'student', 'new_user_class_level':'city'}, inplace=True)

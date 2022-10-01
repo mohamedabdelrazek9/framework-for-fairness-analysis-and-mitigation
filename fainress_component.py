@@ -277,6 +277,29 @@ def lfr(df, sens_attr, label):
 
     return df_new
 
+def sample(df, sens_attr, label):
+    dp = df.loc[(df[sens_attr] == 0) & (df[label] == 1)]
+    dn = df.loc[(df[sens_attr] == 0) & (df[label] == 0)]
+    fp = df.loc[(df[sens_attr] == 1) & (df[label] == 1)]
+    fn = df.loc[(df[sens_attr] == 1) & (df[label] == 0)]
+
+
+    wdp = len(df.loc[df[sens_attr] == 0]) * len(df.loc[df[label] == 1]) / len(df.loc[(df['gender'] == 1) & (df['bin_age'] == 0)])
+    wdn = len(df.loc[df[sens_attr] == 0]) * len(df.loc[df[label] == 0]) / len(df.loc[(df['gender'] == 1) & (df['bin_age'] == 0)])
+    wfp = len(df.loc[df[sens_attr] == 1]) * len(df.loc[df[label] == 1]) / len(df.loc[(df['gender'] == 1) & (df['bin_age'] == 0)])
+    wfn = len(df.loc[df[sens_attr] == 1]) * len(df.loc[df[label] == 0]) / len(df.loc[(df['gender'] == 1) & (df['bin_age'] == 0)])
+
+    # sample
+    dp_sample = dp.sample(n=int(wdp), random_state=1, replace=True)
+    dn_sample = dn.sample(n=int(wdn), random_state=1, replace=True)
+    fp_sample = fp.sample(n=int(wfp), random_state=1, replace=True)
+    fn_sample = fn.sample(n=int(wfn), random_state=1, replace=True)
+
+    # merge
+    df_new = pd.concat([dp_sample, dn_sample, fp_sample, fn_sample])
+
+    return df_new
+
 
 
 
