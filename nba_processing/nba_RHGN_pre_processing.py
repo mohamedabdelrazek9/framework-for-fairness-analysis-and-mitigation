@@ -3,9 +3,16 @@ import pandas as pd
 import dgl
 import torch
 from fainress_component import disparate_impact_remover, reweighting, sample
+from utils import apply_bin_columns, apply_cat_columns
 import fasttext
 
-def nba_RHGN_pre_process(df, dataset_user_id_name, sens_attr, label, debaising_approach=None):
+def nba_RHGN_pre_process(df, dataset_user_id_name, sens_attr, label, onehot_bin_columns, onehot_cat_columns, debaising_approach=None):
+
+    if onehot_bin_columns != None:
+        df = apply_bin_columns(df, onehot_bin_columns)
+    
+    if onehot_cat_columns != None:
+        df = apply_cat_columns(df, onehot_cat_columns)
 
     df = df.astype({'user_id': 'str'}, copy=False)
     df = df.astype({'AGE':'str', 'MP':'str', 'FG':'str'}, copy=False)
