@@ -1,19 +1,39 @@
+from asyncore import readwrite
 import pandas as pd
 import numpy as np
 import scipy.sparse as sp
 import os
-
+from fainress_component import disparate_impact_remover, reweighting, sample
 import time
 
-def tec_CatGCN_pre_process(df):
-    df_user, df_item, df_click = divide_data(df)
-    df_user.dropna(inplace=True)
-    age_dic = {'11~15':0, '16~20':0, '21~25':0, '26~30':1, '31~35':1, '36~40':2, '41~45':2, '46~50':3, '51~55':3, '56~60':4, '61~65':4, '66~70':4, '71~':4}
-    df_user[["age_range"]] = df_user[["age_range"]].applymap(lambda x:age_dic[x])
-    df_user.rename(columns={"user_id":"uid", "age_range":"age"}, inplace=True)
+def tec_CatGCN_pre_process(df, sens_attr, label, debaising_approach=None):
+    if debaising_approach != None:
+        df.dropna(inplace=True)
+        age_dic = {'11~15':0, '16~20':0, '21~25':0, '26~30':1, '31~35':1, '36~40':2, '41~45':2, '46~50':3, '51~55':3, '56~60':4, '61~65':4, '66~70':4, '71~':4}
+        df[["age_range"]] = df[["age_range"]].applymap(lambda x:age_dic[x])
+        df.rename(columns={"user_id":"uid", "age_range":"age"}, inplace=True)
 
-    # binarize age
-    df_user = apply_bin_age(df_user)
+        df = apply_bin_age(df)
+
+        if debaising_approach == 'disparate_impact_remover':
+            df = disparate_impact_remover(df, sens_attr, label)
+        elif debaising_approach == 'reweighting':
+            df = reweighting(df, sens_attr, label)
+        elif debaising_approach == 'sample':
+            df = sample(df, sens_attr, label)
+        
+        df_user, df_item, df_click = divide_data(df)
+
+    else:
+
+        df_user, df_item, df_click = divide_data(df)
+        df_user.dropna(inplace=True)
+        age_dic = {'11~15':0, '16~20':0, '21~25':0, '26~30':1, '31~35':1, '36~40':2, '41~45':2, '46~50':3, '51~55':3, '56~60':4, '61~65':4, '66~70':4, '71~':4}
+        df_user[["age_range"]] = df_user[["age_range"]].applymap(lambda x:age_dic[x])
+        df_user.rename(columns={"user_id":"uid", "age_range":"age"}, inplace=True)
+
+        # binarize age
+        df_user = apply_bin_age(df_user)
 
     # item
     df_item.dropna(inplace=True)

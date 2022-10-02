@@ -3,15 +3,35 @@ import pandas as pd
 import scipy.sparse as sp
 import time
 import os
+from fainress_component import disparate_impact_remover, reweighting, sample
 
-def ali_CatGCN_pre_processing(df):
+def ali_CatGCN_pre_processing(df, sens_attr, label_pred, debaising_approach=None):
 
-    # load ana clean data
-    label, pid_cid, uid_pid = divide_data(df)
-    label.rename(columns={'userid':'uid', 'final_gender_code':'gender','age_level':'age', 'pvalue_level':'buy', 'occupation':'student', 'new_user_class_level':'city'}, inplace=True)
-    label.dropna(inplace=True)
-    label = apply_bin_age(label)
-    label = apply_bin_buy(label)
+    if debaising_approach != None:
+        df.rename(columns={'final_gender_code': 'gender', 'age_level':'age'}, inplace=True)
+        df = apply_bin_age(df)
+        df['gender'] = df['gender'].replace(1, 0)
+        df['gender'] = df['gender'].replace(2, 1)
+        if debaising_approach == 'disparate_impact_remover':
+            df = disparate_impact_remover(df, sens_attr, label_pred)
+        elif debaising_approach == 'reweighting':
+            df = reweighting(df, sens_attr, label_pred)
+        elif debaising_approach == 'sample':
+            df = sample(df, sens_attr, label_pred)
+
+        label, pid_cid, uid_pid = divide_data(df)
+        label.rename(columns={'userid':'uid', 'pvalue_level':'buy', 'occupation':'student', 'new_user_class_level':'city'}, inplace=True)
+        label.dropna(inplace=True)
+        label = apply_bin_buy(label)
+
+    else:
+
+        # load ana clean data
+        label, pid_cid, uid_pid = divide_data(df)
+        label.rename(columns={'userid':'uid', 'final_gender_code':'gender','age_level':'age', 'pvalue_level':'buy', 'occupation':'student', 'new_user_class_level':'city'}, inplace=True)
+        label.dropna(inplace=True)
+        label = apply_bin_age(label)
+        label = apply_bin_buy(label)
 
     #pid_cid
     pid_cid.rename(columns={'adgroup_id':'pid','cate_id':'cid'}, inplace=True)

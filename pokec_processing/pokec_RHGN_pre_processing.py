@@ -2,13 +2,22 @@ from turtle import pd
 import numpy as np
 import pandas as pd
 import dgl
+from fainress_component import disparate_impact_remover, reweighting, sample
 import fasttext
 import torch
 
-def pokec_z_RHGN_pre_process(df, dataset_user_id_name):
+def pokec_z_RHGN_pre_process(df, dataset_user_id_name, sens_attr, label, debaising_approach=None):
 
     df = df.astype({'user_id': 'str'}, copy=False)
     df = df.astype({'completion_percentage':'str', 'AGE':'str', 'I_am_working_in_field':'str'}, copy=False)
+
+    if debaising_approach != None:
+        if debaising_approach == 'disparate_impact_remover':
+            df = disparate_impact_remover(df, sens_attr, label)
+        elif debaising_approach == 'reweighting':
+            df = reweighting(df, sens_attr, label)
+        elif debaising_approach == 'sample':
+            df = sample(df, sens_attr, label)
 
     user_dic = {k: v for v, k in enumerate(df.user_id.drop_duplicates())}
     comp_dic = {k: v for v, k in enumerate(df.completion_percentage.drop_duplicates())}

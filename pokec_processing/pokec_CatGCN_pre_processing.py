@@ -1,9 +1,19 @@
+from dis import dis
 import numpy as np
 import pandas as pd
 import os
 import scipy.sparse as sp
+from fainress_component import disparate_impact_remover, reweighting, sample
 
-def pokec_z_CatGCN_pre_process(df, df_edge_list):
+def pokec_z_CatGCN_pre_process(df, df_edge_list, sens_attr, label, debaising_approach=True):
+
+    if debaising_approach != None:
+        if debaising_approach == 'disparate_impact_remover':
+            df = disparate_impact_remover(df, sens_attr, label)
+        elif debaising_approach == 'reweighting':
+            df = reweighting(df, sens_attr, label)
+        elif debaising_approach == 'sample':
+            df = sample(df, sens_attr, label)
 
     uid_age = df[['user_id', 'AGE']].copy()
     uid_age.dropna(inplace=True)

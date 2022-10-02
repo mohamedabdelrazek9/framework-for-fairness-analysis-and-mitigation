@@ -232,20 +232,20 @@ def CatGCN_pre_processing(data_extension):
          
     
     if args.dataset_name == 'alibaba':
-        user_edge_path, user_field_path, user_gender_path, user_labels_path = ali_CatGCN_pre_processing(df)
+        user_edge_path, user_field_path, user_gender_path, user_labels_path = ali_CatGCN_pre_processing(df, args.sens_attr, args.label, args.debaising_approach)
         target = user_gender_path
     elif args.dataset_name == 'tecent':
-        user_edge_path, user_field_path, user_gender_path, user_labels_path = tec_CatGCN_pre_process(df)
+        user_edge_path, user_field_path, user_gender_path, user_labels_path = tec_CatGCN_pre_process(df, args.sens_attr, args.label, args.debaising_approach)
         target = user_gender_path
 
     # Todo implment CatGCN processing for NBA dataset
     elif args.dataset_name == 'nba':
-        user_edge_path, user_field_path, user_salary_path, user_labels_path = nba_CatGCN_pre_process(df, df_edge_list)
+        user_edge_path, user_field_path, user_salary_path, user_labels_path = nba_CatGCN_pre_process(df, df_edge_list, args.sens_attr, args.label, args.debaising_approach)
         target = user_salary_path
 
     # Todo implment CatGCN processing for Pokec dataset
     elif args.dataset_name == 'pokec_z':
-        user_edge_path, user_field_path, user_work_path, user_labels_path = pokec_z_CatGCN_pre_process(df, df_edge_list)
+        user_edge_path, user_field_path, user_work_path, user_labels_path = pokec_z_CatGCN_pre_process(df, df_edge_list, args.sens_attr, args.label, args.debaising_approach)
         target = user_work_path
 
     #print('Dataset fairness before training:', dataset_fairness)
@@ -301,11 +301,11 @@ def RHGN_pre_processing(data_extension):
         #G, cid1_feature, cid2_feature, cid3_feature = ali_RHGN_pre_process(df)
         G, cid1_feature, cid2_feature, cid3_feature = ali_RHGN_pre_process(df, args.sens_attr, args.label, args.debaising_approach)
     elif args.dataset_name == 'tecent':
-        G, cid1_feature, cid2_feature, cid3_feature, cid4_feature = tec_RHGN_pre_process(df)
+        G, cid1_feature, cid2_feature, cid3_feature, cid4_feature = tec_RHGN_pre_process(df, args.sens_attr, args.label, args.debaising_approach)
 
     # Todo implment RHGN processing for NBA dataset
     elif args.dataset_name == 'nba':
-        G, cid1_feature, cid2_feature, cid3_feature = nba_RHGN_pre_process(df, args.dataset_user_id_name)
+        G, cid1_feature, cid2_feature, cid3_feature = nba_RHGN_pre_process(df, args.dataset_user_id_name, args.sens_attr, args.label, args.debaising_approach)
 
 
     # Todo implment RHGN processing for Pokec dataset

@@ -3,10 +3,20 @@ import pandas as pd
 import os
 import scipy.sparse as sp
 
+from fainress_component import disparate_impact_remover, reweighting, sample
 
-def nba_CatGCN_pre_process(df, df_edge_list):
 
-    #for the nba dataset we choose age as the mapping option to the userid
+def nba_CatGCN_pre_process(df, df_edge_list, sens_attr, label, debaising_approach=None):
+
+    if debaising_approach != None:
+        if debaising_approach == 'disparate_impact_remover':
+            df = disparate_impact_remover(df, sens_attr, label)
+        elif debaising_approach == 'reweighting':
+            df = reweighting(df, sens_attr, label)
+        elif debaising_approach == 'sample':
+            df = sample(df, sens_attr, label)
+            
+    #for the nba dataset we choose age as the m apping option to the userid
     uid_age = df[['userid', 'AGE']].copy()
     uid_age.dropna(inplace=True)
     uid_age2 = df[['userid', 'AGE']].copy()
