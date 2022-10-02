@@ -278,6 +278,7 @@ def lfr(df, sens_attr, label):
     return df_new
 
 def sample(df, sens_attr, label):
+    print('we are in sample')
     dp = df.loc[(df[sens_attr] == 0) & (df[label] == 1)]
     dn = df.loc[(df[sens_attr] == 0) & (df[label] == 0)]
     fp = df.loc[(df[sens_attr] == 1) & (df[label] == 1)]
