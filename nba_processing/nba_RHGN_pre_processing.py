@@ -14,6 +14,10 @@ def nba_RHGN_pre_process(df, dataset_user_id_name, sens_attr, label, onehot_bin_
     if onehot_cat_columns != None:
         df = apply_cat_columns(df, onehot_cat_columns)
 
+    # nba case
+    if -1 in df[label].unique():
+        df[label] = df[label].replace(-1, 0)
+
     df = df.astype({'user_id': 'str'}, copy=False)
     df = df.astype({'AGE':'str', 'MP':'str', 'FG':'str'}, copy=False)
 
