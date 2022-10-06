@@ -39,7 +39,7 @@ def nba_RHGN_pre_process(df, dataset_user_id_name, sens_attr, label, onehot_bin_
     item_dic = {}
     c1, c2, c3=[], [], []
     
-    if debaising_approach == 'sample:':
+    if debaising_approach == 'sample':
         for i, row in df.iterrows():
             #print(i)
             c1_1 = df.at[i, 'AGE']
