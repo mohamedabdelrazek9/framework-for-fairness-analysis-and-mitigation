@@ -29,6 +29,7 @@ def nba_RHGN_pre_process(df, dataset_user_id_name, sens_attr, label, onehot_bin_
             df = reweighting(df, sens_attr, label)
         elif debaising_approach == 'sample':
             df = sample(df, sens_attr, label)
+            df = df.drop_duplicates()
 
 
     if debaising_approach == 'disparate_impact_remover' or debaising_approach == 'reweighting':
