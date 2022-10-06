@@ -31,7 +31,7 @@ def nba_RHGN_pre_process(df, dataset_user_id_name, sens_attr, label, onehot_bin_
             df = sample(df, sens_attr, label)
 
     
-    user_dic = {k: v for v, k in enumerate(df.user_id.drop_duplicates())}
+    user_dic = {k: v for v, k in enumerate(df.userid.drop_duplicates())}
     age_dic = {k: v for v, k in enumerate(df.AGE.drop_duplicates())}
     mp_dic = {k: v for v, k in enumerate(df.MP.drop_duplicates())}
     fg_dic = {k: v for v, k in enumerate(df.FG.drop_duplicates())}
