@@ -285,10 +285,10 @@ def sample(df, sens_attr, label):
     fn = df.loc[(df[sens_attr] == 1) & (df[label] == 0)]
 
 
-    wdp = len(df.loc[df[sens_attr] == 0]) * len(df.loc[df[label] == 1]) / len(df.loc[(df['gender'] == 1) & (df['bin_age'] == 0)])
-    wdn = len(df.loc[df[sens_attr] == 0]) * len(df.loc[df[label] == 0]) / len(df.loc[(df['gender'] == 1) & (df['bin_age'] == 0)])
-    wfp = len(df.loc[df[sens_attr] == 1]) * len(df.loc[df[label] == 1]) / len(df.loc[(df['gender'] == 1) & (df['bin_age'] == 0)])
-    wfn = len(df.loc[df[sens_attr] == 1]) * len(df.loc[df[label] == 0]) / len(df.loc[(df['gender'] == 1) & (df['bin_age'] == 0)])
+    wdp = len(df.loc[df[sens_attr] == 0]) * len(df.loc[df[label] == 1]) / len(df.loc[(df[label] == 1) & (df[sens_attr] == 0)])
+    wdn = len(df.loc[df[sens_attr] == 0]) * len(df.loc[df[label] == 0]) / len(df.loc[(df[label] == 1) & (df[sens_attr] == 0)])
+    wfp = len(df.loc[df[sens_attr] == 1]) * len(df.loc[df[label] == 1]) / len(df.loc[(df[label] == 1) & (df[sens_attr] == 0)])
+    wfn = len(df.loc[df[sens_attr] == 1]) * len(df.loc[df[label] == 0]) / len(df.loc[(df[label] == 1) & (df[sens_attr] == 0)])
 
     # sample
     dp_sample = dp.sample(n=int(wdp), random_state=1, replace=True)
