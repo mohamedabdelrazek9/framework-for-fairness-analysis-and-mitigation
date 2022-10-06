@@ -113,7 +113,7 @@ def nba_RHGN_pre_process(df, dataset_user_id_name, sens_attr, label, onehot_bin_
     G.nodes['user'].data['weight'] = torch.tensor(label_weight[:G.number_of_nodes('user')].values)
     G.nodes['user'].data['country'] = torch.tensor(label_country[:G.number_of_nodes('user')].values)
     #G.nodes['user'].data['teams'] = torch.tensor(label_teams[:G.number_of_nodes('user')])
-    G.nodes['user'].data['salary'] = torch.tensor(label_salary[:G.number_of_nodes('user')].values)
+    G.nodes['user'].data['SALARY'] = torch.tensor(label_salary[:G.number_of_nodes('user')].values)
 
     G.nodes['item'].data['cid1'] = torch.tensor(c1[:G.number_of_nodes('item')])
     G.nodes['item'].data['cid2'] = torch.tensor(c2[:G.number_of_nodes('item')])
