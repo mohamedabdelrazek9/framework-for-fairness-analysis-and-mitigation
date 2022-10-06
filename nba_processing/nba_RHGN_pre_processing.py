@@ -38,31 +38,33 @@ def nba_RHGN_pre_process(df, dataset_user_id_name, sens_attr, label, onehot_bin_
 
     item_dic = {}
     c1, c2, c3=[], [], []
-    #for i in range(len(df)):
-    #    c1.append(age_dic[df.at[i, 'AGE']])
-    #    c2.append(mp_dic[df.at[i, 'MP']])
-    #    c3.append(fg_dic[df.at[i, 'FG']])
-
-    for i, row in df.iterrows():
-        #print(i)
-        c1_1 = df.at[i, 'AGE']
-        #print(c1_1)
-        if isinstance(c1_1, str):
-            c1.append(age_dic[c1_1])
-        else:
-            c1.append(age_dic[c1_1.iloc[0]])
-            
-        c2_2 = df.at[i, 'MP']
-        if isinstance(c2_2, str):
-            c2.append(mp_dic[c2_2])
-        else:
-            c2.append(mp_dic[c2_2.iloc[0]])
-            
-        c3_3 = df.at[i, 'FG']
-        if isinstance(c3_3, str):
-            c3.append(fg_dic[c3_3])
-        else:
-            c3.append(fg_dic[c3_3.iloc[0]])
+    
+    if debaising_approach == 'sample:':
+        for i, row in df.iterrows():
+            #print(i)
+            c1_1 = df.at[i, 'AGE']
+            #print(c1_1)
+            if isinstance(c1_1, str):
+                c1.append(age_dic[c1_1])
+            else:
+                c1.append(age_dic[c1_1.iloc[0]])
+                
+            c2_2 = df.at[i, 'MP']
+            if isinstance(c2_2, str):
+                c2.append(mp_dic[c2_2])
+            else:
+                c2.append(mp_dic[c2_2.iloc[0]])
+                
+            c3_3 = df.at[i, 'FG']
+            if isinstance(c3_3, str):
+                c3.append(fg_dic[c3_3])
+            else:
+                c3.append(fg_dic[c3_3.iloc[0]])
+    else:
+        for i in range(len(df)):
+            c1.append(age_dic[df.at[i, 'AGE']])
+            c2.append(mp_dic[df.at[i, 'MP']])
+            c3.append(fg_dic[df.at[i, 'FG']])
         
         
     print(min(c1), min(c2), min(c3))
@@ -103,15 +105,15 @@ def nba_RHGN_pre_process(df, dataset_user_id_name, sens_attr, label, onehot_bin_
     label_height = user_label.player_height
     label_weight = user_label.player_weight
     label_country = user_label.country
-    label_teams = user_label.teams
+    #label_teams = user_label.teams
     label_salary = user_label.SALARY
 
-    G.nodes['user'].data['age'] = torch.tensor(label_age[:G.number_of_nodes('user')])
-    G.nodes['user'].data['height'] = torch.tensor(label_height[:G.number_of_nodes('user')])
-    G.nodes['user'].data['weight'] = torch.tensor(label_weight[:G.number_of_nodes('user')])
-    G.nodes['user'].data['country'] = torch.tensor(label_country[:G.number_of_nodes('user')])
-    G.nodes['user'].data['teams'] = torch.tensor(label_teams[:G.number_of_nodes('user')])
-    G.nodes['user'].data['salary'] = torch.tensor(label_salary[:G.number_of_nodes('user')])
+    G.nodes['user'].data['age'] = torch.tensor(label_age[:G.number_of_nodes('user')].values)
+    G.nodes['user'].data['height'] = torch.tensor(label_height[:G.number_of_nodes('user')].values)
+    G.nodes['user'].data['weight'] = torch.tensor(label_weight[:G.number_of_nodes('user')].values)
+    G.nodes['user'].data['country'] = torch.tensor(label_country[:G.number_of_nodes('user')].values)
+    #G.nodes['user'].data['teams'] = torch.tensor(label_teams[:G.number_of_nodes('user')])
+    G.nodes['user'].data['salary'] = torch.tensor(label_salary[:G.number_of_nodes('user')].values)
 
     G.nodes['item'].data['cid1'] = torch.tensor(c1[:G.number_of_nodes('item')])
     G.nodes['item'].data['cid2'] = torch.tensor(c2[:G.number_of_nodes('item')])
