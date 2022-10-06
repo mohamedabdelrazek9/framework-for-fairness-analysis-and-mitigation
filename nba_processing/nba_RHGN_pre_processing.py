@@ -31,17 +31,38 @@ def nba_RHGN_pre_process(df, dataset_user_id_name, sens_attr, label, onehot_bin_
             df = sample(df, sens_attr, label)
 
     
-    user_dic = {k: v for v, k in enumerate(df.userid.drop_duplicates())}
+    user_dic = {k: v for v, k in enumerate(df.user_id.drop_duplicates())}
     age_dic = {k: v for v, k in enumerate(df.AGE.drop_duplicates())}
     mp_dic = {k: v for v, k in enumerate(df.MP.drop_duplicates())}
     fg_dic = {k: v for v, k in enumerate(df.FG.drop_duplicates())}
 
     item_dic = {}
     c1, c2, c3=[], [], []
-    for i in range(len(df)):
-        c1.append(age_dic[df.at[i, 'AGE']])
-        c2.append(mp_dic[df.at[i, 'MP']])
-        c3.append(fg_dic[df.at[i, 'FG']])
+    #for i in range(len(df)):
+    #    c1.append(age_dic[df.at[i, 'AGE']])
+    #    c2.append(mp_dic[df.at[i, 'MP']])
+    #    c3.append(fg_dic[df.at[i, 'FG']])
+
+    for i, row in df.iterrows():
+        #print(i)
+        c1_1 = df.at[i, 'AGE']
+        #print(c1_1)
+        if isinstance(c1_1, str):
+            c1.append(age_dic[c1_1])
+        else:
+            c1.append(age_dic[c1_1.iloc[0]])
+            
+        c2_2 = df.at[i, 'MP']
+        if isinstance(c2_2, str):
+            c2.append(mp_dic[c2_2])
+        else:
+            c2.append(mp_dic[c2_2.iloc[0]])
+            
+        c3_3 = df.at[i, 'FG']
+        if isinstance(c3_3, str):
+            c3.append(fg_dic[c3_3])
+        else:
+            c3.append(fg_dic[c3_3.iloc[0]])
         
         
     print(min(c1), min(c2), min(c3))
