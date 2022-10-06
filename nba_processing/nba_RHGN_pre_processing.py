@@ -30,6 +30,19 @@ def nba_RHGN_pre_process(df, dataset_user_id_name, sens_attr, label, onehot_bin_
         elif debaising_approach == 'sample':
             df = sample(df, sens_attr, label)
 
+
+    if debaising_approach == 'disparate_impact_remover' or debaising_approach == 'reweighting':
+        df.AGE = df.AGE.astype(int)
+        df.country = df.country.astype(int)
+        df.SALARY = df.SALARY.astype(int)
+
+        df['user_id'] = pd.to_numeric(df['user_id'])
+        df = df.astype({'user_id': int})
+
+        df.AGE = df.AGE.astype(str)
+        df.MP = df.MP.astype(str)
+        df.FG = df.FG.astype(str)
+
     
     user_dic = {k: v for v, k in enumerate(df.user_id.drop_duplicates())}
     age_dic = {k: v for v, k in enumerate(df.AGE.drop_duplicates())}
@@ -60,6 +73,12 @@ def nba_RHGN_pre_process(df, dataset_user_id_name, sens_attr, label, onehot_bin_
                 c3.append(fg_dic[c3_3])
             else:
                 c3.append(fg_dic[c3_3.iloc[0]])
+
+    elif debaising_approach == 'disparate_impact_remover' or debaising_approach == 'reweighting':
+        for i in range(len(df)):
+            c1.append(age_dic[df['AGE'].iloc[i]])
+            c2.append(mp_dic[df['MP'].iloc[i]])
+            c3.append(fg_dic[df['FG'].iloc[i]])
     else:
         for i in range(len(df)):
             c1.append(age_dic[df.at[i, 'AGE']])
