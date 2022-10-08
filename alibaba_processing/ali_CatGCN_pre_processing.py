@@ -20,6 +20,12 @@ def ali_CatGCN_pre_processing(df, sens_attr, label_pred, debaising_approach=None
         elif debaising_approach == 'sample':
             df = sample(df, sens_attr, label_pred)
 
+        if debaising_approach == 'sample':
+            df = df.reset_index()
+            df = df.drop(['index'], axis=1)
+            df = df.drop_duplicates()
+
+
         label, pid_cid, uid_pid = divide_data_2(df)
         label.rename(columns={'userid':'uid', 'pvalue_level':'buy', 'occupation':'student', 'new_user_class_level':'city'}, inplace=True)
         label.dropna(inplace=True)
