@@ -19,7 +19,7 @@ def ali_CatGCN_pre_processing(df, sens_attr, label_pred, debaising_approach=None
         elif debaising_approach == 'sample':
             df = sample(df, sens_attr, label_pred)
 
-        label, pid_cid, uid_pid = divide_data(df)
+        label, pid_cid, uid_pid = divide_data_2(df)
         label.rename(columns={'userid':'uid', 'pvalue_level':'buy', 'occupation':'student', 'new_user_class_level':'city'}, inplace=True)
         label.dropna(inplace=True)
         label = apply_bin_buy(label)
@@ -158,6 +158,13 @@ def divide_data(df):
     uid_pid = df[['userid', 'adgroup_id', 'clk']].copy()
 
     return label, pid_cid, uid_pid
+
+def divide_data_2(df):
+    df_user = df[{'userid', 'gender', 'bin_age', 'pvalue_level', 'occupation', 'new_user_class_level'}].copy()
+    df_item = df[['adgroup_id', 'cate_id', 'campaign_id', 'brand']].copy() 
+    df_click = df[['userid', 'adgroup_id', 'clk']].copy()
+
+    return df_user, df_item, df_click
 
 def apply_bin_age(label):
     label['bin_age'] = label['age']
