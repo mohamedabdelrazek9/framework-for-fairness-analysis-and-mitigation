@@ -116,7 +116,7 @@ def ali_CatGCN_pre_processing(df, sens_attr, label_pred, debaising_approach=None
     # create the user_buy variable for the return of the function 
     user_buy = user_label[['uid','buy']]
     user_label[['uid','city']].to_csv(os.path.join(save_path, 'user_city.csv'), index=False)
-    user_label[['uid','age']].to_csv(os.path.join(save_path, 'user_age.csv'), index=False)
+    user_label[['uid','bin_age']].to_csv(os.path.join(save_path, 'user_age.csv'), index=False)
     user_label[['uid','gender']].to_csv(os.path.join(save_path, 'user_gender.csv'), index=False)
     user_gender = user_label[['uid', 'gender']]
     user_label[['uid','student']].to_csv(os.path.join(save_path, 'user_student.csv'), index=False)
