@@ -317,7 +317,7 @@ class StackedGNN(nn.Module):
             predictions = F.log_softmax(user_feature, dim=1)
         elif self.args.graph_layer == 'pna':
             user_feature = self.gnn_layers(user_feature, edges)
-            print('user_feature pna in forward pass:', user_feature)
+            #print('user_feature pna in forward pass:', user_feature)
             predictions = F.log_softmax(user_feature, dim=1)
         elif self.args.graph_layer == 'none':
             predictions = F.log_softmax(user_feature, dim=1)
