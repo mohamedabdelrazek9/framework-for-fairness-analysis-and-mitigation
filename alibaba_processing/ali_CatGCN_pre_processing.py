@@ -6,7 +6,8 @@ import os
 from fainress_component import disparate_impact_remover, reweighting, sample
 
 def ali_CatGCN_pre_processing(df, sens_attr, label_pred, debaising_approach=None):
-
+    print(df.columns.tolist())
+    print('')
     if debaising_approach != None:
         df.rename(columns={'final_gender_code': 'gender', 'age_level':'age'}, inplace=True)
         df = apply_bin_age(df)
