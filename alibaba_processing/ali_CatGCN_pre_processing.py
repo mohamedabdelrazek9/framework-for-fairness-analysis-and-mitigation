@@ -240,9 +240,10 @@ def get_neighs(csr):
     idx = np.arange(csr.shape[1])
     for i in range(csr.shape[0]):
         x = csr[i, :].toarray()[0] > 0
-        neighs.append(idx[x])
-#         if i % (10*1000) == 0:
-#             print('sec/10k:', time.time()-t)
+        if idx[x].size > 0:
+            neighs.append(idx[x])
+    #         if i % (10*1000) == 0:
+    #             print('sec/10k:', time.time()-t)
     return neighs
 
 def sample_neigh(neigh, num_sample):
