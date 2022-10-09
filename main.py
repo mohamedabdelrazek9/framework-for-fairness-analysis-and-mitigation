@@ -240,7 +240,7 @@ def CatGCN_pre_processing(data_extension):
 
     # Todo implment CatGCN processing for NBA dataset
     elif args.dataset_name == 'nba':
-        user_edge_path, user_field_path, user_salary_path, user_labels_path = nba_CatGCN_pre_process(df, df_edge_list, args.sens_attr, args.label, args.debaising_approach)
+        user_edge_path, user_field_path, user_salary_path, user_labels_path = nba_CatGCN_pre_process(df, df_edge_list, args.sens_attr, args.label, args.onehot_bin_columns , args.onehot_cat_columns,args.debaising_approach)
         target = user_salary_path
 
     # Todo implment CatGCN processing for Pokec dataset

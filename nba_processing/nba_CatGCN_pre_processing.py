@@ -6,7 +6,17 @@ import scipy.sparse as sp
 from fainress_component import disparate_impact_remover, reweighting, sample
 
 
-def nba_CatGCN_pre_process(df, df_edge_list, sens_attr, label, debaising_approach=None):
+def nba_CatGCN_pre_process(df, df_edge_list, sens_attr, label, onehot_bin_columns, onehot_cat_columns, debaising_approach=None):
+
+    if onehot_bin_columns != None:
+        df = apply_bin_columns(df, onehot_bin_columns)
+    
+    if onehot_cat_columns != None:
+        df = apply_cat_columns(df, onehot_cat_columns)
+
+    #nba case
+    if -1 in df[label].unique():
+        df[label] = df[label].replace(-1, 0)
 
     if debaising_approach != None:
         if debaising_approach == 'disparate_impact_remover':
@@ -15,6 +25,19 @@ def nba_CatGCN_pre_process(df, df_edge_list, sens_attr, label, debaising_approac
             df = reweighting(df, sens_attr, label)
         elif debaising_approach == 'sample':
             df = sample(df, sens_attr, label)
+
+
+    if debaising_approach == 'disparate_impact_remover' or debaising_approach == 'reweighting':
+        df.AGE = df.AGE.astype(int)
+        df.country = df.country.astype(int)
+        df.SALARY = df.SALARY.astype(int)
+
+        df['user_id'] = pd.to_numeric(df['user_id'])
+        df = df.astype({'user_id': int})
+
+        df.AGE = df.AGE.astype(str)
+        df.MP = df.MP.astype(str)
+        df.FG = df.FG.astype(str)
             
     #for the nba dataset we choose age as the m apping option to the userid
     uid_age = df[['userid', 'AGE']].copy()
@@ -161,3 +184,16 @@ def sample_neigh(neigh, num_sample):
     elif len(neigh) < num_sample:
         sample_neigh = np.random.choice(neigh, num_sample, replace=True)
     return sample_neigh
+
+
+def apply_bin_columns(df, onehot_bin_columns):
+    for column in df:
+        if column in onehot_bin_columns:
+            df[column] = df[column].astype(int)
+
+    return df
+
+def apply_cat_columns(df, onehot_cat_columns):
+    df = pd.get_dummies(df, columns=onehot_cat_columns)
+
+    return df
