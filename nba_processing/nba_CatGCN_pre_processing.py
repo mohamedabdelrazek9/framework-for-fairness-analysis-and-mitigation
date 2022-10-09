@@ -26,6 +26,11 @@ def nba_CatGCN_pre_process(df, df_edge_list, sens_attr, label, onehot_bin_column
         elif debaising_approach == 'sample':
             df = sample(df, sens_attr, label)
 
+    if debaising_approach == 'sample':
+            df = df.reset_index()
+            df = df.drop(['index'], axis=1)
+            df = df.drop_duplicates()
+
 
     if debaising_approach == 'disparate_impact_remover' or debaising_approach == 'reweighting':
         df.AGE = df.AGE.astype(int)
