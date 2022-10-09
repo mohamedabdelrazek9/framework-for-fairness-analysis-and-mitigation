@@ -40,9 +40,9 @@ def nba_CatGCN_pre_process(df, df_edge_list, sens_attr, label, onehot_bin_column
         df.FG = df.FG.astype(str)
             
     #for the nba dataset we choose age as the m apping option to the userid
-    uid_age = df[['userid', 'AGE']].copy()
+    uid_age = df[['user_id', 'AGE']].copy()
     uid_age.dropna(inplace=True)
-    uid_age2 = df[['userid', 'AGE']].copy()
+    uid_age2 = df[['user_id', 'AGE']].copy()
 
     #create uid2id
     uid2id = {num: i for i, num in enumerate(df['userid'])}
@@ -50,12 +50,12 @@ def nba_CatGCN_pre_process(df, df_edge_list, sens_attr, label, onehot_bin_column
     age2id = {num: i for i, num in enumerate(pd.unique(uid_age['AGE']))}
 
     #create user_field
-    user_field = col_map(uid_age, 'userid', uid2id)
+    user_field = col_map(uid_age, 'user_id', uid2id)
     user_field = col_map(user_field, 'AGE', age2id)
 
     #create user_label
-    user_label = df[df['userid'].isin(uid_age2['userid'])]
-    user_label = col_map(user_label, 'userid', uid2id)
+    user_label = df[df['user_id'].isin(uid_age2['user_id'])]
+    user_label = col_map(user_label, 'user_id', uid2id)
     user_label = label_map(user_label, user_label.columns[1:])
     print('User label size', user_label.size)
 
@@ -82,15 +82,15 @@ def nba_CatGCN_pre_process(df, df_edge_list, sens_attr, label, onehot_bin_column
     user_field.to_csv(os.path.join(save_path, 'user_field.csv'), index=False)
     user_label.to_csv(os.path.join(save_path, 'user_labels.csv'), index=False)
 
-    user_label[['userid','SALARY']].to_csv(os.path.join(save_path, 'user_salary.csv'), index=False)
+    user_label[['user_id','SALARY']].to_csv(os.path.join(save_path, 'user_salary.csv'), index=False)
     user_salary = user_label[['userid', 'SALARY']]
     print('User salary size', user_salary.size)
-    user_label[['userid','AGE']].to_csv(os.path.join(save_path, 'user_age.csv'), index=False)
-    user_label[['userid','MP']].to_csv(os.path.join(save_path, 'user_mp.csv'), index=False)
-    user_label[['userid','FG']].to_csv(os.path.join(save_path, 'user_fg.csv'), index=False)
-    user_label[['userid','country']].to_csv(os.path.join(save_path, 'user_country.csv'), index=False)
-    user_label[['userid','player_height']].to_csv(os.path.join(save_path, 'user_player_height.csv'), index=False)
-    user_label[['userid','player_weight']].to_csv(os.path.join(save_path, 'user_player_weight.csv'), index=False)
+    user_label[['user_id','AGE']].to_csv(os.path.join(save_path, 'user_age.csv'), index=False)
+    user_label[['user_id','MP']].to_csv(os.path.join(save_path, 'user_mp.csv'), index=False)
+    user_label[['user_id','FG']].to_csv(os.path.join(save_path, 'user_fg.csv'), index=False)
+    user_label[['user_id','country']].to_csv(os.path.join(save_path, 'user_country.csv'), index=False)
+    user_label[['user_id','player_height']].to_csv(os.path.join(save_path, 'user_player_height.csv'), index=False)
+    user_label[['user_id','player_weight']].to_csv(os.path.join(save_path, 'user_player_weight.csv'), index=False)
 
     NUM_FIELD = 10
     #np.random_seed(42)
