@@ -45,7 +45,7 @@ def nba_CatGCN_pre_process(df, df_edge_list, sens_attr, label, onehot_bin_column
     uid_age2 = df[['user_id', 'AGE']].copy()
 
     #create uid2id
-    uid2id = {num: i for i, num in enumerate(df['userid'])}
+    uid2id = {num: i for i, num in enumerate(df['user_id'])}
     #create age2id
     age2id = {num: i for i, num in enumerate(pd.unique(uid_age['AGE']))}
 
@@ -70,10 +70,10 @@ def nba_CatGCN_pre_process(df, df_edge_list, sens_attr, label, onehot_bin_column
     source = []
     target = []
     for i in range(df_edge_list.shape[0]):
-        if any(df.userid == df_edge_list.source[i]) == True and any(df.userid == df_edge_list.target[i]) == True:
-            index = df.userid[df.userid == df_edge_list.source[i]].index.tolist()[0]
+        if any(df.user_id == df_edge_list.source[i]) == True and any(df.user_id == df_edge_list.target[i]) == True:
+            index = df.user_id[df.user_id == df_edge_list.source[i]].index.tolist()[0]
             source.append(index)
-            index2 = df.userid[df.userid == df_edge_list.target[i]].index.tolist()[0]
+            index2 = df.user_id[df.user_id == df_edge_list.target[i]].index.tolist()[0]
             target.append(index2)
 
     user_edge_new = pd.DataFrame({'uid': source, 'uid2': target})
@@ -83,7 +83,7 @@ def nba_CatGCN_pre_process(df, df_edge_list, sens_attr, label, onehot_bin_column
     user_label.to_csv(os.path.join(save_path, 'user_labels.csv'), index=False)
 
     user_label[['user_id','SALARY']].to_csv(os.path.join(save_path, 'user_salary.csv'), index=False)
-    user_salary = user_label[['userid', 'SALARY']]
+    user_salary = user_label[['user_id', 'SALARY']]
     print('User salary size', user_salary.size)
     user_label[['user_id','AGE']].to_csv(os.path.join(save_path, 'user_age.csv'), index=False)
     user_label[['user_id','MP']].to_csv(os.path.join(save_path, 'user_mp.csv'), index=False)
@@ -155,7 +155,7 @@ def field_reader(path):
     :return field: csr matrix of field.
     """
     user_field = pd.read_csv(path)
-    user_index = user_field["userid"].values.tolist()
+    user_index = user_field["user_id"].values.tolist()
     field_index = user_field["AGE"].values.tolist()
     user_count = max(user_index)+1
     field_count = max(field_index)+1
