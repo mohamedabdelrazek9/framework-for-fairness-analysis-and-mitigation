@@ -297,7 +297,7 @@ def sample(df, sens_attr, label):
     fn_sample = fn.sample(n=int(wfn), random_state=1, replace=True)
 
     # merge
-    df_new = pd.concat([dp_sample, dn_sample, fp_sample, fn_sample])
+    df_new = pd.concat([dp_sample, dn_sample, fp_sample, fn_sample]).drop_duplicates().reset_index(drop=True)
 
     return df_new
 
