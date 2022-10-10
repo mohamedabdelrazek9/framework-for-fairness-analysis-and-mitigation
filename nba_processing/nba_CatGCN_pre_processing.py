@@ -43,6 +43,8 @@ def nba_CatGCN_pre_process(df, df_edge_list, sens_attr, label, onehot_bin_column
         df.AGE = df.AGE.astype(str)
         df.MP = df.MP.astype(str)
         df.FG = df.FG.astype(str)
+
+        df['AGE'] = df['AGE'].astype(str).astype(int)
             
     #for the nba dataset we choose age as the m apping option to the userid
     uid_age = df[['user_id', 'AGE']].copy()
@@ -57,6 +59,14 @@ def nba_CatGCN_pre_process(df, df_edge_list, sens_attr, label, onehot_bin_column
     #create user_field
     user_field = col_map(uid_age, 'user_id', uid2id)
     user_field = col_map(user_field, 'AGE', age2id)
+
+    ## new part for disparate remover
+    if debaising_approach == 'disparate_impact_remover':
+        user_field = user_field.reset_index()
+        user_field = user_field.drop(['userid'], axis=1)
+
+        user_field = user_field.rename(columns={"index": "userid"})
+        user_field['userid'] = user_field['userid'].astype(str).astype(int)
 
     #create user_label
     user_label = df[df['user_id'].isin(uid_age2['user_id'])]
