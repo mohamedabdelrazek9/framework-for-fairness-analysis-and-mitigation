@@ -310,7 +310,7 @@ def RHGN_pre_processing(data_extension):
 
     # Todo implment RHGN processing for Pokec dataset
     elif args.dataset_name == 'pokec_z':
-        G, cid1_feature, cid2_feature, cid3_feature = pokec_z_RHGN_pre_process(df, args.dataset_user_id_name, args.sens_attr, args.label, args.onehot_bin_columns, args.onehot_cat_columns, args.debaising_approach)
+        G, cid1_feature, cid2_feature, cid3_feature = pokec_z_RHGN_pre_process(df, args.dataset_user_id_name, args.sens_attr, args.label, args.debaising_approach)
 
 
     
