@@ -63,10 +63,10 @@ def nba_CatGCN_pre_process(df, df_edge_list, sens_attr, label, onehot_bin_column
     ## new part for disparate remover
     if debaising_approach == 'disparate_impact_remover':
         user_field = user_field.reset_index()
-        user_field = user_field.drop(['userid'], axis=1)
+        user_field = user_field.drop(['user_id'], axis=1)
 
-        user_field = user_field.rename(columns={"index": "userid"})
-        user_field['userid'] = user_field['userid'].astype(str).astype(int)
+        user_field = user_field.rename(columns={"index": "user_id"})
+        user_field['user_id'] = user_field['user_id'].astype(str).astype(int)
 
     #create user_label
     user_label = df[df['user_id'].isin(uid_age2['user_id'])]
