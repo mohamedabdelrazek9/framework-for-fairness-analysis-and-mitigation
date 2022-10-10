@@ -53,6 +53,7 @@ class ClusteringMachine(object):
             print("\nWithout graph clustering.\n")
             self.clusters = [0]
             self.cluster_membership = {node: 0 for node in self.graph.nodes()}
+            print('cluster memebership', self.cluster_membership)
         elif self.args.clustering_method == "metis":
             print("\nMetis graph clustering started.\n")
             self.metis_clustering()
