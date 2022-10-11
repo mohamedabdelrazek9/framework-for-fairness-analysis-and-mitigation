@@ -210,6 +210,7 @@ def disparate_impact_remover(df, sens_attr, label):
 
 
 def reweighting(df, sens_attr, label):
+    print('we are in reweighting')
 
     bin_label_dataset = BinaryLabelDataset(favorable_label=1, 
                                            unfavorable_label=0, 
