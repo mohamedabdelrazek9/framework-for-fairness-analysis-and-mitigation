@@ -26,6 +26,20 @@ def pokec_z_RHGN_pre_process(df, dataset_user_id_name, sens_attr, label, debaisi
         elif debaising_approach == 'sample':
             df = sample(df, sens_attr, label)
 
+    if debaising_approach == 'reweighting' or debaising_approach == 'disparate_impact_remover':
+        df.user_id = df.user_id.astype(np.int64)
+        df.user_id = df.user_id.astype(str)
+
+        df.completion_percentage = df.completion_percentage.astype(np.int64)
+        df.completion_percentage = df.completion_percentage.astype(str)
+
+        df.AGE = df.AGE.astype(np.int64)
+        df.AGE = df.AGE.astype(str)
+
+        df.I_am_working_in_field = df.I_am_working_in_field.astype(np.int64)
+        df.I_am_working_in_field = df.I_am_working_in_field.astype(str)
+
+    
     user_dic = {k: v for v, k in enumerate(df.user_id.drop_duplicates())}
     comp_dic = {k: v for v, k in enumerate(df.completion_percentage.drop_duplicates())}
     age_dic = {k: v for v, k in enumerate(df.AGE.drop_duplicates())}
