@@ -49,7 +49,7 @@ def pokec_z_RHGN_pre_process(df, dataset_user_id_name, sens_attr, label, debaisi
 
     item_dic = {}
     c1, c2, c3=[], [], []
-
+    '''
     if debaising_approach == 'sample':
         for i, row in df.iterrows():
             c1_1 = df.at[i, 'completion_percentage']
@@ -69,8 +69,8 @@ def pokec_z_RHGN_pre_process(df, dataset_user_id_name, sens_attr, label, debaisi
                 c3.append(working_dic[c3_3])
             else:
                 c3.append(working_dic[c3_3.iloc[0]])
-
-    elif debaising_approach == 'disparate_impact_remover' or debaising_approach == 'reweighting':
+    '''
+    if debaising_approach == 'disparate_impact_remover' or debaising_approach == 'reweighting':
         for i in range(len(df)):
             c1.append(comp_dic[df['completion_percentage'].iloc[i]])
             c2.append(age_dic[df['AGE'].iloc[i]])
