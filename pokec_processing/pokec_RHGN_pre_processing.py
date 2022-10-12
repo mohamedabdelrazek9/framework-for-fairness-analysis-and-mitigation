@@ -15,8 +15,10 @@ def pokec_z_RHGN_pre_process(df, dataset_user_id_name, sens_attr, label, debaisi
     df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(2, 1)
     df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(3, 1)
     df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(4, 1)
-    df = df.astype({'user_id': 'str'}, copy=False)
-    df = df.astype({'completion_percentage':'str', 'AGE':'str', 'I_am_working_in_field':'str'}, copy=False)
+
+    if debaising_approach != 'sample':
+        df = df.astype({'user_id': 'str'}, copy=False)
+        df = df.astype({'completion_percentage':'str', 'AGE':'str', 'I_am_working_in_field':'str'}, copy=False)
 
     if debaising_approach != None:
         if debaising_approach == 'disparate_impact_remover':
