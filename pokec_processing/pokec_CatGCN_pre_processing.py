@@ -7,6 +7,13 @@ from fainress_component import disparate_impact_remover, reweighting, sample
 
 def pokec_z_CatGCN_pre_process(df, df_edge_list, sens_attr, label, debaising_approach=True):
 
+    df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(-1, 0)
+    df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(0, 0)
+    df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(1, 0)
+    df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(2, 1)
+    df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(3, 1)
+    df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(4, 1)
+
     if debaising_approach != None:
         if debaising_approach == 'disparate_impact_remover':
             df = disparate_impact_remover(df, sens_attr, label)
