@@ -27,6 +27,8 @@ def pokec_z_RHGN_pre_process(df, dataset_user_id_name, sens_attr, label, debaisi
             df = reweighting(df, sens_attr, label)
         elif debaising_approach == 'sample':
             df = sample(df, sens_attr, label)
+            df = df.astype({'user_id':'str'}, copy=False)
+            df = df.astype({'completion_percentage':'str', 'AGE':'str', 'I_am_working_in_field':'str'}, copy=False)
 
     if debaising_approach == 'reweighting' or debaising_approach == 'disparate_impact_remover':
         df.user_id = df.user_id.astype(np.int64)
