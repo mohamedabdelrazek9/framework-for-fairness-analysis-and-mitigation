@@ -91,7 +91,6 @@ def ali_CatGCN_pre_processing(df, sens_attr, label_pred, debaising_approach=None
     uid_uid.drop_duplicates(inplace=True)
 
     del uid_pid_1, uid_pid_2, uid_pid_uid
-
     # Map
     user_label = label[label['uid'].isin(uid_cid['uid'])]
     uid2id = {num: i for i, num in enumerate(user_label['uid'])}
@@ -111,7 +110,15 @@ def ali_CatGCN_pre_processing(df, sens_attr, label_pred, debaising_approach=None
     user_field = col_map(uid_cid, 'uid', uid2id)
     user_field = col_map(user_field, 'cid', cid2id)
 
-    # save ?
+    if debaising_approach == 'disparate_impact_remover':
+        user_field = user_field.reset_index()
+        user_field = user_field.drop(['uid'], axis=1)
+
+        user_field = user_field.rename(columns={"index": "uid"})
+        user_field['uid'] = user_field['uid'].astype(str).astype(int)
+
+    
+# save ?
     save_path = './'
     user_edge.to_csv(os.path.join(save_path, 'user_edge.csv'), index=False)
     user_field.to_csv(os.path.join(save_path, 'user_field.csv'), index=False)
@@ -129,7 +136,6 @@ def ali_CatGCN_pre_processing(df, sens_attr, label_pred, debaising_approach=None
     user_label[['uid','student']].to_csv(os.path.join(save_path, 'user_student.csv'), index=False)
     user_label[['uid','bin_age']].to_csv(os.path.join(save_path, 'user_bin_age.csv'), index=False)
     user_label[['uid','bin_buy']].to_csv(os.path.join(save_path, 'user_bin_buy.csv'), index=False)
-
     # re_process
     NUM_FIELD = 10
     #np.random_seed(42)
