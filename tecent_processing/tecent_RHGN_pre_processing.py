@@ -16,7 +16,7 @@ def tec_RHGN_pre_process(df, sens_attr, label, debaising_approach=None):
         df.rename(columns={"user_id":"uid", "age_range":"age"}, inplace=True)
 
         df = apply_bin_age(df)
-        df_extra = df[['cid1_name', 'cid2_name', 'cid3_name']].copy()
+        df_extra = df[['cid1_name', 'cid2_name ', 'cid3_name']].copy()
         df.drop(columns=["cid1_name", "cid2_name ", "cid3_name", "item_name", "seg_name"], inplace=True)
 
         if debaising_approach == 'disparate_impact_remover':
