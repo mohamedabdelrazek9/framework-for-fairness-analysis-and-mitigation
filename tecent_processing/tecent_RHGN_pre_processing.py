@@ -91,7 +91,7 @@ def tec_RHGN_pre_process(df, sens_attr, label, debaising_approach=None):
     # Build a dictionary and remove duplicate items
     user_dic = {k: v for v,k in enumerate(df_user.uid)}
     cid1_dic = {k: v for v, k in enumerate(df_item.cid1_name.drop_duplicates())}  
-    cid2_dic = {k: v for v, k in enumerate(df_item.cid2_name.drop_duplicates())}
+    cid2_dic = {k: v for v, k in enumerate(df_item['cid2_name '].drop_duplicates())}
     cid3_dic = {k: v for v, k in enumerate(df_item.cid3_name.drop_duplicates())}
     brand_dic = {k: v for v, k in enumerate(df_item.brand.drop_duplicates())}
     item_dic = {}
