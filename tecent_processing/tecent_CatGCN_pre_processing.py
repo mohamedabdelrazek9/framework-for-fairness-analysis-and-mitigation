@@ -15,6 +15,8 @@ def tec_CatGCN_pre_process(df, sens_attr, label, debaising_approach=None):
 
         df = apply_bin_age(df)
 
+        df.drop(columns=["cid1", "cid2", "cid1_name", "cid2_name", "cid3_name", "brand_code", "price", "item_name", "seg_name"], inplace=True)
+
         if debaising_approach == 'disparate_impact_remover':
             df = disparate_impact_remover(df, sens_attr, label)
         elif debaising_approach == 'reweighting':
@@ -38,7 +40,8 @@ def tec_CatGCN_pre_process(df, sens_attr, label, debaising_approach=None):
     # item
     df_item.dropna(inplace=True)
     df_item.rename(columns={"item_id":"pid", "cid3":"cid"}, inplace=True)
-    df_item.drop(columns=["cid1", "cid2", "cid1_name", "cid2_name", "cid3_name", "brand_code", "price", "item_name", "seg_name"], inplace=True)
+    if debaising_approach == None:
+        df_item.drop(columns=["cid1", "cid2", "cid1_name", "cid2_name", "cid3_name", "brand_code", "price", "item_name", "seg_name"], inplace=True)
     df_item.reset_index(drop=True, inplace=True)
 
     df_item = df_item.sample(frac=0.15, random_state=11)
@@ -50,8 +53,8 @@ def tec_CatGCN_pre_process(df, sens_attr, label, debaising_approach=None):
     if debaising_approach == None:
         df_click.rename(columns={"user_id":"uid", "item_id":"pid"}, inplace=True)
     elif debaising_approach != None:
-        df_click.rename(columns={"item_id":"pid"})
-        
+        df_click.rename(columns={"item_id":"pid"}, inplace=True)
+
     df_click.reset_index(drop=True, inplace=True)
 
     df_click = df_click.sample(frac=0.15, random_state=11)
@@ -176,7 +179,7 @@ def divide_data(df):
 
 def divide_data2(df):
     df_user = df[['uid', 'gender', 'age']].copy()
-    df_item = df[['item_id', 'cid1', 'cid2', 'cid3', 'cid1_name', 'cid2_name', 'cid3_name', 'brand_code', 'price', 'item_name', 'seg_name']].copy()
+    df_item = df[['item_id', 'cid3']].copy()
     df_click = df[['uid', 'item_id']].copy()
 
     return df_user, df_item, df_click
