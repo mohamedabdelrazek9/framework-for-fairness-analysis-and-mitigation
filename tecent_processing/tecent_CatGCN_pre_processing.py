@@ -15,7 +15,7 @@ def tec_CatGCN_pre_process(df, sens_attr, label, debaising_approach=None):
 
         df = apply_bin_age(df)
 
-        df.drop(columns=["cid1", "cid2", "cid1_name", "cid2_name", "cid3_name", "brand_code", "price", "item_name", "seg_name"], inplace=True)
+        df.drop(columns=["cid1", "cid2", "cid1_name", "cid2_name ", "cid3_name", "brand_code", "price", "item_name", "seg_name"], inplace=True)
 
         if debaising_approach == 'disparate_impact_remover':
             df = disparate_impact_remover(df, sens_attr, label)
@@ -41,7 +41,7 @@ def tec_CatGCN_pre_process(df, sens_attr, label, debaising_approach=None):
     df_item.dropna(inplace=True)
     df_item.rename(columns={"item_id":"pid", "cid3":"cid"}, inplace=True)
     if debaising_approach == None:
-        df_item.drop(columns=["cid1", "cid2", "cid1_name", "cid2_name", "cid3_name", "brand_code", "price", "item_name", "seg_name"], inplace=True)
+        df_item.drop(columns=["cid1", "cid2", "cid1_name", "cid2_name ", "cid3_name", "brand_code", "price", "item_name", "seg_name"], inplace=True)
     df_item.reset_index(drop=True, inplace=True)
 
     df_item = df_item.sample(frac=0.15, random_state=11)

@@ -101,11 +101,11 @@ def tec_RHGN_pre_process(df, sens_attr, label, debaising_approach=None):
         v = i
         item_dic[k] = v
         c1.append(cid1_dic[df_item.at[i,'cid1_name']])
-        c2.append(cid2_dic[df_item.at[i,'cid2_name']])
+        c2.append(cid2_dic[df_item.at[i,'cid2_name ']])
         c3.append(cid3_dic[df_item.at[i,'cid3_name']])
         brand.append(brand_dic[df_item.at[i,'brand']])
 
-    df_item.drop(columns=["cid1_name", "cid2_name", "cid3_name", "price", "item_name", "seg_name"], inplace=True)
+    df_item.drop(columns=["cid1_name", "cid2_name ", "cid3_name", "price", "item_name", "seg_name"], inplace=True)
 
     df_user['bin_age'] = df_user['bin_age'].replace(1,2)
     df_user['bin_age'] = df_user['bin_age'].replace(0,1)
