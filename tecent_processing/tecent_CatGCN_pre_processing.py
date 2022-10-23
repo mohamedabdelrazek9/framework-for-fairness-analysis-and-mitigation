@@ -133,6 +133,9 @@ def tec_CatGCN_pre_process(df, sens_attr, label, debaising_approach=None):
     user_field = col_map(df_click_item, 'uid', uid2id)
     user_field = col_map(user_field, 'cid', cid2id)
 
+
+    # new 
+    df_label = df_label.join(df['bin_age'])
     # Save?
     save_path = './'
     user_edge.to_csv(os.path.join(save_path, "user_edge.csv"), index=False)
