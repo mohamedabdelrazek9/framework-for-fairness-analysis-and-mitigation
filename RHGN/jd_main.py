@@ -325,7 +325,7 @@ def tecent_training_main(G, cid1_feature, cid2_feature, cid3_feature, cid4_featu
         targets, predictions = Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, test_dataloader, epochs, label, clip, device)
 
         ### Compute fairness ###
-        fair_obj = Fairness(G, test_idx, targets, predictions, sens_attr, neptune_run, multiclass_pred, multiclass_sens)
+        fair_obj = Fairness(G, test_idx, targets, predictions, sens_attr, multiclass_pred, multiclass_sens)
         fair_obj.statistical_parity()
         fair_obj.equal_opportunity()
         fair_obj.overall_accuracy_equality()
