@@ -16,6 +16,8 @@ def tec_RHGN_pre_process(df, sens_attr, label, debaising_approach=None):
         df.rename(columns={"user_id":"uid", "age_range":"age"}, inplace=True)
 
         df = apply_bin_age(df)
+        df_extra = df[['cid1_name', 'cid2_name', 'cid3_name']].copy()
+        df.drop(columns=["cid1_name", "cid2_name ", "cid3_name", "item_name", "seg_name"], inplace=True)
 
         if debaising_approach == 'disparate_impact_remover':
             df = disparate_impact_remover(df, sens_attr, label)
@@ -89,11 +91,18 @@ def tec_RHGN_pre_process(df, sens_attr, label, debaising_approach=None):
     df_click = df_click.astype({'uid': 'str', 'pid': 'str'}, copy=False)
 
     # Build a dictionary and remove duplicate items
-    user_dic = {k: v for v,k in enumerate(df_user.uid)}
-    cid1_dic = {k: v for v, k in enumerate(df_item.cid1_name.drop_duplicates())}  
-    cid2_dic = {k: v for v, k in enumerate(df_item['cid2_name '].drop_duplicates())}
-    cid3_dic = {k: v for v, k in enumerate(df_item.cid3_name.drop_duplicates())}
-    brand_dic = {k: v for v, k in enumerate(df_item.brand.drop_duplicates())}
+    if debaising_approach != None:
+        user_dic = {k: v for v,k in enumerate(df_user.uid)}
+        cid1_dic = {k: v for v,k in enumerate(df_extra.cid1_name.drop_duplicates())}
+        cid2_dic = {k: v for v,k in enumerate(df_extra['cid2_name '].drop_duplicates())}
+        cid3_dic = {k: v for v,k in enumerate(df_extra.cid3_name.drop_duplicates())}
+        brand_dic = {k: v for v, k in enumerate(df_item.brand.drop_duplicates())}
+    else:
+        user_dic = {k: v for v,k in enumerate(df_user.uid)}
+        cid1_dic = {k: v for v, k in enumerate(df_item.cid1_name.drop_duplicates())}  
+        cid2_dic = {k: v for v, k in enumerate(df_item['cid2_name '].drop_duplicates())}
+        cid3_dic = {k: v for v, k in enumerate(df_item.cid3_name.drop_duplicates())}
+        brand_dic = {k: v for v, k in enumerate(df_item.brand.drop_duplicates())}
     item_dic = {}
     c1, c2, c3, brand = [], [], [], []
     for i in range(len(df_item)):
@@ -105,7 +114,10 @@ def tec_RHGN_pre_process(df, sens_attr, label, debaising_approach=None):
         c3.append(cid3_dic[df_item.at[i,'cid3_name']])
         brand.append(brand_dic[df_item.at[i,'brand']])
 
-    df_item.drop(columns=["cid1_name", "cid2_name ", "cid3_name", "price", "item_name", "seg_name"], inplace=True)
+    if debaising_approach != None:
+        df_item.drop(columns=["price"], inplace=True)
+    else:
+        df_item.drop(columns=["cid1_name", "cid2_name ", "cid3_name", "price", "item_name", "seg_name"], inplace=True)
 
     #df_user['bin_age'] = df_user['bin_age'].replace(1,2)
     #df_user['bin_age'] = df_user['bin_age'].replace(0,1)
@@ -144,7 +156,7 @@ def divide_data(df):
 
 def divide_data2(df):
     df_user = df[['uid', 'gender', 'age']].copy()
-    df_item = df[['item_id', 'cid1', 'cid2', 'cid3', 'cid1_name', 'cid2_name ', 'cid3_name', 'brand_code', 'price', 'item_name', 'seg_name']].copy()
+    df_item = df[['item_id', 'cid1', 'cid2', 'cid3', 'brand_code', 'price']].copy()
     df_click = df[['uid', 'item_id']].copy()
 
     return df_user, df_item, df_click
