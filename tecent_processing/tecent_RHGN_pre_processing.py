@@ -111,6 +111,9 @@ def tec_RHGN_pre_process(df, sens_attr, label, debaising_approach=None):
     #df_user['bin_age'] = df_user['bin_age'].replace(0,1)
     #df_user['bin_age'] = df_user['bin_age'].replace(2,0)
 
+    if debaising_approach != None:
+        df_user = df_user.join(df['bin_age']) 
+
     # Save?
 
     # Generate Graph
