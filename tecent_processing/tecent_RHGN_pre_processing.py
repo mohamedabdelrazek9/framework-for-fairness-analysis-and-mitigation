@@ -107,9 +107,9 @@ def tec_RHGN_pre_process(df, sens_attr, label, debaising_approach=None):
 
     df_item.drop(columns=["cid1_name", "cid2_name ", "cid3_name", "price", "item_name", "seg_name"], inplace=True)
 
-    df_user['bin_age'] = df_user['bin_age'].replace(1,2)
-    df_user['bin_age'] = df_user['bin_age'].replace(0,1)
-    df_user['bin_age'] = df_user['bin_age'].replace(2,0)
+    #df_user['bin_age'] = df_user['bin_age'].replace(1,2)
+    #df_user['bin_age'] = df_user['bin_age'].replace(0,1)
+    #df_user['bin_age'] = df_user['bin_age'].replace(2,0)
 
     # Save?
 
