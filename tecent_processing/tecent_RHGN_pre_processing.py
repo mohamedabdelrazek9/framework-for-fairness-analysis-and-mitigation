@@ -109,10 +109,16 @@ def tec_RHGN_pre_process(df, sens_attr, label, debaising_approach=None):
         k = df_item.at[i,'pid']
         v = i
         item_dic[k] = v
-        c1.append(cid1_dic[df_item.at[i,'cid1_name']])
-        c2.append(cid2_dic[df_item.at[i,'cid2_name ']])
-        c3.append(cid3_dic[df_item.at[i,'cid3_name']])
-        brand.append(brand_dic[df_item.at[i,'brand']])
+        if debaising_approach != None:
+            c1.append(cid1_dic[df_extra.at[i,'cid1_name']])
+            c2.append(cid2_dic[df_extra.at[i,'cid2_name ']])
+            c3.append(cid3_dic[df_extra.at[i,'cid3_name']])
+            brand.append(brand_dic[df_item.at[i,'brand']])
+        else:
+            c1.append(cid1_dic[df_item.at[i,'cid1_name']])
+            c2.append(cid2_dic[df_item.at[i,'cid2_name ']])
+            c3.append(cid3_dic[df_item.at[i,'cid3_name']])
+            brand.append(brand_dic[df_item.at[i,'brand']])
 
     if debaising_approach != None:
         df_item.drop(columns=["price"], inplace=True)
