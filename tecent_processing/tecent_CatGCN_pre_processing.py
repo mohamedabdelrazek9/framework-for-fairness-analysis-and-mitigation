@@ -46,10 +46,12 @@ def tec_CatGCN_pre_process(df, sens_attr, label, debaising_approach=None):
 
     # click
     df_click.dropna(inplace=True)
+
     if debaising_approach == None:
         df_click.rename(columns={"user_id":"uid", "item_id":"pid"}, inplace=True)
-    else:
+    elif debaising_approach != None:
         df_click.rename(columns={"item_id":"pid"})
+        
     df_click.reset_index(drop=True, inplace=True)
 
     df_click = df_click.sample(frac=0.15, random_state=11)
