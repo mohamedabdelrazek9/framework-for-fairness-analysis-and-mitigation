@@ -11,7 +11,7 @@ def tec_CatGCN_pre_process(df, sens_attr, label, debaising_approach=None):
         df.dropna(inplace=True)
         age_dic = {'11~15':0, '16~20':0, '21~25':0, '26~30':1, '31~35':1, '36~40':2, '41~45':2, '46~50':3, '51~55':3, '56~60':4, '61~65':4, '66~70':4, '71~':4}
         df[["age_range"]] = df[["age_range"]].applymap(lambda x:age_dic[x])
-        df.rename(columns={"user_id":"uid", "age_range":"age"}, inplace=True)
+        df.rename(columns={"age_range":"age"}, inplace=True)
 
         df = apply_bin_age(df)
 
@@ -170,9 +170,11 @@ def divide_data(df):
 
 
 def divide_data2(df):
-    df_user = df[['uid', 'gender', 'age']].copy()
+    df_user = df[['user_id', 'gender', 'age']].copy()
     df_item = df[['item_id', 'cid1', 'cid2', 'cid3', 'cid1_name', 'cid2_name', 'cid3_name', 'brand_code', 'price', 'item_name', 'seg_name']].copy()
     df_click = df[['user_id', 'item_id']].copy()
+
+    return df_user, df_item, df_click
 
 def apply_bin_age(df_user):
     df_user["bin_age"] = df_user["age"]
