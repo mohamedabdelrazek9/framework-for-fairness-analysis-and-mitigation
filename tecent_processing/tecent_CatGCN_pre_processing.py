@@ -174,7 +174,7 @@ def tec_CatGCN_pre_process(df, sens_attr, label, debaising_approach=None):
 
 def divide_data(df):
     df_user = df[['user_id', 'gender', 'age_range']].copy()
-    df_item = df[['item_id', 'cid1', 'cid2', 'cid3', 'cid1_name', 'cid2_name', 'cid3_name', 'brand_code', 'price', 'item_name', 'seg_name']].copy()
+    df_item = df[['item_id', 'cid1', 'cid2', 'cid3', 'cid1_name', 'cid2_name ', 'cid3_name', 'brand_code', 'price', 'item_name', 'seg_name']].copy()
     df_click = df[['user_id', 'item_id']].copy()
 
     return df_user, df_item, df_click
