@@ -99,7 +99,7 @@ def tec_CatGCN_pre_process(df, sens_attr, label, debaising_approach=None):
     print("After filtering, there are %d interacton events from %d users and %d items (sparsity: %.4f%%)" % 
         (df_click_item.shape[0], uid_activity.shape[0], cid_popularity.shape[0], sparsity * 100))
 
-    # uid-uid analysis
+   # uid-uid analysis
     df_click = df_click[df_click["uid"].isin(df_click_item["uid"])]
     df_click_1 = df_click[["uid", "pid"]].copy()
     df_click_1.rename(columns={"uid":"uid1"}, inplace=True)
@@ -116,9 +116,10 @@ def tec_CatGCN_pre_process(df, sens_attr, label, debaising_approach=None):
     del df_click_1, df_click_2, df_click1_click2
 
     # Map
+    # Map
     df_label = df_user[df_user["uid"].isin(df_click_item["uid"])]
 
-    uid2id = {num: i for i, num in enumerate(df_label['uid'])}
+    uid2id = {num: i for i, num in enumerate(df_click_item['uid'])}
     cid2id = {num: i for i, num in enumerate(pd.unique(df_click_item['cid']))}
 
     df_label = col_map(df_label, 'uid', uid2id)
@@ -164,12 +165,14 @@ def tec_CatGCN_pre_process(df, sens_attr, label, debaising_approach=None):
 
     neighs = get_neighs(user_field)
 
+
     if debaising_approach == 'disparate_impact_remover':
         neighs = [x for x in neighs if x.size != 0]
 
     sample_neighs = []
     for i in range(len(neighs)):
         sample_neighs.append(list(sample_neigh(neighs[i], NUM_FIELD)))
+        
     sample_neighs = np.array(sample_neighs)
 
     np.save(os.path.join(save_path, 'user_field.npy'), sample_neighs)
