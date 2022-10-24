@@ -58,7 +58,7 @@ def load_networkx_file(model_type, data_extension, dataset_name, dataset_path, d
         if dataset_name == 'alibaba' or dataset_name == 'tecent':
             if dataset_name == 'tecent':
                 df_nodes = bin_age_range_tecent(df_nodes)
-                df_nodes = df_nodes.drop(columns=["cid1_name", "cid2_name", "cid3_name", "item_name", "seg_name"])
+                df_nodes = df_nodes.drop(columns=["cid1_name", "cid2_name ", "cid3_name", "item_name", "seg_name"])
             if dataset_name == 'alibaba':
                 df_nodes = bin_alibaba(df_nodes)
             edges_path = create_edges(df_nodes, dataset_name)
