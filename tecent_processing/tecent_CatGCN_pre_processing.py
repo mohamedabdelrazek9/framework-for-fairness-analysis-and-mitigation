@@ -133,11 +133,18 @@ def tec_CatGCN_pre_process(df, sens_attr, label, debaising_approach=None):
     user_field = col_map(df_click_item, 'uid', uid2id)
     user_field = col_map(user_field, 'cid', cid2id)
 
+    if debaising_approach == 'disparate_impact_remover':
+        user_field = user_field.reset_index()
+        user_field = user_field.drop(['uid'], axis=1)
+
+        user_field = user_field.rename(columns={"index": "uid"})
+        user_field['uid'] = user_field['uid'].astype(str).astype(int)
+
 
     # new
     if debaising_approach != None:
         df_label = df_label.join(df['bin_age']) 
-        
+
     # Save?
     save_path = './'
     user_edge.to_csv(os.path.join(save_path, "user_edge.csv"), index=False)
@@ -156,6 +163,9 @@ def tec_CatGCN_pre_process(df, sens_attr, label, debaising_approach=None):
     user_field = field_reader(os.path.join(save_path, "user_field.csv"))
 
     neighs = get_neighs(user_field)
+
+    if debaising_approach == 'disparate_impact_remover':
+        neighs = [x for x in neighs if x.size != 0]
 
     sample_neighs = []
     for i in range(len(neighs)):
