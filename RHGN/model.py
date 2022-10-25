@@ -187,6 +187,8 @@ class jd_RHGN(nn.Module):
             self.adapt_ws.append(nn.Linear(n_inp, n_hid))
         for _ in range(n_layers):
             self.gcs.append(RHGNLayer(n_hid, n_hid, node_dict, edge_dict, n_heads, use_norm=use_norm))
+        print('n_hid:', n_hid)
+        print('n_out:', n_out)
         self.out = nn.Linear(n_hid, n_out)
 
         self.cid1_feature = nn.Embedding(cid1_feature.size(0), cid1_feature.size(1))
