@@ -233,7 +233,7 @@ def tecent_training_main(G, cid1_feature, cid2_feature, cid3_feature, cid4_featu
     #G=torch.load('{}/{}.pkl'.format(args.data_dir,args.graph))
     print(G)
     labels=G.nodes['user'].data[label]
-    if labels.dtype == torch.float32:
+    if labels.dtype == torch.float64:
         labels = labels.type(torch.int64)
     print('labels:', labels)
 
