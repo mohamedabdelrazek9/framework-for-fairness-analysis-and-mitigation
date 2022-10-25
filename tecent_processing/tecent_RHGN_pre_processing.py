@@ -147,7 +147,8 @@ def tec_RHGN_pre_process(df, sens_attr, label, debaising_approach=None):
                                                                                 c1, 
                                                                                 c2, 
                                                                                 c3, 
-                                                                                brand)
+                                                                                brand,
+                                                                                debaising_approach)
     
 
     return G, cid1_feature, cid2_feature, cid3_feature, brand_feature # brand_feature not used (same as cid4_feature?)
@@ -197,7 +198,7 @@ def filter_triplets(tp, user, item, min_uc=0, min_sc=0):
     return tp, usercount, itemcount
 
 
-def generate_graph(df_user, df_item, df_click, user_dic, item_dic, cid1_dic, cid2_dic, cid3_dic, brand_dic, c1, c2, c3, brand):
+def generate_graph(df_user, df_item, df_click, user_dic, item_dic, cid1_dic, cid2_dic, cid3_dic, brand_dic, c1, c2, c3, brand, debaising_approach):
 
     u = {v:k for k,v in user_dic.items()}
     i = {v:k for k,v in item_dic.items()}
@@ -229,6 +230,8 @@ def generate_graph(df_user, df_item, df_click, user_dic, item_dic, cid1_dic, cid
     brand_feature = torch.tensor([temp[k] for _, k in brand_dic.items()])
 
     # Passing labels into label
+    if debaising_approach == 'disparate_impact_remover' or debaising_approach == 'reweighting':
+        df_user['gender'] = df_user['gender'].astype(np.int64)
     label_gender = df_user.gender
     label_age = df_user.age
     label_bin_age = df_user.bin_age

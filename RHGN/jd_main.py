@@ -80,8 +80,7 @@ def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, t
             Batch_logits,Batch_labels = model(input_nodes,output_nodes,blocks, out_key='user',label_key=label, is_train=True)
 
             # The loss is computed only for labeled nodes.
-            #if Batch_labels.dtype == 'torch.float32'
-            #Batch_labels = Batch_labels.int()
+            
             print('Batch_labels', Batch_labels)
             loss = F.cross_entropy(Batch_logits, Batch_labels)
             optimizer.zero_grad()
@@ -233,8 +232,6 @@ def tecent_training_main(G, cid1_feature, cid2_feature, cid3_feature, cid4_featu
     #G=torch.load('{}/{}.pkl'.format(args.data_dir,args.graph))
     print(G)
     labels=G.nodes['user'].data[label]
-    #if labels.dtype == torch.float64:
-    #    labels = labels.type(torch.int64)
     print('labels:', labels)
     print('labels dtype:', labels.dtype)
 
