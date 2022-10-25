@@ -81,7 +81,6 @@ def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, t
 
             # The loss is computed only for labeled nodes.
             
-            print('Batch_labels', Batch_labels)
             loss = F.cross_entropy(Batch_logits, Batch_labels)
             optimizer.zero_grad()
             loss.backward()
@@ -232,8 +231,7 @@ def tecent_training_main(G, cid1_feature, cid2_feature, cid3_feature, cid4_featu
     #G=torch.load('{}/{}.pkl'.format(args.data_dir,args.graph))
     print(G)
     labels=G.nodes['user'].data[label]
-    print('labels:', labels)
-    print('labels dtype:', labels.dtype)
+    
 
 
     # generate train/val/test split
