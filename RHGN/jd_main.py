@@ -80,7 +80,8 @@ def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, t
             Batch_logits,Batch_labels = model(input_nodes,output_nodes,blocks, out_key='user',label_key=label, is_train=True)
 
             # The loss is computed only for labeled nodes.
-            Batch_labels = Batch_labels.int()
+            #if Batch_labels.dtype == 'torch.float32'
+            #Batch_labels = Batch_labels.int()
             print('Batch_labels', Batch_labels)
             loss = F.cross_entropy(Batch_logits, Batch_labels)
             optimizer.zero_grad()
