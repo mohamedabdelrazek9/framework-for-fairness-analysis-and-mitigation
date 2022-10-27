@@ -286,6 +286,7 @@ def RHGN_pre_processing(data_extension):
         df_user = pd.read_csv('../user')
         df_click = pd.read_csv('../user_click')
         df_item = pd.read_csv('../item_info')
+        df = ''
     #else: # simple test for pokec
     #    df = pd.read_csv(args.dataset_path)
     
