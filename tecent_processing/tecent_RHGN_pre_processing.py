@@ -127,7 +127,7 @@ def tec_RHGN_pre_process(df, df_user, df_click, df_item, sens_attr, label, speci
         k = df_item.at[i,'pid']
         v = i
         item_dic[k] = v
-        if debaising_approach != None:
+        if debaising_approach != None and special_case == False:
             c1.append(cid1_dic[df_extra.at[i,'cid1_name']])
             c2.append(cid2_dic[df_extra.at[i,'cid2_name']])
             c3.append(cid3_dic[df_extra.at[i,'cid3_name']])
