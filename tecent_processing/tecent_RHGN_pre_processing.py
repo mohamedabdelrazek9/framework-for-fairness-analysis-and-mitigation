@@ -16,8 +16,8 @@ def tec_RHGN_pre_process(df, df_user, df_click, df_item, sens_attr, label, speci
 
             # binarize age
             df_user = apply_bin_age(df_user)
-            df_extra = df[['cid1_name', 'cid2_name ', 'cid3_name']].copy()
-            df.drop(columns=["cid1_name", "cid2_name ", "cid3_name", "item_name", "seg_name"], inplace=True)
+            #df_extra = df[['cid1_name', 'cid2_name ', 'cid3_name']].copy()
+            #df.drop(columns=["cid1_name", "cid2_name ", "cid3_name", "item_name", "seg_name"], inplace=True)
             if debaising_approach == 'disparate_impact_remover':
                 df_user = disparate_impact_remover(df_user, sens_attr, label)
             elif debaising_approach == 'reweighting':
