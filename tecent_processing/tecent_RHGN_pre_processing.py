@@ -94,13 +94,13 @@ def tec_RHGN_pre_process(df, df_user, df_click, df_item, sens_attr, label, speci
     if debaising_approach != None:
         user_dic = {k: v for v,k in enumerate(df_user.uid)}
         cid1_dic = {k: v for v,k in enumerate(df_extra.cid1_name.drop_duplicates())}
-        cid2_dic = {k: v for v,k in enumerate(df_extra['cid2_name '].drop_duplicates())}
+        cid2_dic = {k: v for v,k in enumerate(df_extra['cid2_name'].drop_duplicates())}
         cid3_dic = {k: v for v,k in enumerate(df_extra.cid3_name.drop_duplicates())}
         brand_dic = {k: v for v, k in enumerate(df_item.brand.drop_duplicates())}
     else:
         user_dic = {k: v for v,k in enumerate(df_user.uid)}
         cid1_dic = {k: v for v, k in enumerate(df_item.cid1_name.drop_duplicates())}  
-        cid2_dic = {k: v for v, k in enumerate(df_item['cid2_name '].drop_duplicates())}
+        cid2_dic = {k: v for v, k in enumerate(df_item['cid2_name'].drop_duplicates())}
         cid3_dic = {k: v for v, k in enumerate(df_item.cid3_name.drop_duplicates())}
         brand_dic = {k: v for v, k in enumerate(df_item.brand.drop_duplicates())}
     item_dic = {}
@@ -111,19 +111,19 @@ def tec_RHGN_pre_process(df, df_user, df_click, df_item, sens_attr, label, speci
         item_dic[k] = v
         if debaising_approach != None:
             c1.append(cid1_dic[df_extra.at[i,'cid1_name']])
-            c2.append(cid2_dic[df_extra.at[i,'cid2_name ']])
+            c2.append(cid2_dic[df_extra.at[i,'cid2_name']])
             c3.append(cid3_dic[df_extra.at[i,'cid3_name']])
             brand.append(brand_dic[df_item.at[i,'brand']])
         else:
             c1.append(cid1_dic[df_item.at[i,'cid1_name']])
-            c2.append(cid2_dic[df_item.at[i,'cid2_name ']])
+            c2.append(cid2_dic[df_item.at[i,'cid2_name']])
             c3.append(cid3_dic[df_item.at[i,'cid3_name']])
             brand.append(brand_dic[df_item.at[i,'brand']])
 
     if debaising_approach != None:
         df_item.drop(columns=["price"], inplace=True)
     else:
-        df_item.drop(columns=["cid1_name", "cid2_name ", "cid3_name", "price", "item_name", "seg_name"], inplace=True)
+        df_item.drop(columns=["cid1_name", "cid2_name", "cid3_name", "price", "item_name", "seg_name"], inplace=True)
 
     #df_user['bin_age'] = df_user['bin_age'].replace(1,2)
     #df_user['bin_age'] = df_user['bin_age'].replace(0,1)
