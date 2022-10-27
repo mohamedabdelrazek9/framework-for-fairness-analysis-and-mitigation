@@ -109,7 +109,7 @@ def tec_RHGN_pre_process(df, df_user, df_click, df_item, sens_attr, label, speci
     df_click = df_click.astype({'uid': 'str', 'pid': 'str'}, copy=False)
 
     # Build a dictionary and remove duplicate items
-    if debaising_approach != None:
+    if debaising_approach != None and special_case == False:
         user_dic = {k: v for v,k in enumerate(df_user.uid)}
         cid1_dic = {k: v for v,k in enumerate(df_extra.cid1_name.drop_duplicates())}
         cid2_dic = {k: v for v,k in enumerate(df_extra['cid2_name'].drop_duplicates())}
