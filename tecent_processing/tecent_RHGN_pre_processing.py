@@ -148,7 +148,8 @@ def tec_RHGN_pre_process(df, df_user, df_click, df_item, sens_attr, label, speci
     #df_user['bin_age'] = df_user['bin_age'].replace(2,0)
 
     if debaising_approach != None:
-        df_user = df_user.join(df['bin_age']) 
+        if 'bin_age' not in df_user:
+            df_user = df_user.join(df_user['bin_age']) 
 
     # Save?
 
