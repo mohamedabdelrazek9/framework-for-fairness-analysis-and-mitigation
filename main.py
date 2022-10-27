@@ -281,12 +281,13 @@ def RHGN_pre_processing(data_extension):
                              args.dataset_path, 
                              args.dataset_name)
 
-    elif args.dataset_name == 'tecent':
+    else:
+        print('we will read normal data')
         df_user = pd.read_csv('../user')
         df_click = pd.read_csv('../user_click')
         df_item = pd.read_csv('../item_info')
-    else: # simple test for pokec
-        df = pd.read_csv(args.dataset_path)
+    #else: # simple test for pokec
+    #    df = pd.read_csv(args.dataset_path)
     
     #print('Dataset fairness before training:', dataset_fairness)
 
