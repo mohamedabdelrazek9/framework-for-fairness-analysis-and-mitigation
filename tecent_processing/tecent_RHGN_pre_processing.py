@@ -5,9 +5,8 @@ import dgl
 import fasttext
 from fainress_component import disparate_impact, disparate_impact_remover, reweighting, sample
 
-def tec_RHGN_pre_process(df, sens_attr, label, debaising_approach=None):
+def tec_RHGN_pre_process(df, df_user, df_click, df_item, sens_attr, label, special_case, debaising_approach=None):
     # load and clean data
-
     if debaising_approach != None:
         df.dropna(inplace=True)
 
@@ -29,8 +28,9 @@ def tec_RHGN_pre_process(df, sens_attr, label, debaising_approach=None):
         df_user, df_item, df_click = divide_data2(df)
 
     else:
-
-        df_user, df_item, df_click = divide_data(df)
+        if special_case == False:
+            print('special case is False')
+            df_user, df_item, df_click = divide_data(df)
 
         # df_user process
         df_user.dropna(inplace=True)

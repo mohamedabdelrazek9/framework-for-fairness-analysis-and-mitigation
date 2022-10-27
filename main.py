@@ -98,7 +98,7 @@ parser.add_argument("--multi-heads", type=str, default="8,1", help="Multi heads 
 parser.add_argument("--theta", type = float, default = 0.5,  help = "Theta coefficient for GCNII. Default is 0.5.")
 parser.add_argument("--gat-units", type=str, default="64", help="Hidden units for global gat part, splitted with comma, maybe none.")
 
-
+parser.add_argument("--special_case", type=bool, default=False)
 
 import networkx as nx
 import numpy as np
@@ -281,6 +281,10 @@ def RHGN_pre_processing(data_extension):
                              args.dataset_path, 
                              args.dataset_name)
 
+    elif args.dataset_name == 'tecent':
+        df_user = pd.read_csv('../user')
+        df_click = pd.read_csv('../user_click')
+        df_item = pd.read_csv('../item_info')
     else: # simple test for pokec
         df = pd.read_csv(args.dataset_path)
     
@@ -301,7 +305,7 @@ def RHGN_pre_processing(data_extension):
         #G, cid1_feature, cid2_feature, cid3_feature = ali_RHGN_pre_process(df)
         G, cid1_feature, cid2_feature, cid3_feature = ali_RHGN_pre_process(df, args.sens_attr, args.label, args.debaising_approach)
     elif args.dataset_name == 'tecent':
-        G, cid1_feature, cid2_feature, cid3_feature, cid4_feature = tec_RHGN_pre_process(df, args.sens_attr, args.label, args.debaising_approach)
+        G, cid1_feature, cid2_feature, cid3_feature, cid4_feature = tec_RHGN_pre_process(df, df_user, df_click, df_item, args.sens_attr, args.label, args.special_case, args.debaising_approach)
 
     # Todo implment RHGN processing for NBA dataset
     elif args.dataset_name == 'nba':
