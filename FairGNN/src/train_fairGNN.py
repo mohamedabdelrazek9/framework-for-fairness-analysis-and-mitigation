@@ -50,6 +50,8 @@ def train_FairGNN(G, features, labels, idx_train, idx_val, idx_test, sens, idx_s
         roc_val = roc_auc_score(labels[idx_val].cpu().numpy(),output[idx_val].detach().cpu().numpy())
         print('output:', output[idx_val])
         print('labels:', labels[idx_val])
+        print('output numpy:', output[idx_val].detach().cpu().numpy())
+        print('labels numpy:', labels[idx_val].cpu().numpy())
         #f1_val = f1_score(labels[idx_val].cpu().numpy(), output[idx_val].detach().cpu().numpy(), average='binary')
 
 
