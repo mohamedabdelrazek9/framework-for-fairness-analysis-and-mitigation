@@ -157,6 +157,10 @@ def FairGNN_pre_processing(data_extension):
             df_nodes = bin_age_range_tecent(df_nodes)
             df_nodes = df_nodes.drop(columns=["cid1_name", "cid2_name", "cid3_name", "item_name", "seg_name"])
             edges_path = create_edges(df_nodes, args.dataset_name)
+            df_edge_list = edges_path
+            #save the edges as .txt file
+            edges_path = './FairGNN_data_relationship'
+            df_edge_list.to_csv(r'{}.txt'.format(edges_path), header=None, index=None, sep=' ', mode='a')
         else:
             # simple test for pokec/tecent
             df_nodes = pd.read_csv(args.dataset_path)    
