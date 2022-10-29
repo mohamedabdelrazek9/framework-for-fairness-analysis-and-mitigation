@@ -134,7 +134,10 @@ def tec_CatGCN_pre_process(df, df_user, df_click, df_item, sens_attr, label, spe
     # Map
     df_label = df_user[df_user["uid"].isin(df_click_item["uid"])]
 
-    uid2id = {num: i for i, num in enumerate(df_click_item['uid'])}
+    if debaising_approach == None and special_case == True:
+        uid2id = {num: i for i, num in enumerate(df_label['uid'])}
+    else:
+        uid2id = {num: i for i, num in enumerate(df_click_item['uid'])}
     cid2id = {num: i for i, num in enumerate(pd.unique(df_click_item['cid']))}
 
     df_label = col_map(df_label, 'uid', uid2id)
