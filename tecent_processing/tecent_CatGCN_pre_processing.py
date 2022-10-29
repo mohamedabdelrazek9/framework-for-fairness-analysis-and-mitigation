@@ -13,6 +13,8 @@ def tec_CatGCN_pre_process(df, df_user, df_click, df_item, sens_attr, label, spe
             age_dic = {'11~15':0, '16~20':0, '21~25':0, '26~30':1, '31~35':1, '36~40':2, '41~45':2, '46~50':3, '51~55':3, '56~60':4, '61~65':4, '66~70':4, '71~':4}
             df_user[["age_range"]] = df_user[["age_range"]].applymap(lambda x:age_dic[x])
             df_user.rename(columns={"user_id":"uid", "age_range":"age"}, inplace=True)
+            # binarize age
+            df_user = apply_bin_age(df_user)
             if debaising_approach == 'disparate_impact_remover':
                 df_user = disparate_impact_remover(df_user, sens_attr, label)
             elif debaising_approach == 'reweighting':
