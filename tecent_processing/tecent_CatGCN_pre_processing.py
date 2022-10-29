@@ -67,7 +67,7 @@ def tec_CatGCN_pre_process(df, df_user, df_click, df_item, sens_attr, label, spe
     # click
     df_click.dropna(inplace=True)
 
-    if debaising_approach == None:
+    if debaising_approach == None and special_case == True:
         df_click.rename(columns={"user_id":"uid", "item_id":"pid"}, inplace=True)
     elif debaising_approach != None:
         df_click.rename(columns={"item_id":"pid"}, inplace=True)
