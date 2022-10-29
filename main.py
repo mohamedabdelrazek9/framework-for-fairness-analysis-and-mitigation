@@ -221,13 +221,20 @@ def CatGCN_pre_processing(data_extension):
                             onehot_bin_columns=None,
                             onehot_cat_columns=None)
     else:
-        #simple test for pokec
-        df = pd.read_csv(args.dataset_path)
-        #df_edge_list = pd.read_csv('./region_job_relationship.txt', sep=" ", header=None)
-        #df_edge_list = pd.read_csv('./region_job_relationship.txt', delimiter= "\t", header=None)
-        #df_edge_list = pd.read_csv('./region_job_relationship.txt', delimiter= "\t", header=None)
-        #df_edge_list.rename(columns={0: "source", 1: "target"}, inplace=True)
-        df_edge_list = pd.read_csv('../user_edge.csv')
+        if args.special_case == True:
+            print('we will read normal data')
+            df_user = pd.read_csv('../user')
+            df_click = pd.read_csv('../user_click')
+            df_item = pd.read_csv('../item_info')
+            df = ''
+        else:
+            #simple test for pokec
+            df = pd.read_csv(args.dataset_path)
+            #df_edge_list = pd.read_csv('./region_job_relationship.txt', sep=" ", header=None)
+            #df_edge_list = pd.read_csv('./region_job_relationship.txt', delimiter= "\t", header=None)
+            #df_edge_list = pd.read_csv('./region_job_relationship.txt', delimiter= "\t", header=None)
+            #df_edge_list.rename(columns={0: "source", 1: "target"}, inplace=True)
+            df_edge_list = pd.read_csv('../user_edge.csv')
 
          
     
@@ -235,7 +242,7 @@ def CatGCN_pre_processing(data_extension):
         user_edge_path, user_field_path, user_gender_path, user_labels_path = ali_CatGCN_pre_processing(df, args.sens_attr, args.label, args.debaising_approach)
         target = user_gender_path
     elif args.dataset_name == 'tecent':
-        user_edge_path, user_field_path, user_gender_path, user_labels_path = tec_CatGCN_pre_process(df, args.sens_attr, args.label, args.debaising_approach)
+        user_edge_path, user_field_path, user_gender_path, user_labels_path = tec_CatGCN_pre_process(df, args.sens_attr, args.label, args.special_case, args.debaising_approach)
         target = user_gender_path
 
     # Todo implment CatGCN processing for NBA dataset
