@@ -140,7 +140,7 @@ def tec_CatGCN_pre_process(df, df_user, df_click, df_item, sens_attr, label, spe
 
     if debaising_approach == None and special_case == True:
         uid2id = {num: i for i, num in enumerate(df_label['uid'])}
-    elif debaising_approach == 'sample' and special_case == True:
+    elif debaising_approach == 'sample' and debaising_approach == 'reweighting' and special_case == True:
          uid2id = {num: i for i, num in enumerate(df_label['uid'])}
     else:
         uid2id = {num: i for i, num in enumerate(df_click_item['uid'])}
