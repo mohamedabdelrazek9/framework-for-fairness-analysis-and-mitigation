@@ -246,6 +246,11 @@ def fair_metric(output,idx, labels, sens):
 
     pred_y = (output[idx].squeeze()>0).type_as(labels).cpu().numpy()
     parity = abs(sum(pred_y[idx_s0])/sum(idx_s0)-sum(pred_y[idx_s1])/sum(idx_s1))
+    print('parity debug')
+    print('pred_y:',pred_y)
+    print('pred_y[idx_s0]:', pred_y[idx_s0])
+    print('idx_s0:', idx_s0)
+    print('parity:', parity)
     equality = abs(sum(pred_y[idx_s0_y1])/sum(idx_s0_y1)-sum(pred_y[idx_s1_y1])/sum(idx_s1_y1))
 
     
