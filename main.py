@@ -22,6 +22,7 @@ from fainress_component import fairness_calculation, disparate_impact_remover, r
 import dgl
 import torch
 import pandas as pd
+from utils import create_edges
 
 
 parser = argparse.ArgumentParser()
@@ -149,12 +150,18 @@ def FairGNN_pre_processing(data_extension):
                                                args.onehot_bin_columns, 
                                                args.onehot_cat_columns)   
 
-    else: # simple test for pokec/tecent
-        df_nodes = pd.read_csv(args.dataset_path)    
-        #edges_path = pd.read_csv('../region_job_relationship.txt', delimiter="\t", header=None)
-        #edges_path.rename(columns={0: "source", 1: "target"}, inplace=True)  
-        #edges_path = '../user_edges.csv'
-        edges_path = '../region_job_relationship'
+    else:
+        if args.special_case == True:
+            print('we will read normal data')
+            df_nodes = pd.read_csv(args.dataset_path)
+            edges_path = create_edges(df_nodes, args.dataset_name)
+        else:
+            # simple test for pokec/tecent
+            df_nodes = pd.read_csv(args.dataset_path)    
+            #edges_path = pd.read_csv('../region_job_relationship.txt', delimiter="\t", header=None)
+            #edges_path.rename(columns={0: "source", 1: "target"}, inplace=True)  
+            #edges_path = '../user_edges.csv'
+            edges_path = '../region_job_relationship'
 
         # Calculate dataset Fairness (if activated)
         # todo add activation proceudre when debaising approaches are implmented
