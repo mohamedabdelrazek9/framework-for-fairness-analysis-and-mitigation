@@ -352,18 +352,18 @@ def create_edges(df_nodes, dataset_name):
         return user_edge
 
     elif dataset_name == 'tecent':
-        df_user = df_nodes[['userid', 'gender', 'age_range']].copy()
+        df_user = df_nodes[['user_id', 'gender', 'age_range']].copy()
         df_user.dropna(inplace=True)
-        df_user.rename(columns={"userid":"uid", "age_range":"age"}, inplace=True)
+        df_user.rename(columns={"user_id":"uid", "age_range":"age"}, inplace=True)
 
         df_item = df_nodes[['item_id', 'cid3']].copy()
         df_item.dropna(inplace=True)
         df_item.rename(columns={"item_id":"pid", "cid3":"cid"}, inplace=True)
         df_item.reset_index(drop=True, inplace=True)
 
-        df_click = df_nodes[['userid', 'item_id']].copy()
+        df_click = df_nodes[['user_id', 'item_id']].copy()
         df_click.dropna(inplace=True)
-        df_click.rename(columns={"userid":"uid", "item_id":"pid"}, inplace=True)
+        df_click.rename(columns={"user_id":"uid", "item_id":"pid"}, inplace=True)
         df_click.reset_index(drop=True, inplace=True)
 
         df_item = df_item.sample(frac=0.15, random_state=11)
