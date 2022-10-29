@@ -100,7 +100,7 @@ parser.add_argument("--theta", type = float, default = 0.5,  help = "Theta coeff
 parser.add_argument("--gat-units", type=str, default="64", help="Hidden units for global gat part, splitted with comma, maybe none.")
 
 parser.add_argument("--special_case", type=bool, default=False)
-parser.add_argument("--attn-drop", type=float, default=.0, help="attention dropout")
+
 parser.add_argument("--num-heads", type=int, default=1,
                         help="number of hidden attention heads")
 parser.add_argument("--num-out-heads", type=int, default=1,
@@ -113,14 +113,7 @@ parser.add_argument("--attn-drop", type=float, default=.0,
                     help="attention dropout")
 parser.add_argument('--negative-slope', type=float, default=0.2,
                     help="the negative slope of leaky relu")
-parser.add_argument('--acc', type=float, default=0.688,
-                    help='the selected FairGNN accuracy on val would be at least this high')
-parser.add_argument('--roc', type=float, default=0.745,
-                    help='the selected FairGNN ROC score on val would be at least this high')
-parser.add_argument('--sens_number', type=int, default=200,
-                    help="the number of sensitive attributes")
-parser.add_argument('--label_number', type=int, default=500,
-                    help="the number of labels")
+
 
 import networkx as nx
 import numpy as np
