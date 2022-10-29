@@ -242,7 +242,7 @@ def CatGCN_pre_processing(data_extension):
         user_edge_path, user_field_path, user_gender_path, user_labels_path = ali_CatGCN_pre_processing(df, args.sens_attr, args.label, args.debaising_approach)
         target = user_gender_path
     elif args.dataset_name == 'tecent':
-        user_edge_path, user_field_path, user_gender_path, user_labels_path = tec_CatGCN_pre_process(df, args.sens_attr, args.label, args.special_case, args.debaising_approach)
+        user_edge_path, user_field_path, user_gender_path, user_labels_path = tec_CatGCN_pre_process(df, df_user, df_click, df_item, args.sens_attr, args.label, args.special_case, args.debaising_approach)
         target = user_gender_path
 
     # Todo implment CatGCN processing for NBA dataset

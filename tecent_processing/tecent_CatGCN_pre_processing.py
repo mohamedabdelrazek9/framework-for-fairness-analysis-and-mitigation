@@ -6,7 +6,7 @@ import os
 from fainress_component import disparate_impact_remover, reweighting, sample
 import time
 
-def tec_CatGCN_pre_process(df, sens_attr, label, special_case, debaising_approach=None):
+def tec_CatGCN_pre_process(df, df_user, df_click, df_item, sens_attr, label, special_case, debaising_approach=None):
     if debaising_approach != None:
         if special_case == True:
             df_user.dropna(inplace=True)
@@ -41,8 +41,9 @@ def tec_CatGCN_pre_process(df, sens_attr, label, special_case, debaising_approac
             df_user, df_item, df_click = divide_data2(df)
 
     else:
-
-        df_user, df_item, df_click = divide_data(df)
+        if special_case == False:
+            print('special case is false')
+            df_user, df_item, df_click = divide_data(df)
         df_user.dropna(inplace=True)
         age_dic = {'11~15':0, '16~20':0, '21~25':0, '26~30':1, '31~35':1, '36~40':2, '41~45':2, '46~50':3, '51~55':3, '56~60':4, '61~65':4, '66~70':4, '71~':4}
         df_user[["age_range"]] = df_user[["age_range"]].applymap(lambda x:age_dic[x])
