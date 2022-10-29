@@ -100,6 +100,7 @@ parser.add_argument("--theta", type = float, default = 0.5,  help = "Theta coeff
 parser.add_argument("--gat-units", type=str, default="64", help="Hidden units for global gat part, splitted with comma, maybe none.")
 
 parser.add_argument("--special_case", type=bool, default=False)
+parser.add_argument("--attn-drop", type=float, default=.0, help="attention dropout")
 
 import networkx as nx
 import numpy as np
