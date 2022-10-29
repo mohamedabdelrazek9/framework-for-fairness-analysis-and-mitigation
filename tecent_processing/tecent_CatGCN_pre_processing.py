@@ -166,7 +166,8 @@ def tec_CatGCN_pre_process(df, df_user, df_click, df_item, sens_attr, label, spe
 
     # new
     if debaising_approach != None:
-        df_label = df_label.join(df['bin_age']) 
+        if 'bin_age' not in df_user:
+            df_label = df_label.join(df_user['bin_age']) 
 
     # Save?
     save_path = './'
