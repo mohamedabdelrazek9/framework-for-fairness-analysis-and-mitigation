@@ -22,7 +22,7 @@ from fainress_component import fairness_calculation, disparate_impact_remover, r
 import dgl
 import torch
 import pandas as pd
-from utils import create_edges
+from utils import create_edges, bin_age_range_tecent
 
 
 parser = argparse.ArgumentParser()
@@ -154,6 +154,8 @@ def FairGNN_pre_processing(data_extension):
         if args.special_case == True:
             print('we will read normal data')
             df_nodes = pd.read_csv(args.dataset_path)
+            df_nodes = bin_age_range_tecent(df_nodes)
+            df_nodes = df_nodes.drop(columns=["cid1_name", "cid2_name", "cid3_name", "item_name", "seg_name"])
             edges_path = create_edges(df_nodes, args.dataset_name)
         else:
             # simple test for pokec/tecent
