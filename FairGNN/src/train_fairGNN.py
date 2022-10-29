@@ -48,7 +48,7 @@ def train_FairGNN(G, features, labels, idx_train, idx_val, idx_test, sens, idx_s
         output,s = model(G, features)
         acc_val = accuracy(output[idx_val], labels[idx_val])
         roc_val = roc_auc_score(labels[idx_val].cpu().numpy(),output[idx_val].detach().cpu().numpy())
-        f1_val = f1_score(labels[idx_val].cpu().numpy(), output[idx_val].detach().cpu().numpy())
+        f1_val = f1_score(labels[idx_val].cpu().numpy(), output[idx_val].detach().cpu().numpy(), average='binary')
 
 
         acc_sens = accuracy(s[idx_test], sens[idx_test])
@@ -57,7 +57,7 @@ def train_FairGNN(G, features, labels, idx_train, idx_val, idx_test, sens, idx_s
 
         acc_test = accuracy(output[idx_test], labels[idx_test])
         roc_test = roc_auc_score(labels[idx_test].cpu().numpy(),output[idx_test].detach().cpu().numpy())
-        f1_test = f1_score(labels[idx_val].cpu().numpy(), output[idx_val].detach().cpu().numpy())
+        f1_test = f1_score(labels[idx_val].cpu().numpy(), output[idx_val].detach().cpu().numpy(), average='binary')
         parity,equality, oae_diff, te_diff = fair_metric(output,idx_test, labels, sens)
         if acc_val > args.acc and roc_val > args.roc:
         
