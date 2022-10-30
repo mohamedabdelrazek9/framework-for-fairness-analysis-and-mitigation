@@ -263,9 +263,9 @@ def CatGCN_pre_processing(data_extension):
                 df_item = pd.read_csv('../item_info')
                 df = ''
             elif args.dataset_name == 'alibaba':
-                df_user = pd.read_csv('../Master-Thesis-dev/user_profile.csv')
-                df_click = pd.read_csv('../Master-Thesis-dev/raw_sample.csv')
-                df_item = pd.read_csv('../Master-Thesis-dev/ad_feature.csv')
+                df_user = pd.read_csv('../Master-Thesis-dev/user_profile.csv', usecols=[0,3,4,5,7,8])
+                df_click = pd.read_csv('../Master-Thesis-dev/raw_sample.csv', usecols=['user', 'adgroup_id', 'clk'])
+                df_item = pd.read_csv('../Master-Thesis-dev/ad_feature.csv', usecols=['adgroup_id', 'cate_id'])
                 df = ''
         else:
             #simple test for pokec
@@ -279,7 +279,7 @@ def CatGCN_pre_processing(data_extension):
          
     
     if args.dataset_name == 'alibaba':
-        user_edge_path, user_field_path, user_gender_path, user_labels_path = ali_CatGCN_pre_processing(df, df_user, df_click, df_item, args.sens_attr, args.label, args.debaising_approach)
+        user_edge_path, user_field_path, user_gender_path, user_labels_path = ali_CatGCN_pre_processing(df, df_user, df_click, df_item, args.sens_attr, args.label, args.special_case, args.debaising_approach)
         target = user_gender_path
     elif args.dataset_name == 'tecent':
         user_edge_path, user_field_path, user_gender_path, user_labels_path = tec_CatGCN_pre_process(df, df_user, df_click, df_item, args.sens_attr, args.label, args.special_case, args.debaising_approach)

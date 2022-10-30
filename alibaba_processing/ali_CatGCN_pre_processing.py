@@ -10,7 +10,7 @@ def ali_CatGCN_pre_processing(df, label, uid_pid, pid_cid, sens_attr, label_pred
     print('')
     if debaising_approach != None:
         if special_case == True:
-            label.rename(columns={'user':'uid', 'final_gender_code':'gender','age_level':'age', 'pvalue_level':'buy', 'occupation':'student', 'new_user_class_level':'city'}, inplace=True)
+            label.rename(columns={'userid':'uid', 'final_gender_code':'gender','age_level':'age', 'pvalue_level':'buy', 'occupation':'student', 'new_user_class_level':'city'}, inplace=True)
             label.dropna(inplace=True)
             label['gender'] = label['gender'].replace(1, 0)
             label['gender'] = label['gender'].replace(2, 1)
@@ -56,7 +56,7 @@ def ali_CatGCN_pre_processing(df, label, uid_pid, pid_cid, sens_attr, label_pred
         # load ana clean data
         if special_case == False:
             label, pid_cid, uid_pid = divide_data(df)
-        label.rename(columns={'user':'uid', 'final_gender_code':'gender','age_level':'age', 'pvalue_level':'buy', 'occupation':'student', 'new_user_class_level':'city'}, inplace=True)
+        label.rename(columns={'userid':'uid', 'final_gender_code':'gender','age_level':'age', 'pvalue_level':'buy', 'occupation':'student', 'new_user_class_level':'city'}, inplace=True)
         label.dropna(inplace=True)
         label = apply_bin_age(label)
         label = apply_bin_buy(label)
