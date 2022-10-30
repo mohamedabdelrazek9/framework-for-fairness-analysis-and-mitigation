@@ -257,10 +257,16 @@ def CatGCN_pre_processing(data_extension):
     else:
         if args.special_case == True:
             print('we will read normal data')
-            df_user = pd.read_csv('../user')
-            df_click = pd.read_csv('../user_click')
-            df_item = pd.read_csv('../item_info')
-            df = ''
+            if args.dataset_name == 'tecent':
+                df_user = pd.read_csv('../user')
+                df_click = pd.read_csv('../user_click')
+                df_item = pd.read_csv('../item_info')
+                df = ''
+            elif args.dataset_name == 'alibaba':
+                df_user = pd.read_csv('../Master-Thesis-dev/user_profile.csv')
+                df_click = pd.read_csv('../Master-Thesis-dev/raw_sample.csv')
+                df_item = pd.read_csv('../Master-Thesis-dev/ad_feature.csv')
+                df = ''
         else:
             #simple test for pokec
             df = pd.read_csv(args.dataset_path)
