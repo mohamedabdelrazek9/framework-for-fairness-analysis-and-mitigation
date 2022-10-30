@@ -5,6 +5,7 @@ from torch.autograd import Variable
 import time
 import numpy as np
 from sklearn import metrics
+from sklearn.metrics import f1_score
 from tqdm import trange, tqdm
 import torch.nn as nn
 
@@ -196,6 +197,9 @@ class ClusterGNNTrainer(object):
         # Confusion matrics and AUC
         confusion_matrix = metrics.confusion_matrix(self.targets, self.predictions)
         print(confusion_matrix)
+        #F1
+        f1 = f1_score(self.targets, self.predictions)
+        print('F1 score:', f1)
         # fpr, tpr, _ = metrics.roc_curve(self.targets, self.predictions)
         # auc = metrics.auc(fpr, tpr)
         # print("AUC:", auc)
