@@ -6,7 +6,7 @@ import os
 from fainress_component import disparate_impact_remover, reweighting, sample
 
 def ali_CatGCN_pre_processing(df, label, uid_pid, pid_cid, sens_attr, label_pred, special_case, debaising_approach=None):
-    print(df.columns.tolist())
+    #print(df.columns.tolist())
     print('')
     if debaising_approach != None:
         if special_case == True:
