@@ -174,8 +174,10 @@ def FairGNN_pre_processing(data_extension):
                 edges_path = create_edges(df_nodes, args.dataset_name)
                 df_edge_list = edges_path
             elif args.dataset_name == 'nba':
-                df_nodes = apply_bin_columns(df_nodes, args.onehot_bin_columns)
-                df_nodes = apply_cat_columns(df_nodes, args.onehot_cat_columns)
+                if args.onehot_bin_columns is not None:
+                    df_nodes = apply_bin_columns(df_nodes, args.onehot_bin_columns)
+                if args.onehot_cat_columns is not None:
+                    df_nodes = apply_cat_columns(df_nodes, args.onehot_cat_columns)
                 df_edge_list = '../nba_relationship.txt'
             #save the edges as .txt file
             edges_path = './FairGNN_data_relationship'
