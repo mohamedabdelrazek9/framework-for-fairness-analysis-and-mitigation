@@ -5,31 +5,51 @@ import time
 import os
 from fainress_component import disparate_impact_remover, reweighting, sample
 
-def ali_CatGCN_pre_processing(df, sens_attr, label_pred, debaising_approach=None):
+def ali_CatGCN_pre_processing(df, label, uid_pid, pid_cid, sens_attr, label_pred, special_case, debaising_approach=None):
     print(df.columns.tolist())
     print('')
     if debaising_approach != None:
-        df.rename(columns={'final_gender_code': 'gender', 'age_level':'age'}, inplace=True)
-        df = apply_bin_age(df)
-        df['gender'] = df['gender'].replace(1, 0)
-        df['gender'] = df['gender'].replace(2, 1)
-        if debaising_approach == 'disparate_impact_remover':
-            df = disparate_impact_remover(df, sens_attr, label_pred)
-        elif debaising_approach == 'reweighting':
-            df = reweighting(df, sens_attr, label_pred)
-        elif debaising_approach == 'sample':
-            df = sample(df, sens_attr, label_pred)
+        if special_case == True:
+            label.rename(columns={'userid':'uid', 'final_gender_code':'gender','age_level':'age', 'pvalue_level':'buy', 'occupation':'student', 'new_user_class_level':'city'}, inplace=True)
+            label.dropna(inplace=True)
+            label['gender'] = label['gender'].replace(1, 0)
+            label['gender'] = label['gender'].replace(2, 1)
+            label = apply_bin_age(label)
+            label = apply_bin_buy(label)
+            if debaising_approach == 'disparate_impact_remover':
+                label = disparate_impact_remover(label, sens_attr, label_pred)
+            elif debaising_approach == 'reweighting':
+                label = reweighting(label, sens_attr, label_pred)
+            elif debaising_approach == 'sample':
+                label = sample(label, sens_attr, label_pred)
 
-        if debaising_approach == 'sample':
-            df = df.reset_index()
-            df = df.drop(['index'], axis=1)
-            df = df.drop_duplicates()
+            if debaising_approach == 'sample':
+                label = label.reset_index()
+                label = label.drop(['index'], axis=1)
+                label = label.drop_duplicates()
+
+        else:
+            df.rename(columns={'final_gender_code': 'gender', 'age_level':'age'}, inplace=True)
+            df = apply_bin_age(df)
+            df['gender'] = df['gender'].replace(1, 0)
+            df['gender'] = df['gender'].replace(2, 1)
+            if debaising_approach == 'disparate_impact_remover':
+                df = disparate_impact_remover(df, sens_attr, label_pred)
+            elif debaising_approach == 'reweighting':
+                df = reweighting(df, sens_attr, label_pred)
+            elif debaising_approach == 'sample':
+                df = sample(df, sens_attr, label_pred)
+
+            if debaising_approach == 'sample':
+                df = df.reset_index()
+                df = df.drop(['index'], axis=1)
+                df = df.drop_duplicates()
 
 
-        label, pid_cid, uid_pid = divide_data_2(df)
-        label.rename(columns={'userid':'uid', 'pvalue_level':'buy', 'occupation':'student', 'new_user_class_level':'city'}, inplace=True)
-        label.dropna(inplace=True)
-        label = apply_bin_buy(label)
+            label, pid_cid, uid_pid = divide_data_2(df)
+            label.rename(columns={'userid':'uid', 'pvalue_level':'buy', 'occupation':'student', 'new_user_class_level':'city'}, inplace=True)
+            label.dropna(inplace=True)
+            label = apply_bin_buy(label)
 
     else:
 
