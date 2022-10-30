@@ -178,7 +178,7 @@ def FairGNN_pre_processing(data_extension):
                     df_nodes = apply_bin_columns(df_nodes, args.onehot_bin_columns)
                 if args.onehot_cat_columns is not None:
                     df_nodes = apply_cat_columns(df_nodes, args.onehot_cat_columns)
-                df_edge_list = '../nba_relationship.txt'
+                df_edge_list = pd.read_csv('../nba_relationship.txt', sep=" ", header=None)
             #save the edges as .txt file
             edges_path = './FairGNN_data_relationship'
             df_edge_list.to_csv(r'{}.txt'.format(edges_path), header=None, index=None, sep=' ', mode='a')
