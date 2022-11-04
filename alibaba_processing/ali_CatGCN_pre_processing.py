@@ -171,6 +171,9 @@ def ali_CatGCN_pre_processing(df, label, uid_pid, pid_cid, sens_attr, label_pred
 
     neighs = get_neighs(user_field)
 
+    if debaising_approach == 'disparate_impact_remover':
+        neighs = [x for x in neighs if x.size != 0]
+
     sample_neighs = []
     for i in range(len(neighs)):
         sample_neighs.append(list(sample_neigh(neighs[i], NUM_FIELD)))
