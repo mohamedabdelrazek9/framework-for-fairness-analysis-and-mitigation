@@ -77,9 +77,10 @@ def nba_CatGCN_pre_process(df, df_edge_list, sens_attr, label, special_case, one
     save_path = "./"
 
     # process edge list
-    if df_edge_list['source'].dtype != 'int64':
-        df_edge_list['source'] = df_edge_list['source'].astype(str).astype(np.int64)
-        df_edge_list['target'] = df_edge_list['target'].astype(str).astype(np.int64)
+    if special_case == False:
+        if df_edge_list['source'].dtype != 'int64':
+            df_edge_list['source'] = df_edge_list['source'].astype(str).astype(np.int64)
+            df_edge_list['target'] = df_edge_list['target'].astype(str).astype(np.int64)
 
     source = []
     target = []
