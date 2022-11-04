@@ -271,6 +271,10 @@ def CatGCN_pre_processing(data_extension):
                 df = pd.read_csv('../nba.csv')
                 df_edge_list = pd.read_csv('../nba_relationship.txt', sep="\t", header=None)
                 df_edge_list = df_edge_list.rename(columns={0: "source", 1: "target"})
+            elif args.dataset_name == 'pokec_z':
+                df = pd.read_csv('../Master-Thesis-dev/region_job.csv')
+                df_edge_list = pd.read_csv('../region_job_relationship.txt',  sep="\t", header=None)
+               
         else:
             #simple test for pokec
             df = pd.read_csv(args.dataset_path)
