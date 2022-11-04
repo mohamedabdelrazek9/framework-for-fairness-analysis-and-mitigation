@@ -267,6 +267,9 @@ def CatGCN_pre_processing(data_extension):
                 df_click = pd.read_csv('../Master-Thesis-dev/raw_sample.csv', usecols=['user', 'adgroup_id', 'clk'])
                 df_item = pd.read_csv('../Master-Thesis-dev/ad_feature.csv', usecols=['adgroup_id', 'cate_id'])
                 df = ''
+            elif args.dataset_name == 'nba':
+                df = pd.read_csv('../nba.csv')
+                df_edge_list = pd.read_csv('../nba_relationship.txt', sep=" ", header=None)
         else:
             #simple test for pokec
             df = pd.read_csv(args.dataset_path)
@@ -287,7 +290,7 @@ def CatGCN_pre_processing(data_extension):
 
     # Todo implment CatGCN processing for NBA dataset
     elif args.dataset_name == 'nba':
-        user_edge_path, user_field_path, user_salary_path, user_labels_path = nba_CatGCN_pre_process(df, df_edge_list, args.sens_attr, args.label, args.onehot_bin_columns , args.onehot_cat_columns,args.debaising_approach)
+        user_edge_path, user_field_path, user_salary_path, user_labels_path = nba_CatGCN_pre_process(df, df_edge_list, args.sens_attr, args.label, args.special_case, args.onehot_bin_columns , args.onehot_cat_columns,args.debaising_approach)
         target = user_salary_path
 
     # Todo implment CatGCN processing for Pokec dataset

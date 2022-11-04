@@ -6,8 +6,7 @@ import scipy.sparse as sp
 from fainress_component import disparate_impact_remover, reweighting, sample
 
 
-def nba_CatGCN_pre_process(df, df_edge_list, sens_attr, label, onehot_bin_columns, onehot_cat_columns, debaising_approach=None):
-
+def nba_CatGCN_pre_process(df, df_edge_list, sens_attr, label, special_case, onehot_bin_columns, onehot_cat_columns, debaising_approach=None):
     if onehot_bin_columns != None:
         df = apply_bin_columns(df, onehot_bin_columns)
     
