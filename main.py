@@ -339,10 +339,23 @@ def RHGN_pre_processing(data_extension):
     else:
         if args.special_case == True:
             print('we will read normal data')
-            df_user = pd.read_csv('../user')
-            df_click = pd.read_csv('../user_click')
-            df_item = pd.read_csv('../item_info')
-            df = ''
+            if args.dataset_name == 'tecent':
+                df_user = pd.read_csv('../user')
+                df_click = pd.read_csv('../user_click')
+                df_item = pd.read_csv('../item_info')
+                df = ''
+            elif args.dataset_name == 'alibaba':
+                df_user = pd.read_csv('../Master-Thesis-dev/user_profile.csv', usecols=[0,3,4,5,7,8])
+                df_click = pd.read_csv('../Master-Thesis-dev/raw_sample.csv', usecols=['user', 'adgroup_id', 'clk'])
+                df_item = pd.read_csv('../Master-Thesis-dev/ad_feature.csv', usecols=['adgroup_id', 'cate_id'])
+                df = ''
+            elif args.dataset_name == 'nba':
+                df = pd.read_csv('../nba.csv')
+                df_edge_list = pd.read_csv('../nba_relationship.txt', sep="\t", header=None)
+                df_edge_list = df_edge_list.rename(columns={0: "source", 1: "target"})
+            elif args.dataset_name == 'pokec_z':
+                df = pd.read_csv('../Master-Thesis-dev/region_job.csv')
+                df_edge_list = pd.read_csv('../region_job_relationship.txt',  sep="\t", header=None)
         else:
             df = pd.read_csv(args.dataset_path)
             df_user = ''

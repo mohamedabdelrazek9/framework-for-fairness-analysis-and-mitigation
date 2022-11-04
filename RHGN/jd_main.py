@@ -8,6 +8,7 @@ from RHGN.model import *
 import argparse
 from sklearn import metrics
 import time
+from sklearn.metrics import f1_score
 #import neptune.new as neptune
 
 from RHGN.fairness import Fairness
@@ -198,6 +199,8 @@ def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, t
     # print("AUC:", auc)
     classification_report = metrics.classification_report(labels, preds)
     print(classification_report)
+    f1 = f1_score(labels, preds)
+    print('F1 score:', f1)
 
     toc = time.perf_counter() # stop counting time
     elapsed_time = (toc-tic)/60
