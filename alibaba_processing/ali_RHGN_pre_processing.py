@@ -13,6 +13,7 @@ def ali_RHGN_pre_process(df, df_user, df_click, df_item, sens_attr, label, speci
             df_user.dropna(inplace=True)
             df_user = apply_bin_age(df_user)
             df_user = apply_bin_buy(df_user)
+            df_user = apply_bin_gender(df_user)
             if debaising_approach == 'disparate_impact_remover':
                 df_user = disparate_impact_remover(df_user, sens_attr, label)
             elif debaising_approach == 'reweighting':
@@ -206,6 +207,12 @@ def apply_bin_buy(df_user):
     df_user['bin_buy'] = df_user['bin_buy'].replace(3.0,2.0)
     df_user['bin_buy'] = df_user['bin_buy'].astype('int64')
 
+    return df_user
+
+def apply_bin_gender(df_user):
+    df_user['bin_gender'] = df_user['gender']
+    df_user['bin_gender'] = df_user['bin_gender'].replace(2,0)
+    
     return df_user
 
 
