@@ -9,7 +9,7 @@ def ali_RHGN_pre_process(df, df_user, df_click, df_item, sens_attr, label, speci
     # load and clean data   
     if debaising_approach != None:
         if special_case == True:
-            df_user.rename(columns={'userid':'uid', 'final_gender_code':'gender','age_level':'age', 'pvalue_level':'buy', 'occupation':'student', 'new_user_class_level':'city'}, inplace=True)
+            df_user.rename(columns={'userid':'uid', 'final_gender_code':'gender','age_level':'age', 'pvalue_level':'buy', 'occupation':'student', 'new_user_class_level ':'city'}, inplace=True)
             df_user.dropna(inplace=True)
             df_user = apply_bin_age(df_user)
             df_user = apply_bin_buy(df_user)
@@ -39,7 +39,7 @@ def ali_RHGN_pre_process(df, df_user, df_click, df_item, sens_attr, label, speci
         # df_user =  label
         if special_case == False:
             df_user, df_item, df_click = divide_data(df)
-        df_user.rename(columns={'userid':'uid', 'final_gender_code':'gender','age_level':'age', 'pvalue_level':'buy', 'occupation':'student', 'new_user_class_level':'city'}, inplace=True)
+        df_user.rename(columns={'userid':'uid', 'final_gender_code':'gender','age_level':'age', 'pvalue_level':'buy', 'occupation':'student', 'new_user_class_level ':'city'}, inplace=True)
         df_user.dropna(inplace=True)
         df_user = apply_bin_age(df_user)
         df_user = apply_bin_buy(df_user)
@@ -49,7 +49,7 @@ def ali_RHGN_pre_process(df, df_user, df_click, df_item, sens_attr, label, speci
         df_item.dropna(axis=0, subset=['cate_id', 'campaign_id', 'brand'], inplace=True)
     df_item.rename(columns={'adgroup_id':'pid', 'cate_id':'cid'}, inplace=True)
 
-    df_click.rename(columns={'userid':'uid', 'adgroup_id':'pid'}, inplace=True)
+    df_click.rename(columns={'user':'uid', 'adgroup_id':'pid'}, inplace=True)
     df_click = df_click[df_click['clk']>0]
 
     df_click.drop('clk', axis=1, inplace=True)

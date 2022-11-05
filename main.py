@@ -347,7 +347,8 @@ def RHGN_pre_processing(data_extension):
             elif args.dataset_name == 'alibaba':
                 df_user = pd.read_csv('../Master-Thesis-dev/user_profile.csv', usecols=[0,3,4,5,7,8])
                 df_click = pd.read_csv('../Master-Thesis-dev/raw_sample.csv', usecols=['user', 'adgroup_id', 'clk'])
-                df_item = pd.read_csv('../Master-Thesis-dev/ad_feature.csv', usecols=['adgroup_id', 'cate_id'])
+                df_item = pd.read_csv('../Master-Thesis-dev/ad_feature.csv')
+                df_item.dropna(axis=0, subset=['cate_id', 'campaign_id', 'brand'], inplace=True)
                 df = ''
             elif args.dataset_name == 'nba':
                 df = pd.read_csv('../nba.csv')
