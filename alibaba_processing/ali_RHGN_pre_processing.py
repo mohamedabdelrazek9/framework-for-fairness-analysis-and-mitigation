@@ -45,7 +45,8 @@ def ali_RHGN_pre_process(df, df_user, df_click, df_item, sens_attr, label, speci
         df_user = apply_bin_buy(df_user)
 
     # df_item = pid_cid
-    df_item.dropna(axis=0, subset=['cate_id', 'campaign_id', 'brand'], inplace=True)
+    if special_case == False:
+        df_item.dropna(axis=0, subset=['cate_id', 'campaign_id', 'brand'], inplace=True)
     df_item.rename(columns={'adgroup_id':'pid', 'cate_id':'cid'}, inplace=True)
 
     df_click.rename(columns={'userid':'uid', 'adgroup_id':'pid'}, inplace=True)
