@@ -91,9 +91,9 @@ def ali_RHGN_pre_process(df, df_user, df_click, df_item, sens_attr, label, speci
     df_click = df_click.astype({'uid': 'str', 'pid': 'str'}, copy=False)
 
     # Build a dictionary and remove duplicate items
-    if special_case == True and debaising_approach == 'reweighting':
+    if special_case == True and debaising_approach == 'reweighting' or debaising_approach == 'disparate_impact_remover':
         df_user['uid'] = df_user['uid'].astype(float).astype(int).astype(str)
-        
+
     user_dic = {k: v for v, k in enumerate(df_user.uid)}
     cate_dic = {k: v for v, k in enumerate(df_item.cid.drop_duplicates())}
     campaign_dic = {k: v for v, k in enumerate(df_item.campaign_id.drop_duplicates())}
