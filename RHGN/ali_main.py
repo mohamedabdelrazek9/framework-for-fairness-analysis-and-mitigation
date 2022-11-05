@@ -160,7 +160,7 @@ def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, t
     # Classification reports
     confusion_matrix = metrics.confusion_matrix(labels, preds)
     print(confusion_matrix)
-    f1 = f1_score(labels, preds)
+    f1 = metrics.f1_score(labels, preds, average='macro')
     print('F1 score:', f1)
     # fpr, tpr, _ = metrics.roc_curve(labels, preds)
     # auc = metrics.auc(fpr, tpr)
