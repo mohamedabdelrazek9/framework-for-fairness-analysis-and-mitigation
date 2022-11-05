@@ -5,25 +5,36 @@ import dgl
 from fainress_component import disparate_impact_remover, reweighting, sample
 import fasttext
 
-def ali_RHGN_pre_process(df, sens_attr, label, debaising_approach=None):
+def ali_RHGN_pre_process(df, df_user, df_click, df_item, sens_attr, label, special_case, debaising_approach=None):
     # load and clean data   
     if debaising_approach != None:
+        if special_case == True:
+            df_user.rename(columns={'userid':'uid', 'final_gender_code':'gender','age_level':'age', 'pvalue_level':'buy', 'occupation':'student', 'new_user_class_level':'city'}, inplace=True)
+            df_user.dropna(inplace=True)
+            df_user = apply_bin_age(df_user)
+            df_user = apply_bin_buy(df_user)
+            if debaising_approach == 'disparate_impact_remover':
+                df_user = disparate_impact_remover(df_user, sens_attr, label)
+            elif debaising_approach == 'reweighting':
+                df_user = reweighting(df_user, sens_attr, label)
+            elif debaising_approach == 'sample':
+                df_user = sample(df_user, sens_attr, label)
+        else:
+            df.rename(columns={'final_gender_code': 'gender', 'age_level':'age'}, inplace=True)
+            df = apply_bin_age(df)
+            df['gender'] = df['gender'].replace(1,0)
+            df['gender'] = df['gender'].replace(2,1)
+            if debaising_approach == 'disparate_impact_remover':
+                df = disparate_impact_remover(df, sens_attr, label)
+            elif debaising_approach == 'reweighting':
+                df = reweighting(df, sens_attr, label)
+            elif debaising_approach == 'sample':
+                df = sample(df, sens_attr, label)
 
-        df.rename(columns={'final_gender_code': 'gender', 'age_level':'age'}, inplace=True)
-        df = apply_bin_age(df)
-        df['gender'] = df['gender'].replace(1,0)
-        df['gender'] = df['gender'].replace(2,1)
-        if debaising_approach == 'disparate_impact_remover':
-            df = disparate_impact_remover(df, sens_attr, label)
-        elif debaising_approach == 'reweighting':
-            df = reweighting(df, sens_attr, label)
-        elif debaising_approach == 'sample':
-            df = sample(df, sens_attr, label)
-
-        df_user, df_item, df_click = divide_data_2(df)
-        df_user.rename(columns={'userid':'uid', 'pvalue_level':'buy', 'occupation':'student', 'new_user_class_level':'city'}, inplace=True)
-        df_user.dropna(inplace=True)
-        df_user = apply_bin_buy(df_user)
+            df_user, df_item, df_click = divide_data_2(df)
+            df_user.rename(columns={'userid':'uid', 'pvalue_level':'buy', 'occupation':'student', 'new_user_class_level':'city'}, inplace=True)
+            df_user.dropna(inplace=True)
+            df_user = apply_bin_buy(df_user)
     else:
         # df_user =  label
         df_user, df_item, df_click = divide_data(df)

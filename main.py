@@ -379,7 +379,7 @@ def RHGN_pre_processing(data_extension):
     '''
     if args.dataset_name == 'alibaba':
         #G, cid1_feature, cid2_feature, cid3_feature = ali_RHGN_pre_process(df)
-        G, cid1_feature, cid2_feature, cid3_feature = ali_RHGN_pre_process(df, args.sens_attr, args.label, args.debaising_approach)
+        G, cid1_feature, cid2_feature, cid3_feature = ali_RHGN_pre_process(df, df_user, df_click, df_item, args.sens_attr, args.label, args.special_case, args.debaising_approach)
     elif args.dataset_name == 'tecent':
         G, cid1_feature, cid2_feature, cid3_feature, cid4_feature = tec_RHGN_pre_process(df, df_user, df_click, df_item, args.sens_attr, args.label, args.special_case, args.debaising_approach)
 
