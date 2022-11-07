@@ -88,7 +88,7 @@ def pokec_z_RHGN_pre_process(df, dataset_user_id_name, sens_attr, label, debaisi
     print(len(comp_dic), len(age_dic), len(working_dic))
 
     has_user = [user_dic[user] for user in df.user_id]
-    is_made_by_user = [comp_dic[item] for item in df.AGE]
+    is_made_by_user = [age_dic[item] for item in df.AGE]
 
 
     data_dict = {
