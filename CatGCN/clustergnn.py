@@ -198,7 +198,7 @@ class ClusterGNNTrainer(object):
         confusion_matrix = metrics.confusion_matrix(self.targets, self.predictions)
         print(confusion_matrix)
         #F1
-        f1 = f1_score(self.targets, self.predictions)
+        f1 = f1_score(self.targets, self.predictions, average='macro')
         print('F1 score:', f1)
         # fpr, tpr, _ = metrics.roc_curve(self.targets, self.predictions)
         # auc = metrics.auc(fpr, tpr)
