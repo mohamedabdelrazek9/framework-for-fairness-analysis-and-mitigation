@@ -4,7 +4,7 @@
 import argparse
 import os
 from turtle import st
-from utils import load_networkx_file, load_neo4j_file
+from utils import bin_alibaba, load_networkx_file, load_neo4j_file
 from FairGNN.src.utils import load_pokec, feature_norm
 from FairGNN.src.train_fairGNN import train_FairGNN
 from alibaba_processing.ali_RHGN_pre_processing import ali_RHGN_pre_process
@@ -179,6 +179,10 @@ def FairGNN_pre_processing(data_extension):
                 if args.onehot_cat_columns is not None:
                     df_nodes = apply_cat_columns(df_nodes, args.onehot_cat_columns)
                 df_edge_list = pd.read_csv('../nba_relationship.txt', sep=" ", header=None)
+            elif args.dataset_name == 'alibaba':
+                df_nodes = bin_alibaba(df_nodes)
+                edges_path = create_edges(df_nodes, args.dataset_name)
+                df_edge_list = edges_path
             #save the edges as .txt file
             edges_path = './FairGNN_data_relationship'
             df_edge_list.to_csv(r'{}.txt'.format(edges_path), header=None, index=None, sep=' ', mode='a')
