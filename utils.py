@@ -301,7 +301,7 @@ def create_edges(df_nodes, dataset_name):
 
     if dataset_name == 'alibaba':
         # divide data
-        df_user = df_nodes[['userid', 'final_gender_code', 'age_level', 'pvalue_level', 'occupation', 'new_user_class_level']].copy()
+        df_user = df_nodes[['userid', 'final_gender_code', 'age_level', 'pvalue_level', 'occupation', 'new_user_class_level ']].copy()
         df_item = df_nodes[['adgroup_id', 'cate_id']].copy()
         df_click = df_nodes[['userid', 'adgroup_id', 'clk']].copy()
 
