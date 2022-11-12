@@ -65,7 +65,7 @@ def get_n_params(model):
     return pp
 
 
-def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, test_dataloader, epochs, label, clip):
+def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, test_dataloader, epochs, label, clip, neptune_run):
     tic = time.perf_counter() # start counting time
 
     best_val_acc = 0
@@ -170,7 +170,7 @@ def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, t
     elapsed_time = (toc-tic)/60
     print("\nElapsed time: {:.4f} minutes".format(elapsed_time))
 
-    '''
+    
     # Log result on Neptune
     neptune_run["test/accuracy"] = best_test_acc
     neptune_run["test/f1_score"] = test_f1
@@ -179,7 +179,7 @@ def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, t
     # neptune_run["test/fpr"] = fpr
     neptune_run["conf_matrix"] = confusion_matrix
     neptune_run["elaps_time"] = elapsed_time    
-    '''
+    
     return labels, preds
 
 
@@ -307,7 +307,7 @@ def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, model_type, s
         scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, epochs=epochs,
                                                         steps_per_epoch=int(train_idx.shape[0]/batch_size)+1,max_lr = lr)
         print('Training RHGN with #param: %d' % (get_n_params(model)))
-        targets, predictions = Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, test_dataloader, epochs, label, clip)
+        targets, predictions = Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, test_dataloader, epochs, label, clip, neptune_run)
 
         # Compute fairness
         fair_obj = Fairness(G, test_idx, targets, predictions, sens_attr, neptune_run, multiclass_pred, multiclass_sens)
