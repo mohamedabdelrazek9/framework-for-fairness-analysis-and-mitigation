@@ -78,21 +78,21 @@ class Fairness(object):
                         sum(np.bitwise_and(self.y_hat[y_hat_idx], self.s[s_idx])) /
                         sum(self.s[s_idx])
                     )
-                    self.neptune_run["fairness/SP_y^" + str(y_hat_idx) + "_s" + str(s_idx)] = stat_parity[y_hat_idx][s_idx]
+                    #self.neptune_run["fairness/SP_y^" + str(y_hat_idx) + "_s" + str(s_idx)] = stat_parity[y_hat_idx][s_idx]
         elif self.multiclass_sens: # Classifier: binary - Sens.attr: multiclass
             ''' P(y^=1|s=0) = P(y^=1|s=1) = ... = P(y^=1|s=N) '''
             stat_parity_s = []
             for s_idx in self.sens_attr_range:
                 stat_parity_s.append(sum(self.pred_y[self.s[s_idx]]) / sum(self.s[s_idx]))
-                self.neptune_run["fairness/SP_s" + str(s_idx)] = stat_parity_s[s_idx]
+                #self.neptune_run["fairness/SP_s" + str(s_idx)] = stat_parity_s[s_idx]
         else: # Classifier: binary - Sens.attr: binary
             ''' P(y^=1|s=0) = P(y^=1|s=1) '''
             # stat_parity = abs(sum(self.pred_y[self.s0]) / sum(self.s0) - sum(self.pred_y[self.s1]) / sum(self.s1))
             stat_parity_s0 = sum(self.pred_y[self.s0]) / sum(self.s0)
             stat_parity_s1 = sum(self.pred_y[self.s1]) / sum(self.s1)
             stat_parity_diff = stat_parity_s0 - stat_parity_s1
-            self.neptune_run["fairness/SP_s0"] = stat_parity_s0
-            self.neptune_run["fairness/SP_s1"] = stat_parity_s1
+            #self.neptune_run["fairness/SP_s0"] = stat_parity_s0
+            #self.neptune_run["fairness/SP_s1"] = stat_parity_s1
             self.neptune_run["fairness/SPD"] = stat_parity_diff
             print(" Statistical Parity Difference (SPD): {:.4f}".format(stat_parity_diff))
 
@@ -115,21 +115,21 @@ class Fairness(object):
                         )
                     except ZeroDivisionError:
                         equal_opp[y_hat_idx].append(0)
-                    self.neptune_run["fairness/EO_y" + str(y_hat_idx) + "_s" + str(s_idx)] = equal_opp[y_hat_idx][s_idx]
+                    #self.neptune_run["fairness/EO_y" + str(y_hat_idx) + "_s" + str(s_idx)] = equal_opp[y_hat_idx][s_idx]
         elif self.multiclass_sens: # Classifier: binary - Sens.attr: multiclass
             ''' P(y^=1|y=1,s=0) = P(y^=1|y=1,s=1) = ... = P(y^=1|y=1,s=N) '''
             equal_opp_s = []
             for s_idx in self.sens_attr_range:
                 equal_opp_s.append(sum(self.pred_y[self.y1_s[s_idx]]) / sum(self.y1_s[s_idx]))
-                self.neptune_run["fairness/EO_s" + str(s_idx)] = equal_opp_s[s_idx]
+                #self.neptune_run["fairness/EO_s" + str(s_idx)] = equal_opp_s[s_idx]
         else: # Classifier: binary - Sens.attr: binary
             ''' P(y^=1|y=1,s=0) = P(y^=1|y=1,s=1) '''
             # equal_opp = abs(sum(self.pred_y[self.y1_s0]) / sum(self.y1_s0) - sum(self.pred_y[self.y1_s1]) / sum(self.y1_s1))
             equal_opp_s0 = sum(self.pred_y[self.y1_s0]) / sum(self.y1_s0)
             equal_opp_s1 = sum(self.pred_y[self.y1_s1]) / sum(self.y1_s1)
             equal_opp_diff = equal_opp_s0 - equal_opp_s1
-            self.neptune_run["fairness/EO_s0"] = equal_opp_s0
-            self.neptune_run["fairness/EO_s1"] = equal_opp_s1
+            #self.neptune_run["fairness/EO_s0"] = equal_opp_s0
+            #self.neptune_run["fairness/EO_s1"] = equal_opp_s1
             self.neptune_run["fairness/EOD"] = equal_opp_diff
             print(" Equal Opportunity Difference (EOD): {:.4f}".format(equal_opp_diff))
 
@@ -149,7 +149,7 @@ class Fairness(object):
                     except ZeroDivisionError:
                         oae_temp += 0.0
                 oae_s.append(oae_temp)
-                self.neptune_run["fairness/OAE_s" + str(s_idx)] = oae_s[s_idx]
+                #self.neptune_run["fairness/OAE_s" + str(s_idx)] = oae_s[s_idx]
         elif self.multiclass_sens: # Classifier: binary - Sens.attr: multiclass
             ''' P(y^=0|y=0,s=0) + P(y^=1|y=1,s=0) = ... = P(y^=0|y=0,s=N) + P(y^=1|y=1,s=N)'''
             oae_s = []
@@ -158,15 +158,15 @@ class Fairness(object):
                     np.count_nonzero(self.pred_y[self.y0_s[s_idx]]==0) / sum(self.y0_s[s_idx]) +
                     sum(self.pred_y[self.y1_s[s_idx]]) / sum(self.y1_s[s_idx])
                 )
-                self.neptune_run["fairness/OAE_s" + str(s_idx)] = oae_s[s_idx]
+                #self.neptune_run["fairness/OAE_s" + str(s_idx)] = oae_s[s_idx]
         else: # Classifier: binary - Sens.attr: binary
             ''' P(y^=0|y=0,s=0) + P(y^=1|y=1,s=0) = P(y^=0|y=0,s=1) + P(y^=1|y=1,s=1) '''
             oae_s0 = np.count_nonzero(self.pred_y[self.y0_s0]==0) / sum(self.y0_s0) + sum(self.pred_y[self.y1_s0]) / sum(self.y1_s0)
             oae_s1 = np.count_nonzero(self.pred_y[self.y0_s1]==0) / sum(self.y0_s1) + sum(self.pred_y[self.y1_s1]) / sum(self.y1_s1)
             # oae_diff = abs(oae_s0 - oae_s1)
             oae_diff = oae_s0 - oae_s1
-            self.neptune_run["fairness/OAE_s0"] = oae_s0
-            self.neptune_run["fairness/OAE_s1"] = oae_s1
+            #self.neptune_run["fairness/OAE_s0"] = oae_s0
+            #self.neptune_run["fairness/OAE_s1"] = oae_s1
             self.neptune_run["fairness/OAED"] = oae_diff
             print(" Overall Accuracy Equality Difference (OAED): {:.4f}".format(oae_diff))
 
@@ -214,7 +214,7 @@ class Fairness(object):
 
             for y_idx in self.class_range:
                 for s_idx in self.sens_attr_range:
-                    self.neptune_run["fairness/TE_y" + str(y_idx) + "_s" + str(s_idx)] = te[y_idx][s_idx]
+                    #self.neptune_run["fairness/TE_y" + str(y_idx) + "_s" + str(s_idx)] = te[y_idx][s_idx]
 
         elif self.multiclass_sens: # Classifier: binary - Sens.attr: multiclass
             ''' P(y^=1|y=0,s=0) / P(y^=0|y=1,s=0) = ... = P(y^=1|y=0,s=N) / P(y^=0|y=1,s=N) '''
@@ -240,7 +240,7 @@ class Fairness(object):
                 te_s = te0_s
 
             #for i in self.sens_attr_range:
-                self.neptune_run["fairness/TE_s" + str(i)] = te_s[i]            
+                #self.neptune_run["fairness/TE_s" + str(i)] = te_s[i]            
 
         else: # Classifier: binary - Sens.attr: binary
             ''' P(y^=1|y=0,s=0) / P(y^=0|y=1,s=0) = P(y^=1|y=0,s=1) / P(y^=0|y=1,s=1) '''
@@ -264,8 +264,8 @@ class Fairness(object):
                 te_s1 = te1_s1
                 te_diff = te_diff_1
 
-            self.neptune_run["fairness/TE_s0"] = te_s0
-            self.neptune_run["fairness/TE_s1"] = te_s1
+            #self.neptune_run["fairness/TE_s0"] = te_s0
+            #self.neptune_run["fairness/TE_s1"] = te_s1
             self.neptune_run["fairness/TED"] = te_diff
             print(" Treatment Equality Difference (TED): {:.4f}".format(te_diff))
 
