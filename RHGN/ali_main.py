@@ -38,7 +38,7 @@ args = parser.parse_args()
 '''
 
 
-
+'''
 # Instantiate Neptune client and log arguments
 neptune_run = neptune.init(
     project=neptune_project,
@@ -53,7 +53,7 @@ neptune_run["num_epochs"] = args.n_epoch
 neptune_run["n_hid"] = args.n_hid
 neptune_run["lr"] = args.max_lr
 neptune_run["clip"] = args.clip
-
+'''
 
 def get_n_params(model):
     pp=0
@@ -310,7 +310,7 @@ def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, model_type, s
         targets, predictions = Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, test_dataloader, epochs, label, clip)
 
         # Compute fairness
-        fair_obj = Fairness(G, test_idx, targets, predictions, sens_attr, multiclass_pred, multiclass_sens)
+        fair_obj = Fairness(G, test_idx, targets, predictions, sens_attr, neptune_run, multiclass_pred, multiclass_sens)
         fair_obj.statistical_parity()
         fair_obj.equal_opportunity()
         fair_obj.overall_accuracy_equality()
