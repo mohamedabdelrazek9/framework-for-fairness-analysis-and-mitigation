@@ -212,8 +212,8 @@ class Fairness(object):
                     else:
                         te[y_hat_idx].append(te_fn_fp[y_hat_idx][s_idx])
 
-            for y_idx in self.class_range:
-                for s_idx in self.sens_attr_range:
+            #for y_idx in self.class_range:
+                #for s_idx in self.sens_attr_range:
                     #self.neptune_run["fairness/TE_y" + str(y_idx) + "_s" + str(s_idx)] = te[y_idx][s_idx]
 
         elif self.multiclass_sens: # Classifier: binary - Sens.attr: multiclass
