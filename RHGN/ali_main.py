@@ -10,7 +10,7 @@ import argparse
 from sklearn import metrics
 import time
 from sklearn.metrics import f1_score
-#import neptune.new as neptune
+import neptune.new as neptune
 
 from RHGN.fairness import Fairness
 '''
@@ -38,11 +38,11 @@ args = parser.parse_args()
 '''
 
 
-'''
+
 # Instantiate Neptune client and log arguments
 neptune_run = neptune.init(
-    project=args.neptune_project,
-    api_token=args.neptune_token,
+    project=neptune_project,
+    api_token=neptune_token,
 )
 neptune_run["sys/tags"].add(args.log_tags.split(","))
 neptune_run["seed"] = args.seed
@@ -53,7 +53,7 @@ neptune_run["num_epochs"] = args.n_epoch
 neptune_run["n_hid"] = args.n_hid
 neptune_run["lr"] = args.max_lr
 neptune_run["clip"] = args.clip
-'''
+
 
 def get_n_params(model):
     pp=0
@@ -184,7 +184,23 @@ def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, t
 
 
 ######################################################################
-def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, model_type, seed, gpu, label, n_inp, batch_size, num_hidden, epochs, lr, sens_attr, multiclass_pred, multiclass_sens, clip):
+def ali_training_main(G, cid1_feature, cid2_feature, cid3_feature, model_type, seed, gpu, label, n_inp, batch_size, num_hidden, epochs, lr, sens_attr, multiclass_pred, multiclass_sens, clip, neptune_project, neptune_token):
+
+# Instantiate Neptune client and log arguments
+    neptune_run = neptune.init(
+        project=neptune_project,
+        api_token=neptune_token,
+    )
+    #neptune_run["sys/tags"].add(args.log_tags.split(","))
+    neptune_run["seed"] = seed
+    neptune_run["dataset"] = "Alibaba-small"
+    #neptune_run["model"] = model
+    neptune_run["label"] = label
+    neptune_run["num_epochs"] = epochs
+    neptune_run["n_hid"] = num_hidden
+    neptune_run["lr"] = lr
+    neptune_run["clip"] = clip
+
 
     '''Fixed random seeds'''
     np.random.seed(seed)

@@ -115,6 +115,12 @@ parser.add_argument('--negative-slope', type=float, default=0.2,
                     help="the negative slope of leaky relu")
 
 
+parser.add_argument('--neptune_project', type=str, default='')
+parser.add_argument('--neptune_token', type=str, default='')
+parser.add_argument('--multiclass_pred', type=bool, default=False)
+parser.add_argument('--multiclass_sens', type=bool, default=False)
+
+
 import networkx as nx
 import numpy as np
 
@@ -443,7 +449,9 @@ def RHGN_pre_processing(data_extension):
                         args.sens_attr, 
                         args.multiclass_pred, 
                         args.multiclass_sens, 
-                        args.clip)
+                        args.clip,
+                        args.neptune_project,
+                        args.neptune_token)
 
     return print('Training RHGN is done.')
 
