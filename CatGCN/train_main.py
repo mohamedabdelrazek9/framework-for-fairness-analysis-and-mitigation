@@ -10,7 +10,7 @@ from CatGCN.utils import pos_preds_attr_distr, tab_printer, graph_reader, field_
 import time
 from CatGCN.fairness import Fairness
 
-def train_CatGCN(user_edge, user_field, user_gender, user_labels, seed, label, neptune_project, neptune_token, args):
+def train_CatGCN(user_edge, user_field, user_gender, user_labels, seed, label, args):
     start_time = time.perf_counter()
 
     """
