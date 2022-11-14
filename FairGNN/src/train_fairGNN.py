@@ -20,10 +20,10 @@ def train_FairGNN(G, features, labels, idx_train, idx_val, idx_test, sens, idx_s
     #neptune_run["sys/tags"].add(args.log_tags.split(","))
     neptune_run["seed"] = args.seed
     neptune_run["sens_number"] = args.sens_number
-    neptune_run['num_hidden'] = args.number_hidden
+    neptune_run['num_hidden'] = args.num_hidden
     neptune_run['alpha'] = args.alpha
     neptune_run['beta'] = args.beta
-    neptune_run['label_run'] = args.label_run
+    neptune_run['label_number'] = args.label_number
     neptune_run["label"] = args.label
     neptune_run['sens_attr'] = args.sens_attr
     neptune_run["num_epochs"] = args.epochs
