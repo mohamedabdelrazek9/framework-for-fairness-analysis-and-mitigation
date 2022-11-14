@@ -33,7 +33,7 @@ def train_CatGCN(user_edge, user_field, user_gender, user_labels, seed, label, n
     neptune_run = neptune.init(
         project = neptune_project,
         api_token = neptune_token)
-    neptune_run["sys/tags"].add(args.log_tags.split(","))
+    #neptune_run["sys/tags"].add(args.log_tags.split(","))
     neptune_run["seed"] = seed
     #neptune_run["dataset"] = "JD-small" if "jd" in args.edge_path else "Alibaba-small"
     neptune_run["model"] = "CatGCN"
