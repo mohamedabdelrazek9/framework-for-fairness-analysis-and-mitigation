@@ -10,7 +10,7 @@ from CatGCN.utils import pos_preds_attr_distr, tab_printer, graph_reader, field_
 import time
 from CatGCN.fairness import Fairness
 
-def train_CatGCN(user_edge, user_field, user_gender, user_labels, seed, label, args):
+def train_CatGCN(user_edge, user_field, user_gender, user_labels, seed, label, neptune_project, neptune_token, args):
     start_time = time.perf_counter()
 
     """
@@ -31,14 +31,14 @@ def train_CatGCN(user_edge, user_field, user_gender, user_labels, seed, label, a
     
     # Instantiate Neptune client and log arguments
     neptune_run = neptune.init(
-        project = args.neptune_project,
-        api_token = args.neptune_token)
+        project = neptune_project,
+        api_token = neptune_token)
     neptune_run["sys/tags"].add(args.log_tags.split(","))
-    neptune_run["seed"] = args.seed
-    neptune_run["dataset"] = "JD-small" if "jd" in args.edge_path else "Alibaba-small"
+    neptune_run["seed"] = seed
+    #neptune_run["dataset"] = "JD-small" if "jd" in args.edge_path else "Alibaba-small"
     neptune_run["model"] = "CatGCN"
-    neptune_run["label"] = args.label
-    neptune_run["lr"] = args.learning_rate
+    neptune_run["label"] = label
+    neptune_run["lr"] = args.lr
     neptune_run["L2"] = args.weight_decay
     neptune_run["dropout"] = args.dropout
     neptune_run["diag_probe"] = args.diag_probe
@@ -64,16 +64,16 @@ def train_CatGCN(user_edge, user_field, user_gender, user_labels, seed, label, a
 
     ## Compute fairness metrics
     print("Fairness metrics on sensitive attributes '{}':".format(args.sens_attr))
-    fair_obj = Fairness(user_labels, clustering_machine.sg_test_nodes[0], gnn_trainer.targets, gnn_trainer.predictions, args.sens_attr, args.multiclass_pred, args.multiclass_sens) #todo add neptune_run later
+    fair_obj = Fairness(user_labels, clustering_machine.sg_test_nodes[0], gnn_trainer.targets, gnn_trainer.predictions, args.sens_attr, neptune_run, args.multiclass_pred, args.multiclass_sens) #todo add neptune_run later
     fair_obj.statistical_parity()
     fair_obj.equal_opportunity()
     fair_obj.overall_accuracy_equality()
     fair_obj.treatment_equality()
 
     elaps_time = (time.perf_counter() - start_time)/60
-    #neptune_run["elaps_time"] = elaps_time
+    neptune_run["elaps_time"] = elaps_time
 
-    #neptune_run.stop()
+    neptune_run.stop()
 
 if __name__ == "__main__":
     train_CatGCN()
