@@ -206,6 +206,7 @@ class ClusterGNNTrainer(object):
 
         train_time = (time.perf_counter() - train_start_time)/60
 
+
         print("Optimization Finished!")
         print("Total time elapsed: {:.2f}min".format(train_time))
         print("Best Result:\n",
@@ -216,7 +217,7 @@ class ClusterGNNTrainer(object):
             "accuracy: {:.4f}".format(acc_score),
             "macro-f1: {:.4f}".format(macro_f1))        
 
-        '''
+        
         # Save results on Neptune
         self.neptune_run["best_epoch"] = best_epoch
         self.neptune_run["test/loss"] = test_loss
@@ -227,4 +228,4 @@ class ClusterGNNTrainer(object):
         # self.neptune_run["test/fpr"] = fpr
         self.neptune_run["conf_matrix"] = confusion_matrix
         self.neptune_run["train_time"] = train_time
-        '''
+        
