@@ -30,10 +30,10 @@ def train_CatGCN(user_edge, user_field, user_gender, user_labels, seed, label, n
 
     
     # Instantiate Neptune client and log arguments
-    print('token:', neptune_token)
+    print('token:', args.neptune_token)
     neptune_run = neptune.init(
-        project = neptune_project,
-        api_token = neptune_token,
+        project = args.neptune_project,
+        api_token = args.neptune_token,
     )
     #neptune_run["sys/tags"].add(args.log_tags.split(","))
     neptune_run["seed"] = seed
