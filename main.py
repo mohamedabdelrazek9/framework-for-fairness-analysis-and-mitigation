@@ -317,7 +317,7 @@ def CatGCN_pre_processing(data_extension):
     
     # Add model training after data processing
     print('Starting CatGCN training')
-    train_CatGCN(user_edge_path, user_field_path, target, user_labels_path, args.seed, args.label, args.neptune_project, args.neptune_token, args)
+    train_CatGCN(user_edge_path, user_field_path, target, user_labels_path, args.seed, args.label, args)
     
     return print('Training CatGCN is done.')
 
