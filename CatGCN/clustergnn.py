@@ -15,7 +15,7 @@ class ClusterGNNTrainer(object):
     """
     Training a huge graph cluster partition strategy.
     """
-    def __init__(self, args, clustering_machine):
+    def __init__(self, args, clustering_machine, neptune_run):
         self.args = args
         self.clustering_machine = clustering_machine
         self.neptune_run = neptune_run
