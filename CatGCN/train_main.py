@@ -1,6 +1,6 @@
 import torch
 import numpy as np
-#import neptune.new as neptune
+import neptune.new as neptune
 
 #from parser import parameter_parser
 from CatGCN.clustering import ClusteringMachine
@@ -28,7 +28,7 @@ def train_CatGCN(user_edge, user_field, user_gender, user_labels, seed, label, a
     user_labels = label_reader(user_labels)
     print('args', args)
 
-    '''
+    
     # Instantiate Neptune client and log arguments
     neptune_run = neptune.init(
         project = args.neptune_project,
@@ -47,11 +47,11 @@ def train_CatGCN(user_edge, user_field, user_gender, user_labels, seed, label, a
     neptune_run["gnn_hops"] = args.gnn_hops
     neptune_run["gnn_units"] = args.gnn_units
     neptune_run["balance_ratio"] = args.balance_ratio
-    # neptune_run["n_epochs"] = args.epochs
-    '''
+    neptune_run["n_epochs"] = args.epochs
+    
     clustering_machine = ClusteringMachine(args, graph, field_index, target)
     clustering_machine.decompose()
-    gnn_trainer = ClusterGNNTrainer(args, clustering_machine) # todo add later neptune_run
+    gnn_trainer = ClusterGNNTrainer(args, clustering_machine, neptune_run) # todo add later neptune_run
     gnn_trainer.train_val_test()
 
     ## Compute accuracy per sensitive attribute group
