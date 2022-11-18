@@ -187,7 +187,7 @@ def disparate_impact_remover(df, sens_attr, label):
                                            protected_attribute_names=[sens_attr], 
                                            unprivileged_protected_attributes=[1])
 
-    di = DisparateImpactRemover(repair_level=1)
+    di = DisparateImpactRemover(repair_level=0.8)
     di_transformation = di.fit_transform(bin_label_dataset)
 
     privileged_groups = [{sens_attr: 0}] 
