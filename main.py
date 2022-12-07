@@ -139,10 +139,13 @@ def FairGNN_pre_processing(data_extension):
     
     # calculate fairness before doing anything in the dataset
     #predict_attr = args.predict_attr
-    #fairness_calculation(args.dataset_name, args.dataset_path, args.sens_attr, predict_attr)
+    ###################################################
+    #!! Fairness calculation before pre-processing
+    ###################################################
+    #if(args.calc_fairness):
+        #fairness_calculation(args.dataset_name, args.dataset_path, args.sens_attr, predict_attr)
 
     if data_extension in networkx_format_list:
-       # print('data extension is networkx format', data_extension)
         df_nodes, edges_path = load_networkx_file(model_type,
                                                   data_extension, 
                                                   args.dataset_name,
@@ -161,8 +164,6 @@ def FairGNN_pre_processing(data_extension):
                                                                                             args.seed,
                                                                                             test_idx=True)
     elif data_extension == '.json':
-        #print('data is neo4j format')
-        # todo pre-process if data is in format neo4j  
         df_nodes, edges_path = load_neo4j_file(model_type,
                                                args.dataset_path, 
                                                args.dataset_name,
@@ -170,7 +171,7 @@ def FairGNN_pre_processing(data_extension):
                                                args.onehot_bin_columns, 
                                                args.onehot_cat_columns)   
 
-    else:
+    else: # special case we read the original data
         if args.special_case == True:
             print('we will read normal data')
             df_nodes = pd.read_csv(args.dataset_path)
@@ -200,10 +201,7 @@ def FairGNN_pre_processing(data_extension):
             #edges_path = '../user_edges.csv'
             edges_path = '../region_job_relationship'
 
-        # Calculate dataset Fairness (if activated)
-        # todo add activation proceudre when debaising approaches are implmented
-    #if(args.calc_fairness):
-    #    df_nodes =  fairness_calculation(df_nodes, args.dataset_name, args.model_type, args.sens_attr, args.predict_attr)
+        
 
         adj, features, labels, idx_train, idx_val, idx_test,sens,idx_sens_train = load_pokec(df_nodes,
                                                                                             edges_path,
@@ -215,14 +213,11 @@ def FairGNN_pre_processing(data_extension):
                                                                                             args.seed,
                                                                                             test_idx=True)
 
-    #print('Dataset fairness before training:', dataset_fairness)
-
-
     G = dgl.DGLGraph()
     #G.from_scipy_sparse_matrix(adj) # not supported
     G = dgl.from_scipy(adj)
     
-    if args.dataset_name == 'nba':
+    if args.dataset_name == 'nba' and args.dataset_name == 'alibaba':
         features = feature_norm(features)
 
     if args.dataset_name == 'nba' or args.dataset_name == 'pokec_z' or args.dataset_name == 'pokec_n':
