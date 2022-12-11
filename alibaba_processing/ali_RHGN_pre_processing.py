@@ -8,6 +8,7 @@ import fasttext
 def ali_RHGN_pre_process(df, df_user, df_click, df_item, sens_attr, label, special_case, debaising_approach=None):
     # load and clean data   
     if debaising_approach != None:
+        # special case == csv data 
         if special_case == True:
             df_user.rename(columns={'userid':'uid', 'final_gender_code':'gender','age_level':'age', 'pvalue_level':'buy', 'occupation':'student', 'new_user_class_level ':'city'}, inplace=True)
             df_user.dropna(inplace=True)
