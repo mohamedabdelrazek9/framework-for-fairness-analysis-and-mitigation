@@ -175,6 +175,7 @@ def FairGNN_pre_processing(data_extension):
         if args.special_case == True:
             print('we will read normal data')
             df_nodes = pd.read_csv(args.dataset_path)
+            print('Dataset is read')
             if args.dataset_name == 'tecent':
                 df_nodes = bin_age_range_tecent(df_nodes)
                 df_nodes = df_nodes.drop(columns=["cid1_name", "cid2_name", "cid3_name", "item_name", "seg_name"])
