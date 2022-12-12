@@ -109,6 +109,8 @@ def load_pokec(df_nodes, edges_path, dataset_user_id_name, sens_attr, predict_at
     random.seed(seed)
     if dataset_name != 'alibaba':
         label_idx = np.where(labels>=0)[0]
+    else:
+        label_idx = np.where(labels>=0)[0]
     random.shuffle(label_idx)
 
     # test
