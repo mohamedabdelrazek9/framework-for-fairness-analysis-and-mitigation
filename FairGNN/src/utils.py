@@ -142,7 +142,7 @@ def load_pokec(df_nodes, edges_path, dataset_user_id_name, sens_attr, predict_at
     print('adj:', adj)
     print('adj shape:', adj.shape)
     print('features:', features)
-    print('labels:', labels)
+    print('labels:', labels.unique())
     print('idx_train:', idx_train)
     print('idx_val:', idx_val)
     print('idx_test:', idx_test)
