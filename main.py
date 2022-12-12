@@ -215,6 +215,7 @@ def FairGNN_pre_processing(data_extension):
                                                                                             args.label_number, 
                                                                                             args.sens_number,
                                                                                             args.seed,
+                                                                                            args.dataset_name,
                                                                                             test_idx=True)
 
     G = dgl.DGLGraph()

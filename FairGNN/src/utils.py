@@ -57,7 +57,7 @@ def load_data(path="../dataset/cora/", dataset="cora"):
 
     return adj, features, labels, idx_train, idx_val, idx_test
 
-def load_pokec(df_nodes, edges_path, dataset_user_id_name, sens_attr, predict_attr, label_number=1000,sens_number=500,seed=19,test_idx=False):
+def load_pokec(df_nodes, edges_path, dataset_user_id_name, sens_attr, predict_attr, label_number=1000,sens_number=500,seed=19, dataset_name, test_idx=False):
     """Load data"""
 
     #idx_features_labels = pd.read_csv(os.path.join(path,"{}.csv".format(dataset)))
@@ -73,8 +73,11 @@ def load_pokec(df_nodes, edges_path, dataset_user_id_name, sens_attr, predict_at
 
 
     features = sp.csr_matrix(df_nodes[header], dtype=np.float32)
+    if dataset_name == 'alibaba':
+        df_nodes.loc[df_nodes[predict_attr] == 1, predict_attr] = 0
+        df_nodes.loc[df_nodes[predict_attr] == 2, predict_attr] = 1
+
     labels = df_nodes[predict_attr].values
-    
 
     # build graph
     idx = np.array(df_nodes[dataset_user_id_name], dtype=int)
@@ -104,7 +107,8 @@ def load_pokec(df_nodes, edges_path, dataset_user_id_name, sens_attr, predict_at
 
     import random
     random.seed(seed)
-    label_idx = np.where(labels>=0)[0]
+    if dataset_name != 'alibaba':
+        label_idx = np.where(labels>=0)[0]
     random.shuffle(label_idx)
 
     # test
