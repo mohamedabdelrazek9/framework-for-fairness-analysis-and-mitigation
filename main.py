@@ -222,7 +222,10 @@ def FairGNN_pre_processing(data_extension):
     #G.from_scipy_sparse_matrix(adj) # not supported
     G = dgl.from_scipy(adj)
     
-    if args.dataset_name == 'nba' and args.dataset_name == 'alibaba':
+    #if args.dataset_name == 'nba' and args.dataset_name == 'alibaba':
+    #    features = feature_norm(features)
+
+    if args.dataset_name == 'nba':
         features = feature_norm(features)
 
     if args.dataset_name == 'nba' or args.dataset_name == 'pokec_z' or args.dataset_name == 'pokec_n':
