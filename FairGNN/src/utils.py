@@ -138,6 +138,15 @@ def load_pokec(df_nodes, edges_path, dataset_user_id_name, sens_attr, predict_at
     
 
     # random.shuffle(sens_idx)
+    print('adj:', adj)
+    print('adj shape:', adj.shape)
+    print('features:', features)
+    print('labels:', labels)
+    print('idx_train:', idx_train)
+    print('idx_val:', idx_val)
+    print('idx_test:', idx_test)
+    print('sens:', sens)
+    print('idx_sens_train:', idx_sens_train)
 
     return adj, features, labels, idx_train, idx_val, idx_test, sens,idx_sens_train
 
