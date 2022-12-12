@@ -190,6 +190,7 @@ def FairGNN_pre_processing(data_extension):
             elif args.dataset_name == 'alibaba':
                 #sample 
                 #df_nodes = df_nodes.sample(frac=0.10, random_state=11)
+                print(df_nodes.shape)
                 df_nodes = bin_alibaba(df_nodes)
                 edges_path = create_edges(df_nodes, args.dataset_name)
                 df_edge_list = edges_path
