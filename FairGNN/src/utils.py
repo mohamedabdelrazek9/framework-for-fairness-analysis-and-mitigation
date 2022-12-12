@@ -57,7 +57,7 @@ def load_data(path="../dataset/cora/", dataset="cora"):
 
     return adj, features, labels, idx_train, idx_val, idx_test
 
-def load_pokec(df_nodes, edges_path, dataset_user_id_name, sens_attr, predict_attr, label_number=1000,sens_number=500,seed=19, dataset_name, test_idx=False):
+def load_pokec(df_nodes, edges_path, dataset_user_id_name, sens_attr, predict_attr, dataset_name, label_number=1000,sens_number=500,seed=19, test_idx=False):
     """Load data"""
 
     #idx_features_labels = pd.read_csv(os.path.join(path,"{}.csv".format(dataset)))
