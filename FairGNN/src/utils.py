@@ -90,6 +90,7 @@ def load_pokec(df_nodes, edges_path, dataset_user_id_name, sens_attr, predict_at
     adj = sp.coo_matrix((np.ones(edges.shape[0]), (edges[:, 0], edges[:, 1])),
                         shape=(labels.shape[0], labels.shape[0]),
                         dtype=np.float32)
+    print('after sp.coo_matrix')
     # build symmetric adjacency matrix
     adj = adj + adj.T.multiply(adj.T > adj) - adj.multiply(adj.T > adj)
 
