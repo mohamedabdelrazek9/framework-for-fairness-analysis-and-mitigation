@@ -64,6 +64,7 @@ def load_pokec(df_nodes, edges_path, dataset_user_id_name, sens_attr, predict_at
     
     # get columns list from df
     header = list(df_nodes.columns)
+    print(header)
     header.remove(dataset_user_id_name)
 
     # remover sens_attr and predict_attr from columns list
