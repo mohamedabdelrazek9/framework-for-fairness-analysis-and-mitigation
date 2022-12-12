@@ -62,9 +62,11 @@ def load_pokec(df_nodes, edges_path, dataset_user_id_name, sens_attr, predict_at
 
     #idx_features_labels = pd.read_csv(os.path.join(path,"{}.csv".format(dataset)))
     
+    # get columns list from df
     header = list(df_nodes.columns)
     header.remove(dataset_user_id_name)
 
+    # remover sens_attr and predict_attr from columns list
     header.remove(sens_attr)
     header.remove(predict_attr)
 
@@ -79,10 +81,12 @@ def load_pokec(df_nodes, edges_path, dataset_user_id_name, sens_attr, predict_at
     #edges_unordered = np.genfromtxt(os.path.join(path,"{}_relationship.txt".format(dataset)), dtype=int)
     edges_unordered = np.genfromtxt(os.path.join("{}.txt".format(edges_path)), dtype=int)
     
-    
+    print('edges_unorder:', edges_unordered)
     edges = np.array(list(map(idx_map.get, edges_unordered.flatten())),
                      dtype=float).reshape(edges_unordered.shape)
     edges = edges.astype(int)
+    print('')
+    print('edges:', edges)
     adj = sp.coo_matrix((np.ones(edges.shape[0]), (edges[:, 0], edges[:, 1])),
                         shape=(labels.shape[0], labels.shape[0]),
                         dtype=np.float32)
