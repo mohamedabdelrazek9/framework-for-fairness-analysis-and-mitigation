@@ -123,7 +123,10 @@ def load_pokec(df_nodes, edges_path, dataset_user_id_name, sens_attr, predict_at
         idx_test = label_idx[label_number:]
         idx_val = idx_test
     else:
-        idx_test = label_idx[int(0.75 * len(label_idx)):]
+        if dataset_name == 'alibaba' or dataset_name == 'tecent':
+            idx_test = label_idx[int(0.65 * len(label_idx))]
+        else:
+            idx_test = label_idx[int(0.75 * len(label_idx)):]
 
 
 
