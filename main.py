@@ -152,7 +152,9 @@ def FairGNN_pre_processing(data_extension):
                                                   args.dataset_path,
                                                   args.dataset_user_id_name, 
                                                   args.onehot_bin_columns, 
-                                                  args.onehot_cat_columns)
+                                                  args.onehot_cat_columns,
+                                                  args.sens_attr,
+                                                  args.predict_attr)
         # this here needs to be moved after the else condition
         adj, features, labels, idx_train, idx_val, idx_test,sens,idx_sens_train = load_pokec(df_nodes,
                                                                                             edges_path,

@@ -7,7 +7,7 @@ import scipy.sparse as sp
 import re
 from alibaba_processing.ali_CatGCN_pre_processing import get_count, filter_triplets, col_map, label_map
 
-def load_networkx_file(model_type, data_extension, dataset_name, dataset_path, dataset_user_id_name, onehot_bin_columns, onehot_cat_columns):
+def load_networkx_file(model_type, data_extension, dataset_name, dataset_path, dataset_user_id_name, onehot_bin_columns, onehot_cat_columns, sens_attr, predict_attr):
 
     # load data from graphml to csv
     #print('Loading dataset for FairGNN...')
@@ -41,6 +41,13 @@ def load_networkx_file(model_type, data_extension, dataset_name, dataset_path, d
         # if so, we convert it to int
         df_nodes[dataset_user_id_name] = pd.to_numeric(df_nodes[dataset_user_id_name])
         df_nodes = df_nodes.astype({dataset_user_id_name: int})
+
+    #check if sens_attr and predict_attr is float 
+    if (df_nodes[sens_attr].dtype == np.float64):
+        df_nodes[sens_attr] = df_nodes[sens_attr].astype(int)
+    if (df_nodes[predict_attr].dtype == np.float64):
+        df_nodes[predict_attr] = df_nodes[predict_attr].astype(int)
+
 
     # todo if dataset will be used for RHGN or CatGCN then return, else we assume for FairGNN then complete the onehot encoding process
     if model_type == 'RHGN':
