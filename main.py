@@ -199,10 +199,11 @@ def FairGNN_pre_processing(data_extension):
             elif args.dataset_name == 'pokec_z':
                 df_nodes = pd.read_csv(args.dataset_path)
                 edges_path = '../region_job_relationship'
+                df_edge_list = edges_path
                 df_edge_list.to_csv(r'{}.txt'.format(edges_path), header=None, index=None, sep=' ', mode='a')
             #save the edges as .txt file
             #edges_path = './FairGNN_data_relationship'
-            #df_edge_list.to_csv(r'{}.txt'.format(edges_path), header=None, index=None, sep=' ', mode='a')
+            # df_edge_list.to_csv(r'{}.txt'.format(edges_path), header=None, index=None, sep=' ', mode='a')
         else:
             # simple test for pokec/tecent
             df_nodes = pd.read_csv(args.dataset_path)    
