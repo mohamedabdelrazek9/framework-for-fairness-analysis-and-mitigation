@@ -198,9 +198,10 @@ def FairGNN_pre_processing(data_extension):
                 df_edge_list = edges_path
             elif args.dataset_name == 'pokec_z':
                 df_nodes = pd.read_csv(args.dataset_path)
-                edges_path = '../MasterThesis-dev/region_job_relationship.txt'
-                df_edge_list = edges_path
-                df_edge_list.to_csv(r'{}.txt'.format(edges_path), header=None, index=None, sep=' ', mode='a')
+                edges_path = '../Master-Thesis-dev/region_job_relationship.txt'
+                #df_edge_list = edges_path
+                #df_edge_list = pd.read_csv('../Master-Thesis-dev/region_job_relationship.txt')
+                #df_edge_list.to_csv(r'{}.txt'.format(edges_path), header=None, index=None, sep=' ', mode='a')
                 #df = pd.read_csv('../Master-Thesis-dev/region_job.csv')
                 #df_edge_list = pd.read_csv('../region_job_relationship.txt',  sep="\t", header=None)
                 #edges_path = ''
