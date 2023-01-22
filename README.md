@@ -18,3 +18,9 @@ We evaluate the model fairness using disparate impact and disparate mistreatment
 
 ## Requirements
 TBA
+
+
+## Later updates
+- A web based UI for using the framework with metrics visualization
+- Integration of new GNN models.
+- Integration of new datasets.
