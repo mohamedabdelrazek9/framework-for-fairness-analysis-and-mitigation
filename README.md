@@ -5,6 +5,10 @@ Repository of the the Master Thesis Design and development of a standardised fra
 
 ![Framework_final](https://user-images.githubusercontent.com/45569039/213778147-d8488eb0-965d-46ec-a526-1f1f942dfb18.jpg)
 
+The framework is based on these GNN models:
+- [FairGNN](https://arxiv.org/abs/2009.01454)
+- [RHGN](https://arxiv.org/abs/2110.07181)
+- [CatGCN](https://arxiv.org/abs/2009.05303)
 ## Abstract
 User profiling classification has been a very popular problem in the last year in regards to machine learning, which concentrates on classifying users into a specific category.
 After the introduction of Graph Neural Networks (GNNs) in last years, user profiling classification has been represented as a node classification problem to better understand and account for the relationship between users.
