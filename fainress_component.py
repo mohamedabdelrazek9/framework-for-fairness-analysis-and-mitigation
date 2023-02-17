@@ -37,7 +37,7 @@ def fairness_calculation_nba(dataset_path, sens_attr, predict_attr):
 
     df[predict_attr] = df[predict_attr].replace(-1, 0)
 
-    dataset_fairness(df, sens_attr, predict_attr)
+    #dataset_fairness(df, sens_attr, predict_attr)
 
     disparate_impact(df, sens_attr, predict_attr)
 
