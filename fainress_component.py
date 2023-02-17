@@ -42,8 +42,9 @@ def fairness_calculation_nba(dataset_path, sens_attr, predict_attr):
     disparate_impact(df, sens_attr, predict_attr)
 
 def fairness_calculation_alibaba(dataset_path, sens_attr, label):
-    data = nx.read_graphml(dataset_path)
-    df = pd.DataFrame.from_dict(dict(data.nodes(data=True)), orient='index')
+   # data = nx.read_graphml(dataset_path)
+    #df = pd.DataFrame.from_dict(dict(data.nodes(data=True)), orient='index')
+    df = pd.read_csv(dataset_path)
 
     if df.columns[0] != 'userid':
         df = df.reset_index(level=0)
@@ -71,8 +72,9 @@ def fairness_calculation_alibaba(dataset_path, sens_attr, label):
     disparate_impact(df, sens_attr, label)
 
 def fairness_calculation_tecent(dataset_path, sens_attr, label):
-    data = nx.read_graphml(dataset_path)
-    df = pd.DataFrame.from_dict(dict(data.nodes(data=True)), orient='index')
+    #data = nx.read_graphml(dataset_path)
+    #df = pd.DataFrame.from_dict(dict(data.nodes(data=True)), orient='index')
+    df = pd.read_csv(dataset_path)
 
     if df.columns[0] != 'user_id':
         df = df.reset_index(level=0)
@@ -98,8 +100,9 @@ def fairness_calculation_tecent(dataset_path, sens_attr, label):
     disparate_impact(df, sens_attr, label)
     
 def fairness_calculation_pokec(dataset_path, dataset_name, sens_attr, label):
-    data = nx.read_graphml(dataset_path)
-    df = pd.DataFrame.from_dict(dict(data.nodes(data=True)), orient='index')
+    #data = nx.read_graphml(dataset_path)
+    #df = pd.DataFrame.from_dict(dict(data.nodes(data=True)), orient='index')
+    df = pd.read_csv(dataset_path)
 
     if df.columns[0] != 'user_id':
         df = df.reset_index(level=0)
