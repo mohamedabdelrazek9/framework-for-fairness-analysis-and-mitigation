@@ -23,8 +23,9 @@ def fairness_calculation(dataset_name, dataset_path, sens_attr, predict_attr):
 
 
 def fairness_calculation_nba(dataset_path, sens_attr, predict_attr):
-    data = nx.read_graphml(dataset_path)
-    df = pd.DataFrame.from_dict(dict(data.nodes(data=True)), orient='index')
+    #data = nx.read_graphml(dataset_path)
+    #df = pd.DataFrame.from_dict(dict(data.nodes(data=True)), orient='index')
+    df = pd.read_csv(dataset_path)
 
     if df.columns[0] != 'user_id':
         df = df.reset_index(level=0)
