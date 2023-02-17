@@ -80,7 +80,7 @@ def fairness_calculation_tecent(dataset_path, sens_attr, label):
     #    df = df.reset_index(level=0)
      #   df = df.rename(columns={"index": "user_id"})
 
-    i#f type(df['user_id'][0]) != np.int64:
+    #if type(df['user_id'][0]) != np.int64:
      #   df['user_id'] = pd.to_numeric(df['user_id'])
      #   df = df.astype({'user_id': int})
 
