@@ -67,7 +67,7 @@ def fairness_calculation_alibaba(dataset_path, sens_attr, label):
     df[label] = df[label].replace(1, 0)
     df[label] = df[label].replace(2, 1)
 
-    dataset_fairness(df, sens_attr, label)
+    #dataset_fairness(df, sens_attr, label)
 
     disparate_impact(df, sens_attr, label)
 
@@ -76,26 +76,27 @@ def fairness_calculation_tecent(dataset_path, sens_attr, label):
     #df = pd.DataFrame.from_dict(dict(data.nodes(data=True)), orient='index')
     df = pd.read_csv(dataset_path)
 
-    if df.columns[0] != 'user_id':
-        df = df.reset_index(level=0)
-        df = df.rename(columns={"index": "user_id"})
+    #if df.columns[0] != 'user_id':
+    #    df = df.reset_index(level=0)
+     #   df = df.rename(columns={"index": "user_id"})
 
-    if type(df['user_id'][0]) != np.int64:
-        df['user_id'] = pd.to_numeric(df['user_id'])
-        df = df.astype({'user_id': int})
+    i#f type(df['user_id'][0]) != np.int64:
+     #   df['user_id'] = pd.to_numeric(df['user_id'])
+     #   df = df.astype({'user_id': int})
 
-    if sens_attr == 'bin_age':
-        df.rename(columns={'age_range':'age'}, inplace=True)
+    #if sens_attr == 'bin_age':
+    #    df.rename(columns={'age_range':'age'}, inplace=True)
 
-    age_dic = {'11~15':0, '16~20':0, '21~25':0, '26~30':1, '31~35':1, '36~40':2, '41~45':2, '46~50':3, '51~55':3, '56~60':4, '61~65':4, '66~70':4, '71~':4}
-    df[[sens_attr]] = df[[sens_attr]].applymap(lambda x:age_dic[x])
+    if sens_attr == 'age_range':
+        age_dic = {'11~15':0, '16~20':0, '21~25':0, '26~30':1, '31~35':1, '36~40':2, '41~45':2, '46~50':3, '51~55':3, '56~60':4, '61~65':4, '66~70':4, '71~':4}
+        df[[sens_attr]] = df[[sens_attr]].applymap(lambda x:age_dic[x])
 
-    df[sens_attr] = df[sens_attr].replace(1,0)
-    df[sens_attr] = df[sens_attr].replace(2,1)
-    df[sens_attr] = df[sens_attr].replace(3,1)
-    df[sens_attr] = df[sens_attr].replace(4,1)
+        df[sens_attr] = df[sens_attr].replace(1,0)
+        df[sens_attr] = df[sens_attr].replace(2,1)
+        df[sens_attr] = df[sens_attr].replace(3,1)
+        df[sens_attr] = df[sens_attr].replace(4,1)
 
-    dataset_fairness(df, sens_attr, label)
+    #dataset_fairness(df, sens_attr, label)
 
     disparate_impact(df, sens_attr, label)
     
@@ -104,13 +105,13 @@ def fairness_calculation_pokec(dataset_path, dataset_name, sens_attr, label):
     #df = pd.DataFrame.from_dict(dict(data.nodes(data=True)), orient='index')
     df = pd.read_csv(dataset_path)
 
-    if df.columns[0] != 'user_id':
-        df = df.reset_index(level=0)
-        df = df.rename(columns={"index": "user_id"})
+    #if df.columns[0] != 'user_id':
+    #    df = df.reset_index(level=0)
+    #    df = df.rename(columns={"index": "user_id"})
 
-    if type(df['user_id'][0]) != np.int64:
-        df['user_id'] = pd.to_numeric(df['user_id'])
-        df = df.astype({'user_id': int})
+    #if type(df['user_id'][0]) != np.int64:
+    #    df['user_id'] = pd.to_numeric(df['user_id'])
+    #    df = df.astype({'user_id': int})
 
     if dataset_name == 'pokec_z':
         df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(-1, 0)
@@ -120,14 +121,14 @@ def fairness_calculation_pokec(dataset_path, dataset_name, sens_attr, label):
         df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(3, 1)
         df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(4, 1)
 
-    elif dataset_name == 'pokec_n':
-        df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(-1, 0)
-        df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(0, 1)
-        df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(1, 1)
-        df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(2, 1)
-        df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(3, 1)
+    #elif dataset_name == 'pokec_n':
+    #    df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(-1, 0)
+    #    df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(0, 1)
+    #    df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(1, 1)
+    #    df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(2, 1)
+    #    df['I_am_working_in_field'] = df['I_am_working_in_field'].replace(3, 1)
 
-    dataset_fairness(df, sens_attr, label)
+    #dataset_fairness(df, sens_attr, label)
 
     disparate_impact(df, sens_attr, label)
 
