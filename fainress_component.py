@@ -46,13 +46,13 @@ def fairness_calculation_alibaba(dataset_path, sens_attr, label):
     #df = pd.DataFrame.from_dict(dict(data.nodes(data=True)), orient='index')
     df = pd.read_csv(dataset_path)
 
-    if df.columns[0] != 'userid':
-        df = df.reset_index(level=0)
-        df = df.rename(columns={"index": "userid"})
+    #if df.columns[0] != 'userid':
+    #    df = df.reset_index(level=0)
+    #    df = df.rename(columns={"index": "userid"})
 
-    if type(df['userid'][0]) != np.int64:
-        df['userid'] = pd.to_numeric(df['userid'])
-        df = df.astype({'userid': int})
+    #if type(df['userid'][0]) != np.int64:
+    #    df['userid'] = pd.to_numeric(df['userid'])
+    #    df = df.astype({'userid': int})
 
     if sens_attr == 'age' or sens_attr == 'age_level' or sens_attr == 'bin_age':
         df.rename(columns={'age_level':'age', 'final_gender_code':'gender'}, inplace=True)
