@@ -189,7 +189,7 @@ def FairGNN_pre_processing(data_extension):
                 if args.onehot_cat_columns is not None:
                     df_nodes = apply_cat_columns(df_nodes, args.onehot_cat_columns)
                 df_edge_list = pd.read_csv('../nba_relationship.txt', sep=" ", header=None)
-                edges_path = '../nba_relationship.txt'
+                edges_path = '../nba_relationship'
             elif args.dataset_name == 'alibaba':
                 #sample 
                 #df_nodes = df_nodes.sample(frac=0.10, random_state=11)
