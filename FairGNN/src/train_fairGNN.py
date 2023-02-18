@@ -122,7 +122,7 @@ def train_FairGNN(G, features, labels, idx_train, idx_val, idx_test, sens, idx_s
 
     print('============performace on test set=============')
     if len(best_result) > 0:
-        print("Test:",
+        print("Test_final:",
                 "accuracy: {:.4f}".format(best_result['acc']),
                 "roc: {:.4f}".format(best_result['roc']),
                 "F1: {:.4f}".format(best_result['F1']),
@@ -134,10 +134,10 @@ def train_FairGNN(G, features, labels, idx_train, idx_val, idx_test, sens, idx_s
 
         neptune_run['acc'] = best_result['acc']
         neptune_run['F1'] = best_result['F1']
-        neptune_run['parity'] = best_result['parity']
-        neptune_run['equality'] = best_result['equality']
-        neptune_run['accuracy equality'] = best_result['accuracy equality']
-        neptune_run['treatment equality'] = best_result['treatment equality']
+        neptune_run['parity'] = best_result['parity'] #SPD
+        neptune_run['equality'] = best_result['equality'] #EOD
+        neptune_run['accuracy equality'] = best_result['accuracy equality'] #OAE
+        neptune_run['treatment equality'] = best_result['treatment equality'] #TED
 
     else:
         print("Please set smaller acc/roc thresholds")
