@@ -156,7 +156,7 @@ def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, t
             torch.cuda.empty_cache()
 
     classification_report = metrics.classification_report(labels, preds, digits=4)
-    print(classification_report)
+    print(classification_report+'end')
     # Classification reports
     confusion_matrix = metrics.confusion_matrix(labels, preds)
     print(confusion_matrix)
