@@ -168,7 +168,7 @@ def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, t
 
     toc = time.perf_counter() # stop counting time
     elapsed_time = (toc-tic)/60
-    print("\nElapsed time: {:.4f} minutes".format(elapsed_time))
+    #print("\nElapsed time: {:.4f} minutes".format(elapsed_time))
 
     
     # Log result on Neptune
