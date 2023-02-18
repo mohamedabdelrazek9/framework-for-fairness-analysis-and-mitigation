@@ -136,7 +136,8 @@ def train_FairGNN(G, features, labels, idx_train, idx_val, idx_test, sens, idx_s
                 "parity: {:.4f}".format(best_result['parity']),
                 "equality: {:.4f}".format(best_result['equality']),
                 "accuracy equality: {:.4f}".format(best_result['accuracy equality']),
-                "treatment equality {:.4f}".format(best_result['treatment equality']))
+                "treatment equality {:.4f}".format(best_result['treatment equality']),
+                "end")
 
         neptune_run['acc'] = best_result['acc']
         neptune_run['F1'] = best_result['F1']
