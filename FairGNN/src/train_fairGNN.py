@@ -10,6 +10,12 @@ from FairGNN.src.models.FairGNN import FairGNN
 from utils import fair_metric
 from sklearn.metrics import accuracy_score,roc_auc_score,recall_score,f1_score
 import neptune.new as neptune
+import warnings
+
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+warnings.filterwarnings("ignore", category=RuntimeWarning)
+warnings.filterwarnings("ignore")
+
 
 def train_FairGNN(G, features, labels, idx_train, idx_val, idx_test, sens, idx_sens_train, dataset_name, sens_number, args):
     

@@ -23,6 +23,11 @@ import dgl
 import torch
 import pandas as pd
 from utils import create_edges, bin_age_range_tecent, apply_bin_columns, apply_cat_columns
+import warnings
+
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+warnings.filterwarnings("ignore", category=RuntimeWarning)
+warnings.filterwarnings("ignore")
 
 
 parser = argparse.ArgumentParser()
