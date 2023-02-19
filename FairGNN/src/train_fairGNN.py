@@ -114,7 +114,7 @@ def train_FairGNN(G, features, labels, idx_train, idx_val, idx_test, sens, idx_s
                 "oaed: {:.4f}".format(oae_diff_val),
                 "treatment equality: {:.4f}".format(te_diff_val))
             print("Test:",
-                    "accuracy1: {:.4f}".format(acc_test.item()),
+                    "a: {:.4f}".format(acc_test.item()),
                     "roc: {:.4f}".format(roc_test),
                     "F1: {:.4f}".format(f1_test),
                     "acc_sens: {:.4f}".format(acc_sens),
@@ -129,7 +129,7 @@ def train_FairGNN(G, features, labels, idx_train, idx_val, idx_test, sens, idx_s
     print('============performace on test set=============')
     if len(best_result) > 0:
         print("Test_final:",
-                "accuracy1: {:.4f}".format(best_result['acc']),
+                "a: {:.4f}".format(best_result['acc']),
                 "roc: {:.4f}".format(best_result['roc']),
                 "F1: {:.4f}".format(best_result['F1']),
                 "acc_sens: {:.4f}".format(acc_sens),
