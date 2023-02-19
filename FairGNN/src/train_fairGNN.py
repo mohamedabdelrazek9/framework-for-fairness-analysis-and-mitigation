@@ -97,7 +97,7 @@ def train_FairGNN(G, features, labels, idx_train, idx_val, idx_test, sens, idx_s
                 best_result['F1'] = f1_test
                 best_result['parity'] = parity
                 best_result['equality'] = equality
-                best_result['accuracy equality'] = oae_diff
+                best_result['oaed'] = oae_diff
                 best_result['treatment equality'] = te_diff
 
             print("=================================")
@@ -111,7 +111,7 @@ def train_FairGNN(G, features, labels, idx_train, idx_val, idx_test, sens, idx_s
                 "F1_val: {:.4f}".format(f1_val),
                 "parity_val: {:.4f}".format(parity_val),
                 "equality: {:.4f}".format(equality_val),
-                "accuracy equality: {:.4f}".format(oae_diff_val),
+                "oaed: {:.4f}".format(oae_diff_val),
                 "treatment equality: {:.4f}".format(te_diff_val))
             print("Test:",
                     "accuracy: {:.4f}".format(acc_test.item()),
@@ -120,7 +120,7 @@ def train_FairGNN(G, features, labels, idx_train, idx_val, idx_test, sens, idx_s
                     "acc_sens: {:.4f}".format(acc_sens),
                     "parity: {:.4f}".format(parity),
                     "equality: {:.4f}".format(equality),
-                    "accuracy equality: {:.4f}".format(oae_diff),
+                    "oaed: {:.4f}".format(oae_diff),
                     "treatment equality: {:.4f}".format(te_diff))
 
     print("Optimization Finished!")
@@ -135,7 +135,7 @@ def train_FairGNN(G, features, labels, idx_train, idx_val, idx_test, sens, idx_s
                 "acc_sens: {:.4f}".format(acc_sens),
                 "parity: {:.4f}".format(best_result['parity']),
                 "equality: {:.4f}".format(best_result['equality']),
-                "accuracy equality: {:.4f}".format(best_result['accuracy equality']),
+                "oaed: {:.4f}".format(best_result['oaed']),
                 "treatment equality {:.4f}".format(best_result['treatment equality']),
                 "end")
 
@@ -143,7 +143,7 @@ def train_FairGNN(G, features, labels, idx_train, idx_val, idx_test, sens, idx_s
         neptune_run['F1'] = best_result['F1']
         neptune_run['parity'] = best_result['parity'] #SPD
         neptune_run['equality'] = best_result['equality'] #EOD
-        neptune_run['accuracy equality'] = best_result['accuracy equality'] #OAE
+        neptune_run['oaed'] = best_result['oaed'] #OAE
         neptune_run['treatment equality'] = best_result['treatment equality'] #TED
 
     else:
