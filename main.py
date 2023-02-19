@@ -494,6 +494,9 @@ if args.type == 1:
         cat_pre_processing = CatGCN_pre_processing(data_extension)
     if 'RHGN' in args.model_type:
         rhgn_pre_processing = RHGN_pre_processing(data_extension)
+    if 'FairGNN' in args.model_type and 'RHGN' in args.model_type:
+        fair_pre_processing = FairGNN_pre_processing(data_extension)
+        rhgn_pre_processing = RHGN_pre_processing(data_extension)
 
 #if 'FairGNN' in args.model_type:
 #    fair_pre_processing = FairGNN_pre_processing(data_extension)
