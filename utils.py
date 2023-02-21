@@ -253,14 +253,14 @@ def fair_metric(output,idx, labels, sens):
 
     pred_y = (output[idx].squeeze()>0).type_as(labels).cpu().numpy()
     #parity = abs(sum(pred_y[idx_s0])/sum(idx_s0)-sum(pred_y[idx_s1])/sum(idx_s1))
-    parity = sum(pred_y[idx_s0])/sum(idx_s0)-sum(pred_y[idx_s1])/sum(idx_s1)
+    parity = np.abs(sum(pred_y[idx_s0])/sum(idx_s0)-sum(pred_y[idx_s1])/sum(idx_s1))
     print('parity debug')
     print('pred_y:',pred_y)
     print('pred_y[idx_s0]:', pred_y[idx_s0])
     print('idx_s0:', idx_s0)
     print('parity:', parity)
     #equality = abs(sum(pred_y[idx_s0_y1])/sum(idx_s0_y1)-sum(pred_y[idx_s1_y1])/sum(idx_s1_y1))
-    equality = sum(pred_y[idx_s0_y1])/sum(idx_s0_y1)-sum(pred_y[idx_s1_y1])/sum(idx_s1_y1)
+    equality = np.abs(sum(pred_y[idx_s0_y1])/sum(idx_s0_y1)-sum(pred_y[idx_s1_y1])/sum(idx_s1_y1))
     
     # treatment equality
     te1_s0 = (sum(pred_y[idx_s0_y0]) / sum(idx_s0_y0)) / (np.count_nonzero(pred_y[idx_s0_y1] == 0) / sum(idx_s0_y1))
@@ -285,7 +285,7 @@ def fair_metric(output,idx, labels, sens):
     # "overall accuracy equality"
     oae_s0 = np.count_nonzero(pred_y[idx_s0_y0] == 0) / sum(idx_s0_y0) + sum(pred_y[idx_s0_y1]) / sum(idx_s0_y1)
     oae_s1 = np.count_nonzero(pred_y[idx_s1_y0] == 0) / sum(idx_s1_y0) + sum(pred_y[idx_s1_y1]) / sum(idx_s1_y1)
-    oae_diff = oae_s0 - oae_s1 
+    oae_diff = np.abs(oae_s0 - oae_s1) 
 
     # disparate_impact
 
