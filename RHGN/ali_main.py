@@ -180,7 +180,7 @@ def Batch_train(model, optimizer, scheduler, train_dataloader, val_dataloader, t
     neptune_run["conf_matrix"] = confusion_matrix
     neptune_run["elaps_time"] = elapsed_time   
 
-    fair_obj = Fairness(G, test_idx, targets, predictions, sens_attr, neptune_run, multiclass_pred, multiclass_sens) 
+    #fair_obj = Fairness(G, test_idx, targets, predictions, sens_attr, neptune_run, multiclass_pred, multiclass_sens) 
     
     return labels, preds
 

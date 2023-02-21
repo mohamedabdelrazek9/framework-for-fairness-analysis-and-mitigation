@@ -51,7 +51,7 @@ parser.add_argument('--weight_decay', type=float, default=1e-5, help='Weight dec
 parser.add_argument('--alpha', type=float, default=4, help='The hyperparameter of alpha')
 parser.add_argument('--beta', type=float, default=0.01, help='The hyperparameter of beta')
 parser.add_argument('--roc', type=float, default=0.745, help='the selected FairGNN ROC score on val would be at least this high')
-parser.add_argument('--epochs_fairgnn', type=int, default=2000, help='Number of epochs to train')
+parser.add_argument('--epochs_rhgn', type=int, default=2000, help='Number of epochs to train')
 parser.add_argument('--epochs', type=int, default=2000, help='Number of epochs to train')
 parser.add_argument('--seed', type=int, default=42, help='Random seed.')
 parser.add_argument('--no-cuda', action='store_true', default=False, help='Disables CUDA training')
@@ -450,7 +450,7 @@ def RHGN_pre_processing(data_extension):
                             args.n_inp,
                             args.batch_size,
                             args.num_hidden,
-                            args.epochs,
+                            args.epochs_rhgn,
                             args.lr,
                             args.sens_attr,
                             args.multiclass_pred,
@@ -469,7 +469,7 @@ def RHGN_pre_processing(data_extension):
                         args.n_inp, 
                         args.batch_size, 
                         args.num_hidden, 
-                        args.epochs, 
+                        args.epochs_rhgn, 
                         args.lr, 
                         args.sens_attr, 
                         args.multiclass_pred, 

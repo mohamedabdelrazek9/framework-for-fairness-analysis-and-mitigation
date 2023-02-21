@@ -32,7 +32,7 @@ def train_FairGNN(G, features, labels, idx_train, idx_val, idx_test, sens, idx_s
     neptune_run['label_number'] = args.label_number
     neptune_run["label"] = args.label
     neptune_run['sens_attr'] = args.sens_attr
-    neptune_run["num_epochs"] = args.epochs_fairgnn
+    neptune_run["num_epochs"] = args.epochs
     
 
     model = FairGNN(nfeat = features.shape[1], args = args)
@@ -57,7 +57,7 @@ def train_FairGNN(G, features, labels, idx_train, idx_val, idx_test, sens, idx_s
     best_fair = 100
 
 
-    for epoch in range(args.epochs_fairgnn):
+    for epoch in range(args.epochs):
         print(epoch)
         print('')
         t = time.time()
