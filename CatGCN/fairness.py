@@ -94,7 +94,7 @@ class Fairness(object):
             self.neptune_run["fairness/SP_s0"] = stat_parity_s0
             self.neptune_run["fairness/SP_s1"] = stat_parity_s1
             self.neptune_run["fairness/SPD"] = stat_parity_diff
-            print(" Statistical Parity Difference (SPD): {:.4f}".format(stat_parity_diff))
+            print(" Statistical Parity Difference (SPD): {:.4f}".format(np.abs(stat_parity_diff)))
 
     
     def equal_opportunity(self):
@@ -168,7 +168,7 @@ class Fairness(object):
             self.neptune_run["fairness/OAE_s0"] = oae_s0
             self.neptune_run["fairness/OAE_s1"] = oae_s1
             self.neptune_run["fairness/OAED"] = oae_diff
-            print(" Overall Accuracy Equality Difference (OAED): {:.4f}".format(oae_diff))
+            print(" Overall Accuracy Equality Difference (OAED): {:.4f}".format(np.abs(oae_diff)))
 
 
     def treatment_equality(self):
