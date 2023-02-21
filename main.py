@@ -52,7 +52,7 @@ parser.add_argument('--alpha', type=float, default=4, help='The hyperparameter o
 parser.add_argument('--beta', type=float, default=0.01, help='The hyperparameter of beta')
 parser.add_argument('--roc', type=float, default=0.745, help='the selected FairGNN ROC score on val would be at least this high')
 parser.add_argument('--epochs_fairgnn', type=int, default=2000, help='Number of epochs to train')
-parser.add_argument('--epochs_rhgn', type=int, default=2000, help='Number of epochs to train')
+parser.add_argument('--epochs', type=int, default=2000, help='Number of epochs to train')
 parser.add_argument('--seed', type=int, default=42, help='Random seed.')
 parser.add_argument('--no-cuda', action='store_true', default=False, help='Disables CUDA training')
 parser.add_argument('--acc', type=float, default=0.688, help='the selected FairGNN accuracy on val would be at least this high')
