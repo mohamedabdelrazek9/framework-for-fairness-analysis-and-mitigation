@@ -290,7 +290,7 @@ def fair_metric(output,idx, labels, sens):
     # disparate_impact
 
 
-    return np.abs(parity), np.abs(equality), np.abs(oae_diff), np.abs(te_diff)
+    return parity, equality,oae_diff, te_diff
 
 
 def apply_bin_columns(df, onehot_bin_columns):

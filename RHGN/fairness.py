@@ -270,7 +270,7 @@ class Fairness(object):
             self.neptune_run["fairness/TE_s0"] = te_s0
             self.neptune_run["fairness/TE_s1"] = te_s1
             
-            print("Treatment Equality Difference (TED): {:.4f}".format(te_diff))
+            print("Treatment Equality Difference (TED): {:.4f}".format(np.abs(te_diff)))
             self.neptune_run["fairness/TED"] = te_diff
 
 
