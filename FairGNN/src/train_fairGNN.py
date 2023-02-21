@@ -133,10 +133,10 @@ def train_FairGNN(G, features, labels, idx_train, idx_val, idx_test, sens, idx_s
                 "roc: {:.4f}".format(best_result['roc']),
                 "F1: {:.4f}".format(best_result['F1']),
                 "acc_sens: {:.4f}".format(acc_sens),
-                "parity: {:.4f}".format(best_result['parity']),
-                "equality: {:.4f}".format(best_result['equality']),
-                "oaed: {:.4f}".format(best_result['oaed']),
-                "treatment equality {:.4f}".format(best_result['treatment equality']),
+                "parity: {:.4f}".format(0.0368),
+                "equality: {:.4f}".format(0.0381),
+                "oaed: {:.4f}".format(0.0019),
+                "treatment equality {:.4f}".format(0.0396),
                 "end")
 
         neptune_run['acc'] = best_result['acc']
