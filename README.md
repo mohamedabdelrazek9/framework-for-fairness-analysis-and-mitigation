@@ -46,5 +46,5 @@ Available [here](https://mohamedabdelrazek9-fairup-homepage-gv365a.streamlit.app
 - Integration of new datasets.
 
 ## Contact
-- M.Sc. Erasmo Purificato: erasmo.purificato@ovgu.com
-- M.Sc. Mohamed Abdelrazek: mimo.1998@hotmail.com 
+- **M.Sc. Erasmo Purificato: erasmo.purificato@ovgu.com**
+- **M.Sc. Mohamed Abdelrazek: mimo.1998@hotmail.com**
