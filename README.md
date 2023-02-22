@@ -1,30 +1,27 @@
 [![Python](https://img.shields.io/badge/Python-3.8.10-%233776AB?logo=Python)](https://www.python.org/)
 
-# FairUP: a Framework for Fairness Analysis of Graph Neural Network-Based User Profiling Models
-Repository of the the Master Thesis Design and development of a standardised framework for fairness analysis and mitigation for Graph Neural Network-based user profiling models.
+# FairUP
+The official implmentation of "FairUP: a Framework for Fairness Analysis of Graph Neural Network-Based User Profiling Models"
 
-![Framework_final](https://user-images.githubusercontent.com/45569039/213778147-d8488eb0-965d-46ec-a526-1f1f942dfb18.jpg)
+![fairup_architecture](https://user-images.githubusercontent.com/45569039/220563974-905756a9-eb1f-4140-9a17-73b8c3a52529.png)
 
-The framework is based on these GNN models:
+The framework currently supports these GNN models:
 - [FairGNN](https://arxiv.org/abs/2009.01454)
 - [RHGN](https://arxiv.org/abs/2110.07181)
 - [CatGCN](https://arxiv.org/abs/2009.05303)
 ## Abstract
-User profiling classification has been a very popular problem in the last year in regards to machine learning, which concentrates on classifying users into a specific category.
-After the introduction of Graph Neural Networks (GNNs) in last years, user profiling classification has been represented as a node classification problem to better understand and account for the relationship between users.
-This paved the way to many new state of the art GNN models structures to solve the user profiling problem while concentrating on many different aspects, which gave the user so many options to consider from.
-Additionally, most of these models only concentrate on evaluating how good is the model prediction, while neglecting the model fairness.
-In this work we design and develop a novel framework for fairness analysis and mitigation based on user profiling classification.
-The framework goal is allow users to better analyze and compare different user profiling models at the same time, making it easier for users to choose the best suitable model for them. 
-Since every model requires a different input data type structure, we overcome this problem by designing a standardised pre-processing approach which makes it easier for the user to train several state of the art GNN models sequentially using only a single data type structure.
-To this end, we also conducted a series of preliminary experiments to compare the fairness of several state of the art GNN models using several pre-processing debiasing approaches.
-We evaluate the model fairness using disparate impact and disparate mistreatment metrics and observe that it is possible to achieve fairer GNN models predictions using some of the debiasing approaches in some cases.
+ Modern user profiling approaches capture different forms of interactions with the data, from user-item  to item-item relationships. Hence, Graph Neural Networks (GNNs) have become the natural way to model and process these forms of interactions and build efficient and effective user profiles. However, each GNN-based user profiling approach has its own way to process information, thus creating heterogeneity that does not favour the benchmarking of these approaches. To overcome this issue, we present FairUP, a framework that standardises the input needed to run three state-of-the-art GNN-based user profiling profiles. Moreover, given the importance that algorithmic fairness is getting in the evaluation of Machine Learning tasks, FairUP also includes two modules that (i) allow to assess the presence of unfairness by measuring disparate impact metrics and (ii) mitigate the presence of unfairness via three debiasing techniques that pre-process the data. The framework, while extensible in multiple directions, currently offers the possibility to be run on four real-world dataset.
 
 ## Requirements
 TBA
 
+## Web application
+Available [here](https://mohamedabdelrazek9-fairup-homepage-gv365a.streamlit.app/)
 
 ## Later updates
-- A web based UI for using the framework with metrics visualization
 - Integration of new GNN models.
 - Integration of new datasets.
+
+## Contact
+- M.Sc. Erasmo Purificato: erasmo.purificato@ovgu.com
+- M.Sc. Mohamed Abdelrazek: mimo.1998@hotmail.com 
