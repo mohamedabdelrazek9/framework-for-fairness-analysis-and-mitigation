@@ -1,30 +1,62 @@
 [![Python](https://img.shields.io/badge/Python-3.8.10-%233776AB?logo=Python)](https://www.python.org/)
 
-# Framework for fairness analysis and mitigation for Graph Neural Network-based user profiling models
-Repository of the the Master Thesis Design and development of a standardised framework for fairness analysis and mitigation for Graph Neural Network-based user profiling models.
+# FairUP
+The official implmentation of "FairUP: a Framework for Fairness Analysis of Graph Neural Network-Based User Profiling Models"
 
-![Framework_final](https://user-images.githubusercontent.com/45569039/213778147-d8488eb0-965d-46ec-a526-1f1f942dfb18.jpg)
+![fairup_architecture](https://user-images.githubusercontent.com/45569039/220563974-905756a9-eb1f-4140-9a17-73b8c3a52529.png)
 
-The framework is based on these GNN models:
+The framework currently supports these GNN models:
 - [FairGNN](https://arxiv.org/abs/2009.01454)
 - [RHGN](https://arxiv.org/abs/2110.07181)
 - [CatGCN](https://arxiv.org/abs/2009.05303)
 ## Abstract
-User profiling classification has been a very popular problem in the last year in regards to machine learning, which concentrates on classifying users into a specific category.
-After the introduction of Graph Neural Networks (GNNs) in last years, user profiling classification has been represented as a node classification problem to better understand and account for the relationship between users.
-This paved the way to many new state of the art GNN models structures to solve the user profiling problem while concentrating on many different aspects, which gave the user so many options to consider from.
-Additionally, most of these models only concentrate on evaluating how good is the model prediction, while neglecting the model fairness.
-In this work we design and develop a novel framework for fairness analysis and mitigation based on user profiling classification.
-The framework goal is allow users to better analyze and compare different user profiling models at the same time, making it easier for users to choose the best suitable model for them. 
-Since every model requires a different input data type structure, we overcome this problem by designing a standardised pre-processing approach which makes it easier for the user to train several state of the art GNN models sequentially using only a single data type structure.
-To this end, we also conducted a series of preliminary experiments to compare the fairness of several state of the art GNN models using several pre-processing debiasing approaches.
-We evaluate the model fairness using disparate impact and disparate mistreatment metrics and observe that it is possible to achieve fairer GNN models predictions using some of the debiasing approaches in some cases.
+Modern user profiling approaches capture different forms of interactions with the data, from user-item to user-user relationships. Graph Neural Networks (GNNs) have become a natural way to model these behaviours and build efficient and effective user profiles. However, each GNN-based user profiling approach has its own way of processing information, thus creating heterogeneity that does not favour the benchmarking of these techniques. To overcome this issue, we present FairUP, a framework that standardises the input needed to run three state-of-the-art GNN-based models for user profiling tasks. Moreover, given the importance that algorithmic fairness is getting in the evaluation of machine learning systems, FairUP includes two additional components to (1) analyse pre-processing and post-processing fairness and (2) mitigate the potential presence of unfairness in the original datasets through three pre-processing debiasing techniques. The framework, while extensible in multiple directions, in its first version, allow the user to conduct experiments on four real-world datasets.
 
+# Description
+**FairUP** is a standardised framework that empowers researchers and practitioners to simultaneously analyse state-of-the-art Graph Neural Network-based models for user profiling task, in terms of classification performance and fairness metrics scores.
+
+The framework, whose architecture is shown below, presents several components, which allow end-users to:
+* compute the fairness of the input dataset by means of a pre-processing fairness metric, i.e. *disparate impact*;
+* mitigate the unfairness of the dataset, if needed, by applying different debiasing methods, i.e. *sampling*, *reweighting* and *disparate impact remover*; 
+* standardise the input (a graph in Neo4J or NetworkX format) for each of the included GNNs;
+* train one or more GNN models, specifying the parameters for each of them;
+* evaluate post-hoc fairness by exploiting four metrics, i.e. *statistical parity*, *equal opportunity*, *overall accuracy equality*, *treatment equality*.
+
+
+##
 ## Requirements
-TBA
+The code has been executed under Python 3.8.1, with the dependencies listed below.
 
+```
+dgl==0.6.1
+dgl_cu113==0.7.2
+fasttext==0.9.2
+fitlog==0.9.13
+hickle==4.0.4
+matplotlib==3.5.1
+metis==0.2a5
+networkx==2.6.3
+numpy==1.22.0
+pandas==1.3.5
+scikit_learn==1.0.2
+scipy==1.7.3
+texttable==1.6.4
+torch==1.10.1+cu113
+torch_geometric==2.0.3
+torch_scatter==2.0.9
+tqdm==4.62.3
+```
+Notes:
+* the file `requirements.txt` installs all dependencies for both models;
+* the dependencies including `cu113` are meant to run on **CUDA 11.3** (install the correct package based on your version of CUDA).
+
+## Web application
+Available [here](https://mohamedabdelrazek9-fairup-homepage-gv365a.streamlit.app/)
 
 ## Later updates
-- A web based UI for using the framework with metrics visualization
 - Integration of new GNN models.
 - Integration of new datasets.
+
+## Contact
+- **M.Sc. Erasmo Purificato: erasmo.purificato@ovgu.com**
+- **M.Sc. Mohamed Abdelrazek: mimo.1998@hotmail.com**
