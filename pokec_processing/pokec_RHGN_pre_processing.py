@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import dgl
 from fainress_component import disparate_impact_remover, reweighting, sample
-import fasttext
+import fastText
 import torch
 
 def pokec_z_RHGN_pre_process(df, dataset_user_id_name, sens_attr, label, debaising_approach=None):

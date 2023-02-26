@@ -1,6 +1,6 @@
 import torch
 
-import metis
+##import metis
 import numpy as np
 import networkx as nx
 from sklearn.model_selection import train_test_split
@@ -54,9 +54,9 @@ class ClusteringMachine(object):
             self.clusters = [0]
             self.cluster_membership = {node: 0 for node in self.graph.nodes()}
             print('cluster memebership', self.cluster_membership)
-        elif self.args.clustering_method == "metis":
-            print("\nMetis graph clustering started.\n")
-            self.metis_clustering()
+        #elif self.args.clustering_method == "metis":
+        #    print("\nMetis graph clustering started.\n")
+        #    self.metis_clustering()
         else:
             print("\nRandom graph clustering started.\n")
             self.random_clustering()
@@ -70,13 +70,13 @@ class ClusteringMachine(object):
         self.clusters = [cluster for cluster in range(self.args.cluster_number)]
         self.cluster_membership = {node: np.random.choice(self.clusters) for node in self.graph.nodes()}
 
-    def metis_clustering(self):
+    #def metis_clustering(self):
         """
         Clustering the graph with Metis.
         """
-        (st, parts) = metis.part_graph(self.graph, self.args.cluster_number, seed=self.args.seed)
-        self.clusters = list(set(parts))
-        self.cluster_membership = {node: membership for node, membership in enumerate(parts)}
+    #    (st, parts) = metis.part_graph(self.graph, self.args.cluster_number, seed=self.args.seed)
+    #    self.clusters = list(set(parts))
+    #    self.cluster_membership = {node: membership for node, membership in enumerate(parts)}
 
     def generate_data_partitioning(self):
         """

@@ -4,7 +4,7 @@ import dgl
 import torch
 from fainress_component import disparate_impact_remover, reweighting, sample
 from utils import apply_bin_columns, apply_cat_columns
-import fasttext
+import fastText
 
 def nba_RHGN_pre_process(df, dataset_user_id_name, sens_attr, label, onehot_bin_columns, onehot_cat_columns, debaising_approach=None):
 

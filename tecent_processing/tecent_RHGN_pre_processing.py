@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import torch
 import dgl
-import fasttext
+import fastText
 from fainress_component import disparate_impact_remover, reweighting, sample
 
 def tec_RHGN_pre_process(df, df_user, df_click, df_item, sens_attr, label, special_case, debaising_approach=None):

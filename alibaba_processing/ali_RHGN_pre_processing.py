@@ -3,7 +3,7 @@ import pandas as pd
 import torch
 import dgl
 from fainress_component import disparate_impact_remover, reweighting, sample
-import fasttext
+import fastText
 
 def ali_RHGN_pre_process(df, df_user, df_click, df_item, sens_attr, label, special_case, debaising_approach=None):
     # load and clean data   
